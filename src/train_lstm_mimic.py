@@ -127,6 +127,7 @@ with torch.no_grad():
         trues.extend(yb.numpy())
 probs = np.array(probs); trues = trues = np.array(trues).astype(int)
 preds = (probs>0.5).astype(int)
+# TODO: Implement ROC curve support for multiclass classification
 roc_auc = roc_auc_score(trues, probs)
 accuracy= (preds==trues).mean()
 
@@ -139,7 +140,6 @@ print(f"  AUC:      {roc_auc:.4f}")
 print(f"  Accuracy: {accuracy:.4f}")
 print("\nDetailed Classification Report:")
 print(classification_report(trues, preds, zero_division=0))
-
 
 fpr, tpr, _ = roc_curve(trues, probs)
 plt.figure(); plt.plot(fpr,tpr,label=f"AUC={roc_auc:.2f}"); plt.plot([0,1],[0,1],'k--')

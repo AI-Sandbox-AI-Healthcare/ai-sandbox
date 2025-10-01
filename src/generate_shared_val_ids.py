@@ -1,4 +1,4 @@
-Let's diagnose each script:
+#Let's diagnose each script:
 #!/usr/bin/env python3
 # generate_shared_val_ids.py
 # --------------------------------------------------------------

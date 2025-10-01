@@ -182,6 +182,10 @@ merged_df['on_psych_or_pain_meds'] = merged_df['on_psych_or_pain_meds'].fillna(F
 medication_count = prescriptions_df.groupby(['subject_id', 'hadm_id']).size().reset_index(name='medication_count')
 merged_df = merged_df.merge(medication_count, on=['subject_id', 'hadm_id'], how='left')
 
+# Psych/pain medication count
+psych_or_pain_rx_count = filtered_rx.groupby(['subject_id', 'hadm_id']).size().reset_index(name='psych_or_pain_rx_count')
+merged_df = merged_df.merge(psych_or_pain_rx_count, on=['subject_id', 'hadm_id'], how='left')
+
 merged_df['medication_count'] = merged_df['medication_count'].fillna(0)
 merged_df['psych_or_pain_rx_count'] = merged_df['psych_or_pain_rx_count'].fillna(0)
 merged_df['polypharmacy_flag'] = (merged_df['medication_count'] >= 5).astype(int)
