@@ -13,6 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.calibration import CalibratedClassifierCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from lightgbm import LGBMClassifier
@@ -47,6 +48,14 @@ args = parser.parse_args()
 METRIC_PREFIX = args.metric_prefix or os.getenv("METRIC_PREFIX", "iter1")
 BASE = "."
 
+mlruns_dir = Path(BASE) / "mlruns"
+for exp in mlruns_dir.glob("*/"):
+    meta_file = exp / "meta.yaml"
+    if not meta_file.exists():
+        print(f"🧹 Removing stale experiment {exp}")
+        import shutil; shutil.rmtree(exp)
+
+
 mlflow.set_experiment("stacking_meta_learner")
 mlflow.start_run(run_name=f"meta_learner_{METRIC_PREFIX}")
 mlflow.log_param("seed", SEED)
@@ -58,7 +67,7 @@ model_paths = {
     "lstm":         f"{BASE}/lstm_probs_{METRIC_PREFIX}.npz",
     "gru":          f"{BASE}/gru_probs_{METRIC_PREFIX}.npz",
     "transformer":  f"{BASE}/transformer_probs_{METRIC_PREFIX}.npz",
-    "clinicalbert_lstm": f"{BASE}/clinicalbert_lstm_probs_{METRIC_PREFIX}.npz",
+    "clinicalbert": f"{BASE}/clinicalbert_transformer_probs_{METRIC_PREFIX}.npz",
     "rf":           f"{BASE}/rf_probs_{METRIC_PREFIX}.npz",
     "xgb":          f"{BASE}/xgb_probs_{METRIC_PREFIX}.npz",
     "tfidf":        f"{BASE}/tfidf_probs_{METRIC_PREFIX}.npz"
@@ -177,91 +186,85 @@ mlflow.log_param("meta_test_size", X_test_meta.shape[0])
 print(f"✅ Final aligned shape: {X_meta.shape} using models: {valid_models}")
 
 # ---------------------------------------------------------------------
-# 2. Evaluate candidate meta-learners
+# 2. Evaluate candidate meta-learners (with n_jobs for parallelism)
 # ---------------------------------------------------------------------
 candidates = {
-    "LogisticRegression": LogisticRegression(max_iter=1000, class_weight="balanced", random_state=SEED),
-    "RandomForest": RandomForestClassifier(n_estimators=100, class_weight="balanced", random_state=SEED),
+    "LogisticRegression": LogisticRegression(max_iter=1000, class_weight="balanced", random_state=SEED, n_jobs=-1),
+    "RandomForest": RandomForestClassifier(n_estimators=200, class_weight="balanced", random_state=SEED, n_jobs=-1),
     "XGBoost": XGBClassifier(
-        n_estimators=100,
-        learning_rate=0.1,
-        eval_metric="mlogloss",
-        verbosity=0,
-        use_label_encoder=False,
-        objective="multi:softprob",
-        num_class=num_classes,
-        random_state=SEED
+        n_estimators=200, learning_rate=0.05, eval_metric="mlogloss",
+        verbosity=0, use_label_encoder=False,
+        objective="multi:softprob", num_class=num_classes,
+        random_state=SEED, n_jobs=-1
     ),
     "LightGBM": LGBMClassifier(
-        n_estimators=200, learning_rate=0.05,
+        n_estimators=300, learning_rate=0.05,
         class_weight="balanced", random_state=SEED,
-        verbose=-1  # ✅ updated param
+        n_jobs=-1, verbose=-1
     ),
-    "CatBoost": CatBoostClassifier(verbose=0, random_seed=SEED),
-    "MLP": MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000, random_state=SEED),
+    "CatBoost": CatBoostClassifier(verbose=0, random_seed=SEED, thread_count=-1),
+    "MLP": MLPClassifier(hidden_layer_sizes=(128, 64), max_iter=500, random_state=SEED),
     "SVM": SVC(kernel="rbf", probability=True, class_weight="balanced", random_state=SEED),
     "NaiveBayes": GaussianNB(),
     "StackingCV": StackingClassifier(
         estimators=[
-            ('lr', LogisticRegression(max_iter=500, class_weight='balanced', random_state=SEED)),
-            ('rf', RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=SEED)),
+            ('lr', LogisticRegression(max_iter=500, class_weight='balanced', random_state=SEED, n_jobs=-1)),
+            ('rf', RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=SEED, n_jobs=-1)),
             ('xgb', XGBClassifier(n_estimators=100, learning_rate=0.1, eval_metric="mlogloss",
                                   verbosity=0, use_label_encoder=False,
                                   objective="multi:softprob", num_class=num_classes,
-                                  random_state=SEED))
+                                  random_state=SEED, n_jobs=-1))
         ],
-        final_estimator=LogisticRegression(max_iter=500, class_weight="balanced", random_state=SEED),
-        cv=2
+        final_estimator=LogisticRegression(max_iter=500, class_weight="balanced", random_state=SEED, n_jobs=-1),
+        cv=3,
+        n_jobs=-1
     )
 }
 
+# Cross-validation loop
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
 best_model, best_score, best_fold_scores = None, -1, None
 candidate_scores = {}
 
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
-print("Evaluating candidate meta-learners:")
+print("Evaluating candidate meta-learners (parallelized):")
 
 for name, model in candidates.items():
     fold_scores = []
     for train_idx, val_idx in cv.split(X_train_meta, y_train_meta):
         model.fit(X_train_meta[train_idx], y_train_meta[train_idx])
-        raw_preds = model.predict(X_train_meta[val_idx])
-        preds = (np.argmax(raw_preds, axis=1)
-                 if hasattr(raw_preds, "shape") and raw_preds.ndim == 2 and raw_preds.shape[1] > 1
-                 else raw_preds)
+        preds = model.predict(X_train_meta[val_idx])
         score = f1_score(y_train_meta[val_idx], preds, average="macro", zero_division=0)
         fold_scores.append(score)
 
     avg_score = np.mean(fold_scores)
-    candidate_scores[name] = fold_scores  # ✅ store per-model scores
+    candidate_scores[name] = fold_scores
     print(f"{name}: macro-F1 = {avg_score:.4f}")
 
     if avg_score > best_score:
-        best_score = avg_score
-        best_model = (name, model)
-        best_fold_scores = fold_scores  # ✅ keep the fold scores for the best model
+        best_score, best_model, best_fold_scores = avg_score, (name, model), fold_scores
 
 print(f"\nBest meta-learner: {best_model[0]} (macro-F1 = {best_score:.4f})")
-
 mlflow.log_param("best_model", best_model[0])
 mlflow.log_metric("best_macro_f1", best_score)
 
 # ---------------------------------------------------------------------
-# 3. Final training and evaluation
+# 3. Final training with calibration
 # ---------------------------------------------------------------------
 with ResourceLogger(tag=f"stacker_multiclass_{METRIC_PREFIX}"):
-    best_model[1].fit(X_train_meta, y_train_meta)
-    y_pred_test = best_model[1].predict(X_test_meta)
+    calibrated = CalibratedClassifierCV(best_model[1], cv=3, n_jobs=-1)
+    calibrated.fit(X_train_meta, y_train_meta)
+    y_pred_test = calibrated.predict(X_test_meta)
 
-train_pred = best_model[1].predict(X_train_meta)
+train_pred = calibrated.predict(X_train_meta)
 train_f1 = f1_score(y_train_meta, train_pred, average="macro", zero_division=0)
+
 mlflow.log_metric("train_macro_f1", train_f1)
 mlflow.log_metric("test_macro_f1", f1_score(y_test_meta, y_pred_test, average="macro", zero_division=0))
 
-# Save model
-joblib.dump(best_model[1], f"{BASE}/stacker_best_model_{METRIC_PREFIX}.pkl")
+# Save calibrated model
+joblib.dump(calibrated, f"{BASE}/stacker_best_model_{METRIC_PREFIX}.pkl")
 with open(f"{BASE}/stacker_best_model_{METRIC_PREFIX}.txt", "w") as f:
-    f.write(best_model[0])
+    f.write(best_model[0] + " + CalibratedClassifierCV")
 
 # Save metrics
 METRIC_CSV = f"{BASE}/stacker_multiclass_metrics_{METRIC_PREFIX}_{best_model[0].lower()}.csv"
