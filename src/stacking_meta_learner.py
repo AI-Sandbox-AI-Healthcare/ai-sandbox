@@ -250,14 +250,25 @@ mlflow.log_metric("best_macro_f1", best_score)
 # ---------------------------------------------------------------------
 # 3. Final training with calibration
 # ---------------------------------------------------------------------
+from sklearn.calibration import CalibratedClassifierCV
+
+# ---------------------------------------------------------------------
+# 3. Final training and evaluation with calibration
+# ---------------------------------------------------------------------
 with ResourceLogger(tag=f"stacker_multiclass_{METRIC_PREFIX}"):
-    calibrated = CalibratedClassifierCV(best_model[1], cv=3, n_jobs=-1)
+
+    # Wrap in calibrated classifier (default sigmoid / Platt scaling)
+    calibrated = CalibratedClassifierCV(
+        estimator=best_model[1],
+        method="sigmoid",  # or "isotonic" if you prefer (needs more data)
+        cv=3               # small CV for calibration folds
+    )
+
     calibrated.fit(X_train_meta, y_train_meta)
     y_pred_test = calibrated.predict(X_test_meta)
 
 train_pred = calibrated.predict(X_train_meta)
 train_f1 = f1_score(y_train_meta, train_pred, average="macro", zero_division=0)
-
 mlflow.log_metric("train_macro_f1", train_f1)
 mlflow.log_metric("test_macro_f1", f1_score(y_test_meta, y_pred_test, average="macro", zero_division=0))
 
@@ -486,25 +497,24 @@ with open(model_card_path, "w") as f_md:
         f_md.write(f"  - Fold {i+1}: {score:.4f}\n")
     f_md.write("\n")
 
-    f.write("## Candidate Comparison (Avg Macro-F1)\n")
+    f_md.write("## Candidate Comparison (Avg Macro-F1)\n")
     for name, fold_scores in candidate_scores.items():
-        f.write(f"- {name}: {np.mean(fold_scores):.4f}\n")
+        f_md.write(f"- {name}: {np.mean(fold_scores):.4f}\n")
 
+    f_md.write("\n## Interpretability Artifacts\n")
+    if "shap_plot_path" in locals() and os.path.exists(shap_plot_path):
+        f_md.write(f"- SHAP Summary Plot: `{shap_plot_path}`\n")
+    if best_model[0] == "LogisticRegression" and "coef_plot_path" in locals() and os.path.exists(coef_plot_path):
+        f_md.write(f"- Logistic Regression Coefficients Plot: `{coef_plot_path}`\n")
+    if "force_plot_path" in locals() and os.path.exists(force_plot_path):
+        f_md.write(f"- SHAP Force Plot: `{force_plot_path}`\n")
+    if "waterfall_path" in locals() and os.path.exists(waterfall_path):
+        f_md.write(f"- SHAP Waterfall Plot: `{waterfall_path}`\n")
 
-    f.write("## Interpretability Artifacts\n")
-    if os.path.exists(shap_plot_path):
-        f.write(f"- SHAP Summary Plot: `{shap_plot_path}`\n")
-    if best_model[0] == "LogisticRegression" and os.path.exists(coef_plot_path):
-        f.write(f"- Logistic Regression Coefficients Plot: `{coef_plot_path}`\n")
-    if os.path.exists(force_plot_path):
-        f.write(f"- SHAP Force Plot: `{force_plot_path}`\n")
-    if os.path.exists(waterfall_path):
-        f.write(f"- SHAP Waterfall Plot: `{waterfall_path}`\n")
-    
-    f.write("\n## Notes\n")
-    f.write("- This model stacks multiple base learners using a meta-classifier trained on probability outputs.\n")
-    f.write("- All training and evaluation used shared validation splits across all models.\n")
-    f.write("- SHAP explanations and coefficients (if available) provide insight into which base models contributed most to predictions.\n")
+    f_md.write("\n## Notes\n")
+    f_md.write("- This model stacks multiple base learners using a meta-classifier trained on probability outputs.\n")
+    f_md.write("- All training and evaluation used shared validation splits across all models.\n")
+    f_md.write("- SHAP explanations and coefficients (if available) provide insight into which base models contributed most to predictions.\n")
 
 print(f"📄 Model card saved → {model_card_path}")
 mlflow.log_artifact(model_card_path)
