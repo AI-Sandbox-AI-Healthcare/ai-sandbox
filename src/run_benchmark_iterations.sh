@@ -1,15 +1,17 @@
+#!/usr/bin/env bash
 # run_benchmark_iterations.sh
 # ---------------------------------------------------------------------
-# Run 30 iterations of full model training and save benchmark results
+# Run N iterations of full model training and save benchmark results
 # ---------------------------------------------------------------------
 
 set -euo pipefail
 
-TOTAL_ITERATIONS=31
+TOTAL_ITERATIONS=30        # adjust as needed
 RUN_SCRIPT="./run_all_models.sh"
 LOG_DIR="./logs"
 SUMMARY_CSV="./benchmark_timing_summary.csv"
 
+# Ensure logs folder exists
 mkdir -p "$LOG_DIR"
 
 if [ ! -f "$RUN_SCRIPT" ]; then
@@ -17,8 +19,10 @@ if [ ! -f "$RUN_SCRIPT" ]; then
   exit 1
 fi
 
-# Detect where to resume
-existing_iters=($(ls "$LOG_DIR"/iter*.out 2>/dev/null | sed -E 's/.*iter([0-9]+)\.out/\1/' | sort -n))
+# Detect where to resume (safe: won't fail if no files exist)
+existing_iters=($(find "$LOG_DIR" -maxdepth 1 -name 'iter*.out' \
+  | sed -E 's/.*iter([0-9]+)\.out/\1/' | sort -n))
+
 if [ ${#existing_iters[@]} -gt 0 ]; then
   last_completed=${existing_iters[-1]}
   START_ITER=$((last_completed + 1))
@@ -48,7 +52,8 @@ run_iteration() {
   local start_time=$(date +%s)
 
   echo "🚀 [$tag] Starting on GPU $GPU_ID at $(date)"
-  CUDA_VISIBLE_DEVICES="$GPU_ID" METRIC_PREFIX="$tag" SEED_OFFSET="$i" bash "$RUN_SCRIPT" > "$log_file" 2>&1
+  CUDA_VISIBLE_DEVICES="$GPU_ID" METRIC_PREFIX="$tag" SEED_OFFSET="$i" \
+      bash "$RUN_SCRIPT" > "$log_file" 2>&1
 
   local end_time=$(date +%s)
   local duration=$((end_time - start_time))
@@ -70,29 +75,14 @@ for ((i = START_ITER; i <= TOTAL_ITERATIONS; i++)); do
   echo "🚀 Finished iteration $i."
 done
 
-# Check if any iteration outputs exist before merging
-if ls "$LOG_DIR"/iter*.out 1> /dev/null 2>&1; then
+# Merge results after iterations complete
+if find "$LOG_DIR" -maxdepth 1 -name 'iter*.out' | grep -q .; then
   echo "=== Merging iteration results ==="
   python3 merge_benchmark_results.py
   python3 wilcoxon_test.py
   python3 plot_f1_distributions.py
-
-  # Summarize benchmark timing
   python3 summarize_benchmark.py
-
-  echo \"🎉 Benchmarking complete! All outputs updated.\"
+  echo "🎉 Benchmarking complete! All outputs updated."
 else
-  echo \"⚠️ No iteration outputs found to merge. Skipping post-processing.\"
+  echo "⚠️ No iteration outputs found to merge. Skipping post-processing."
 fi
-
-
-# Merge all results cleanly
-echo "=== Merging iteration results ==="
-python3 merge_benchmark_results.py
-python3 wilcoxon_test.py
-python3 plot_f1_distributions.py
-
-# Summarize benchmark timing
-python3 summarize_benchmark.py
-
-echo "🎉 Benchmarking complete! All outputs updated."

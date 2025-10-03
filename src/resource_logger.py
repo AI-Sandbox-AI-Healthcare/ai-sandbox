@@ -3,7 +3,7 @@ Simple utilities to log wall‑clock runtime, CPU/GPU usage, and disk usage to C
 Usage:
 
 from resource_logger import ResourceLogger
-with ResourceLogger(tag="clinicalbert_lstm"):
+with ResourceLogger(tag="clinicalbert_transformer"):
     train()
 
 The logger appends one row per run to <BASE>/resource_usage.csv.

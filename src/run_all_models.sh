@@ -10,7 +10,7 @@ set -euo pipefail
 # 0. Setup logging
 # ---------------------------------------------------------------------
 BASE="./"
-METRIC_PREFIX="${METRIC_PREFIX:-run1}"
+METRIC_PREFIX="${METRIC_PREFIX:-iter1}"
 SEED_OFFSET="${SEED_OFFSET:-0}"
 LOG_DIR="./logs"
 LOGFILE="${LOG_DIR}/timing_${METRIC_PREFIX}.txt"
@@ -89,9 +89,20 @@ SEED_OFFSET="$SEED_OFFSET" python train_gru_mimic.py --metric_prefix "$METRIC_PR
 SEED_OFFSET="$SEED_OFFSET" python train_transformer_mimic.py --metric_prefix "$METRIC_PREFIX" &
 wait
 
-# ensure ClinicalBERT runs last (so logs are tidy)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-SEED_OFFSET="$SEED_OFFSET" python clinicalbert_lstm_training.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
+
+CLS_FILE="precomputed_bert_cls_${METRIC_PREFIX}.npz"
+
+if [ -f "$CLS_FILE" ]; then
+  echo "📝 [$METRIC_PREFIX] Skipping BERT embedding precompute (found $CLS_FILE)"
+else
+  echo "📝 [$METRIC_PREFIX] Precomputing BERT embeddings..."
+  SEED_OFFSET="$SEED_OFFSET" METRIC_PREFIX="$METRIC_PREFIX" \
+      python precompute_bert_embeddings.py 2>&1 | tee -a "$LOGFILE"
+fi
+
+echo "🚀 [$METRIC_PREFIX] Training ClinicalBERT..."
+SEED_OFFSET="$SEED_OFFSET" python clinicalbert_training.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 
 log_time "GPU-based model training" "$start"
 
@@ -110,7 +121,7 @@ start=$(date +%s)
 
 # sanity-check that all .npz are present
 missing=false
-for m in lstm gru transformer clinicalbert_lstm rf xgb tfidf; do
+for m in lstm gru transformer clinicalbert_transformer rf xgb tfidf; do
   f="./${m}_probs_${METRIC_PREFIX}.npz"
   if [ ! -f "$f" ]; then
     echo "❌ Missing $f" | tee -a "$LOGFILE"
@@ -122,7 +133,7 @@ $missing && { echo "⚠️ Skipping stacking"; touch stacking_skipped_"$METRIC_P
 # alignment check
 python3 - <<PY
 import numpy as np
-mods = ['lstm','gru','transformer','clinicalbert_lstm','rf','xgb','tfidf']
+mods = ['lstm','gru','transformer','clinicalbert_transformer','rf','xgb','tfidf']
 sets = [set(np.load(f"{m}_probs_${METRIC_PREFIX}.npz")['subject_ids']) for m in mods]
 shared = set.intersection(*sets)
 print(f"✅ Aligned subjects: {len(shared)}")
@@ -145,7 +156,7 @@ echo -e "\n=== [7] Merging Metrics ===" | tee -a "$LOGFILE"
 start=$(date +%s)
 python3 - <<PY
 import pandas as pd, glob, os
-pref = os.getenv("METRIC_PREFIX","run1")
+pref = os.getenv("METRIC_PREFIX","iter1")
 files = glob.glob(f"./**/*{pref}*.csv",recursive=True)
 dfs=[]
 for fp in files:
@@ -153,7 +164,7 @@ for fp in files:
     try:
         df = pd.read_csv(fp)
         df.insert(0,"model",tag)
-        df.insert(1,"run",pref)
+        df.insert(1,"iter",pref)
         dfs.append(df)
     except:
         pass
