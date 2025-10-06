@@ -304,13 +304,6 @@ final_cols = [
     'polypharmacy_flag', 'psych_or_pain_rx_count',
 ]
 
-output_csv = "mimic_enriched_features.csv"
-merged_df[final_cols].to_csv(output_csv, index=False)
-print(f"Saved enriched dataset to {output_csv}.")
-
-engine.dispose()
-print("Database connection closed.")
-
 # Class counts
 counts = merged_df["multiclass_label"].value_counts(dropna=False).sort_index()
 print("\n📊 Class Distribution Before Saving:")
@@ -323,3 +316,19 @@ summary = {
 }
 with open("mimic_enriched_features_summary.json", "w") as f:
     json.dump(summary, f, indent=2)
+
+# ---------------------------------------------------------------------
+# Drop class -1 (neither MH nor pain)
+# ---------------------------------------------------------------------
+n_before = len(merged_df)
+merged_df = merged_df[merged_df['multiclass_label'] != -1].copy()
+n_after = len(merged_df)
+print(f"\n🧹 Dropped {n_before - n_after} rows with multiclass_label = -1.")
+
+output_csv = "mimic_enriched_features.csv"
+merged_df[final_cols].to_csv(output_csv, index=False)
+print(f"Saved enriched dataset to {output_csv}.")
+
+engine.dispose()
+print("Database connection closed.")
+
