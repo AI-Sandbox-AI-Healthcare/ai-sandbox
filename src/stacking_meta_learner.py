@@ -260,7 +260,21 @@ for name, model in candidates.items():
     for train_idx, val_idx in cv.split(X_train_meta, y_train_meta):
         model.fit(X_train_meta[train_idx], y_train_meta[train_idx])
         preds = model.predict(X_train_meta[val_idx])
-        score = f1_score(y_train_meta[val_idx], preds, average="macro", zero_division=0)
+
+        # --- Safe F1 scoring (handles probability or one-hot outputs) ---
+        if preds.ndim > 1:
+            # Some models (e.g., CatBoost/XGB) may return one-hot or prob. matrix
+            preds = np.argmax(preds, axis=1)
+        y_true_fold = np.asarray(y_train_meta[val_idx]).ravel()
+
+        try:
+            score = f1_score(y_true_fold, preds, average="macro", zero_division=0)
+        except ValueError as e:
+            print(f"⚠️ { name } F1 computation failed: {e}")
+            mlflow.log_param(f"{name}_f1_error", str(e))
+            score = 0.0
+        # ---------------------------------------------------------------
+
         fold_scores.append(score)
 
     avg_score = np.mean(fold_scores)
