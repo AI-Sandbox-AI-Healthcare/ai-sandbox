@@ -4,7 +4,8 @@
 # With validation alignment and file sanity checks
 # ---------------------------------------------------------------------
 
-set -euo pipefail
+set -Eeo pipefail
+trap 'echo "⚠️ Error in run_all_models.sh at line $LINENO (exit code $?)" | tee -a "$LOGFILE"' ERR
 
 # ---------------------------------------------------------------------
 # 0. Setup logging
@@ -17,6 +18,7 @@ LOGFILE="${LOG_DIR}/timing_${METRIC_PREFIX}.txt"
 
 mkdir -p "$LOG_DIR"
 echo "🧠 Benchmark script started at $(date)" > "$LOGFILE"
+echo "🧩 Running in CPU-only mode (CUDA disabled)" | tee -a "$LOGFILE"
 
 # helper to stamp durations
 log_time() {
@@ -212,3 +214,4 @@ fi
 # ---------------------------------------------------------------------
 echo -e "\n=== [8] Done ===" | tee -a "$LOGFILE"
 echo "🎉 Finished at $(date)" | tee -a "$LOGFILE"
+exit 0
