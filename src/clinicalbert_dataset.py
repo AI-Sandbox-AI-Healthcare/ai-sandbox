@@ -19,7 +19,7 @@ class ClinicalBERTFastDatasetWithIDs(Dataset):
 
         self.X_structured = torch.tensor(X_structured[:N], dtype=torch.float32)
         self.y = torch.tensor(y[:N], dtype=torch.long)
-        self.subject_ids = torch.tensor(subject_ids[:N], dtype=torch.long)
+        self.subject_ids = list(subject_ids[:N])
 
         # Pre-pad visit masks
         padded_masks = np.zeros((N, self.max_visits), dtype=bool)
@@ -53,7 +53,7 @@ def collate_fn(batch):
         torch.stack(structured),
         torch.stack(visit_masks),
         torch.stack(labels),
-        torch.stack(subj_ids),
+        list(subj_ids),
     )
 
 # -------------------------------
@@ -70,7 +70,7 @@ class ClinicalBERTPrecomputedDataset(Dataset):
 
         self.X_structured = torch.tensor(X_structured[:N], dtype=torch.float32)
         self.y = torch.tensor(y[:N], dtype=torch.long)
-        self.subject_ids = torch.tensor(subject_ids[:N], dtype=torch.long)
+        self.subject_ids = list(subject_ids[:N])
 
         padded_masks = np.zeros((N, self.max_visits), dtype=bool)
         for i, m in enumerate(masks[:N]):
@@ -99,5 +99,5 @@ def collate_precomputed(batch):
         torch.stack(structured),
         torch.stack(visit_masks),
         torch.stack(labels),
-        torch.stack(subj_ids),
+        list(subj_ids),
     )

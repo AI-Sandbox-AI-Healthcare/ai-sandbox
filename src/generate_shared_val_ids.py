@@ -30,32 +30,21 @@ VAL_IDS_PATH = Path(f"shared_val_ids_{args.metric_prefix}.npy")
 # --------------------------------------------------------------
 # Load patient-level data
 # --------------------------------------------------------------
-feat_path = Path("mimic_enriched_features_w_notes.csv")
+feat_path = Path("synthea_enriched_features_w_notes.csv")
 if not feat_path.exists():
-    raise FileNotFoundError("Missing mimic_enriched_features_w_notes.csv")
+    raise FileNotFoundError("Missing synthea_enriched_features_w_notes.csv")
 
 df = pd.read_csv(feat_path)
 
 # Clean labels
-df = df.dropna(subset=["multiclass_label"])
-df["multiclass_label"] = df["multiclass_label"].astype(int)
+df = df.dropna(subset=["binary_label"])
+df["binary_label"] = df["binary_label"].astype(int)
 
 # Remove class -1 (neither MH nor pain)
-df = df[df["multiclass_label"] >= 0]
+df_patient = df[df["binary_label"] >= 0]
 
-# Parse admission time to ensure proper ordering
-df["admittime"] = pd.to_datetime(df["admittime"], errors="coerce")
-
-# Aggregate to patient-level: last admission per subject
-df_patient = (
-    df.sort_values("admittime")
-      .groupby("subject_id")
-      .last()
-      .reset_index()
-)
-
-eligible_ids = df_patient["subject_id"].values
-labels = df_patient["multiclass_label"].values
+eligible_ids = df_patient["id"].values
+labels = df_patient["binary_label"].values
 
 # --------------------------------------------------------------
 # Perform stratified split

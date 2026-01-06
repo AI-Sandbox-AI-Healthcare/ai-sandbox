@@ -86,26 +86,36 @@ if missing:
 # Load and align predictions using subject_ids
 probs_by_model, y_by_model, subj_by_model = {}, {}, {}
 for name, path in model_paths.items():
-    data = np.load(path)
+    data = np.load(path, allow_pickle=True)
     probs_by_model[name] = data["probs"]
     y_by_model[name] = data["y_true"]
     subj_by_model[name] = data["subject_ids"]
 
-# Check that all models predict the same number of classes
-num_class_dims = [probs.shape[1] for probs in probs_by_model.values()]
+# Ensure all model probability arrays have 2 dimensions
+for name, probs in probs_by_model.items():
+    if probs.ndim == 1:
+        # If shape is (N,), reshape to (N, 1)
+        probs = probs.reshape(-1, 1)
+        probs_by_model[name] = probs
+    elif probs.ndim == 2 and probs.shape[1] == 2:
+        # Optionally keep only the positive class probability for binary
+        probs = probs[:, 1:]
+        probs_by_model[name] = probs
+
+# Check consistent output dimensions
+num_class_dims = [p.shape[1] for p in probs_by_model.values()]
 if len(set(num_class_dims)) != 1:
     print("Mismatch in number of predicted classes across models:")
-    for name, probs in probs_by_model.items():
-        print(f"  {name}: {probs.shape[1]} classes")
+    for name, p in probs_by_model.items():
+        print(f"  {name}: shape {p.shape}")
     Path(f"stacking_class_mismatch_{METRIC_PREFIX}.txt").touch()
     sys.exit(1)
 
-
 # Intersect subject IDs
-intersect_ids = set(int(x) for x in subj_by_model["lstm"])
+intersect_ids = set(str(x) for x in subj_by_model["lstm"])
 for ids in subj_by_model.values():
-    ids_int = np.asarray(ids).astype(int).flatten().tolist()
-    intersect_ids &= set(ids_int)
+    ids_str = [str(x) for x in ids]
+    intersect_ids &= set(ids_str)
 
 if len(intersect_ids) == 0:
     print("No common subject_ids found across models.")
@@ -291,7 +301,7 @@ mlflow.log_metric("best_macro_f1", best_score)
 # ---------------------------------------------------------------------
 # 3. Final training and evaluation with calibration
 # ---------------------------------------------------------------------
-with ResourceLogger(tag=f"stacker_multiclass_{METRIC_PREFIX}"):
+with ResourceLogger(tag=f"stacker_binary_{METRIC_PREFIX}"):
 
     # Wrap in calibrated classifier (default sigmoid / Platt scaling)
     calibrated = CalibratedClassifierCV(
@@ -314,7 +324,7 @@ with open(f"{BASE}/stacker_best_model_{METRIC_PREFIX}.txt", "w") as f:
     f.write(best_model[0] + " + CalibratedClassifierCV")
 
 # Save metrics
-METRIC_CSV = f"{BASE}/stacker_multiclass_metrics_{METRIC_PREFIX}_{best_model[0].lower()}.csv"
+METRIC_CSV = f"{BASE}/stacker_binary_metrics_{METRIC_PREFIX}_{best_model[0].lower()}.csv"
 acc = accuracy_score(y_test_meta, y_pred_test)
 report = classification_report(y_test_meta, y_pred_test, zero_division=0, output_dict=True)
 

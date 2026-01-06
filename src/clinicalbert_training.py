@@ -10,10 +10,10 @@ from clinicalbert_dataset import (
 )
 from transformers import AutoModel, get_cosine_schedule_with_warmup
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
-from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 import seaborn as sns
 from torch.amp import GradScaler, autocast
+#from torch.cuda.amp import GradScaler, autocast
 from resource_logger import ResourceLogger
 from tqdm import tqdm
 import argparse
@@ -70,12 +70,12 @@ else:
         print(f"✂️ Truncated note sequences to {TRUNC_TOKENS} tokens per visit.")
 
 # Align
-sid_to_idx = {int(s): i for i, s in enumerate(sid_notes)}
+sid_to_idx = {s: i for i, s in enumerate(sid_notes)}
 def align_split(X, y, m, sids):
     keep_mask = np.isin(sids, sid_notes)
     sids_keep = sids[keep_mask]
     X, y, m = X[keep_mask], y[keep_mask], m[keep_mask]
-    note_idx = [sid_to_idx[int(s)] for s in sids_keep]
+    note_idx = [sid_to_idx[s] for s in sids_keep]
     if USE_PRECOMPUTED:
         emb = BERT_EMB_ALL[note_idx]
         return X, y, m, sids_keep, emb, None
@@ -91,10 +91,8 @@ else:
     print(f"📊 Train notes={A_train.shape}, Val notes={A_val.shape}")
 
 # ----------------------------- Class Weights ----------------------------
-class_counts = np.bincount(y_train.astype(int), minlength=3)
-inv_freq = np.where(class_counts > 0, (len(y_train) / (3.0 * class_counts)), 0.0)
-weight_tensor = torch.tensor(inv_freq, dtype=torch.float32, device=device)
-criterion = nn.CrossEntropyLoss(weight=weight_tensor)
+pos_weight = torch.tensor((y_train==0).sum() / (y_train==1).sum(), dtype=torch.float32).to(device)
+criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
 # ----------------------------- DataLoaders ------------------------------
 BATCH_SIZE  = 16 if (args.low_mem_mode or os.getenv("LOW_MEM_MODE") == "1") else 32
@@ -125,7 +123,7 @@ class EmbeddingVisitTransformer(nn.Module):
         self.fusion_proj = nn.Linear(hidden_dim * 2, hidden_dim) if self.struct_proj is not None else None
         enc_layer = nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=nhead, dropout=dropout, batch_first=True)
         self.encoder = nn.TransformerEncoder(enc_layer, num_layers=num_layers)
-        self.classifier = nn.Sequential(nn.Linear(hidden_dim, 64), nn.GELU(), nn.Dropout(dropout), nn.Linear(64, 3))
+        self.classifier = nn.Sequential(nn.Linear(hidden_dim, 64), nn.GELU(), nn.Dropout(dropout), nn.Linear(64, 1))
     def forward(self, bert_embs, structured_seq=None, visit_mask=None):
         x = self.bert_proj(bert_embs)
         if self.struct_proj is not None and structured_seq is not None:
@@ -175,6 +173,7 @@ try:
                     )
                     with autocast(device_type="cuda", enabled=torch.cuda.is_available()):
                         logits = model(bert_embs, struct_seq, visit_mask)
+                        labels = labels.to(device).unsqueeze(1).float()
                         loss = criterion(logits, labels)
                 else:
                     ids, amask, struct_seq, visit_mask, labels, _ = batch
@@ -183,9 +182,10 @@ try:
                     )
                     with autocast(device_type="cuda", enabled=torch.cuda.is_available()):
                         logits = model(ids, amask, struct_seq, visit_mask)
+                        labels = labels.to(device).unsqueeze(1).float()
                         loss = criterion(logits, labels)
                 scaler.scale(loss).backward()
-                scaler.step(optimizer); scaler.update(); scheduler.step()
+                scaler.step(optimizer); scheduler.step(); scaler.update()
                 train_loss += loss.item()
             train_loss /= max(1, len(train_loader))
             print(f"Epoch {epoch+1} Train Loss: {train_loss:.4f}")
@@ -206,11 +206,12 @@ try:
                             ids.to(device), amask.to(device), struct_seq.to(device), visit_mask.float().to(device), labels.to(device)
                         )
                         logits = model(ids, amask, struct_seq, visit_mask)
+                    labels = labels.to(device).unsqueeze(1).float()
                     loss = criterion(logits, labels); val_loss += loss.item()
-                    probs = torch.softmax(logits, dim=1).cpu().numpy()
-                    preds.extend(np.argmax(probs, axis=1))
+                    probs = torch.sigmoid(logits).cpu().numpy()
+                    preds.extend((probs > 0.5).astype(int))
                     trues.extend(labels.cpu().numpy())
-                    subj_out.extend(subj_ids.cpu().numpy())
+                    subj_out.extend(subj_ids)
             val_loss /= max(1, len(val_loader))
             print(f"Epoch {epoch+1} Val Loss: {val_loss:.4f}")
             if val_loss < best_val_loss:
@@ -241,30 +242,25 @@ if os.path.exists(BEST_PATH):
                     ids.to(device), amask.to(device), struct_seq.to(device), visit_mask.float().to(device), labels.to(device)
                 )
                 logits = model(ids, amask, struct_seq, visit_mask)
-            p = torch.softmax(logits, dim=1).cpu().numpy()
-            probs.extend(p); preds.extend(np.argmax(p, axis=1))
-            trues.extend(labels.cpu().numpy()); subj_out.extend(subj_ids.cpu().numpy())
+            p = torch.sigmoid(logits).cpu().numpy()
+            probs.extend(p); preds.extend((p>0.5).astype(int))
+            trues.extend(labels.cpu().numpy()); subj_out.extend(subj_ids)
     probs, preds, trues, subj_out = np.array(probs), np.array(preds), np.array(trues), np.array(subj_out)
-    all_classes = [0,1,2]
-    y_bin = label_binarize(trues, classes=all_classes)
-    macro_auc = roc_auc_score(y_bin, probs, average="macro", multi_class="ovr")
-    micro_auc = roc_auc_score(y_bin, probs, average="micro", multi_class="ovr")
-    print(f"ROC-AUC (macro): {macro_auc:.4f} | (micro): {micro_auc:.4f}")
-    report = classification_report(trues, preds, labels=all_classes, zero_division=0, output_dict=True)
+    macro_auc = roc_auc_score(trues, probs)
+    report = classification_report(trues, preds, zero_division=0, output_dict=True)
     with open(METRIC_CSV,"w",newline="") as f:
-        w=csv.writer(f); w.writerow(["Class","Precision","Recall","F1-score"])
-        for cls in all_classes:
-            row=report.get(str(cls),{"precision":0,"recall":0,"f1-score":0})
-            w.writerow([cls,f"{row['precision']:.4f}",f"{row['recall']:.4f}",f"{row['f1-score']:.4f}"])
-        w.writerow(["Accuracy",f"{report.get('accuracy',0):.4f}","",""])
-        w.writerow(["MacroAUC",f"{macro_auc:.4f}","",""]); w.writerow(["MicroAUC",f"{micro_auc:.4f}","",""])
-    cm = confusion_matrix(trues, preds, labels=all_classes)
-    plt.figure(figsize=(6,5)); sns.heatmap(cm,annot=True,fmt="d",cmap="Blues",
-        xticklabels=all_classes,yticklabels=all_classes)
+        w=csv.writer(f); w.writerow(["Metric","Value"])
+        w.writerow(["Accuracy",report["accuracy"]])
+        w.writerow(["MacroAUC",macro_auc])
+        w.writerow(["Precision_1",report["1"]["precision"]])
+        w.writerow(["Recall_1",report["1"]["recall"]])
+        w.writerow(["F1_1",report["1"]["f1-score"]])
+    cm = confusion_matrix(trues, preds)
+    plt.figure(figsize=(5,4)); sns.heatmap(cm,annot=True,fmt="d",cmap="Blues")
     plt.xlabel("Predicted"); plt.ylabel("True"); plt.title("Confusion Matrix")
     plt.tight_layout(); plt.savefig(f"{BASE}/clinicalbert_confusion_{METRIC_PREFIX}.png"); plt.close()
     np.savez_compressed(f"{BASE}/clinicalbert_transformer_probs_{METRIC_PREFIX}.npz",
-        probs=probs, y_true=trues.astype(np.int64), subject_ids=subj_out.astype(np.int64))
+        probs=probs, y_true=trues.astype(np.int64), subject_ids=np.array(subj_out, dtype=str))
     print(f"📦 Saved outputs → clinicalbert_transformer_probs_{METRIC_PREFIX}.npz")
 else:
     print(f"❌ No saved model found at {BEST_PATH}")

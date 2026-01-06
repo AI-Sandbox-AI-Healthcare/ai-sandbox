@@ -68,7 +68,6 @@ else
   done
 fi
 
-
 # ---------------------------------------------------------------------
 # 2. Shared Validation IDs
 # ---------------------------------------------------------------------
@@ -90,7 +89,7 @@ log_time "Generating structured visit sequences" "$start"
 echo -e "\n=== [4] CPU Baselines ===" | tee -a "$LOGFILE"
 start=$(date +%s)
 CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python tfidf_logreg_notes.py --metric_prefix "$METRIC_PREFIX" &
-CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python mimic_classification.py --metric_prefix "$METRIC_PREFIX" &
+CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python synthea_classification.py --metric_prefix "$METRIC_PREFIX" &
 wait
 log_time "CPU model training (TF-IDF + RF/XGB)" "$start"
 
@@ -99,9 +98,9 @@ log_time "CPU model training (TF-IDF + RF/XGB)" "$start"
 # ---------------------------------------------------------------------
 echo -e "\n=== [5] GPU Models ===" | tee -a "$LOGFILE"
 start=$(date +%s)
-SEED_OFFSET="$SEED_OFFSET" python train_lstm_mimic.py --metric_prefix "$METRIC_PREFIX" &
-SEED_OFFSET="$SEED_OFFSET" python train_gru_mimic.py --metric_prefix "$METRIC_PREFIX" &
-SEED_OFFSET="$SEED_OFFSET" python train_transformer_mimic.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python train_lstm_synthea.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python train_gru_synthea.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python train_transformer_synthea.py --metric_prefix "$METRIC_PREFIX" &
 wait
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -134,7 +133,6 @@ if command -v nvidia-smi &> /dev/null; then
   nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader | tee -a "$LOGFILE"
 fi
 
-
 # ---------------------------------------------------------------------
 # 6. Stacking Meta-Learner
 # ---------------------------------------------------------------------
@@ -156,7 +154,7 @@ $missing && { echo "⚠️ Skipping stacking"; touch stacking_skipped_"$METRIC_P
 python3 - <<PY
 import numpy as np
 mods = ['lstm','gru','transformer','clinicalbert_transformer','rf','xgb','tfidf']
-sets = [set(np.load(f"{m}_probs_${METRIC_PREFIX}.npz")['subject_ids']) for m in mods]
+sets = [set(np.load(f"{m}_probs_${METRIC_PREFIX}.npz", allow_pickle=True)['subject_ids']) for m in mods]
 shared = set.intersection(*sets)
 print(f"✅ Aligned subjects: {len(shared)}")
 with open("aligned_ids_count_${METRIC_PREFIX}.txt","w") as f: f.write(str(len(shared)))

@@ -80,8 +80,8 @@ def tokenize_patient(subject_entry):
     )
 
     return subject_id, {
-        "input_ids": encoded["input_ids"],
-        "attention_mask": encoded["attention_mask"]
+        "input_ids": encoded["input_ids"].numpy(),
+        "attention_mask": encoded["attention_mask"].numpy()
     }
 
 # ---------------------------------------------------------------------
@@ -101,20 +101,20 @@ with ProcessPoolExecutor(max_workers=max_workers, initializer=init_tokenizer) as
             if tokenized is None:
                 skipped_subjects.append(subject_id)
             else:
-                all_ids.append(int(subject_id))
-                all_inputs.append(tokenized["input_ids"].numpy())     # (T, L)
-                all_masks.append(tokenized["attention_mask"].numpy()) # (T, L)
+                all_ids.append(subject_id)
+                all_inputs.append(tokenized["input_ids"])     # (T, L)
+                all_masks.append(tokenized["attention_mask"]) # (T, L)
         except Exception as e:
-            print(f"⚠️ Error tokenizing subject {futures[future]}: {e}")
+            print(f"?? Error tokenizing subject {futures[future]}: {e}")
             skipped_subjects.append(futures[future])
-
+        
 # ---------------------------------------------------------------------
 # 6. Convert lists → NumPy arrays
 # ---------------------------------------------------------------------
 if not all_inputs:
     raise RuntimeError("❌ No patients successfully tokenized!")
 
-all_ids = np.array(all_ids, dtype=np.int64)
+all_ids = np.array(all_ids, dtype=str)
 all_inputs = np.stack(all_inputs)   # (N, T, L)
 all_masks = np.stack(all_masks)     # (N, T, L)
 

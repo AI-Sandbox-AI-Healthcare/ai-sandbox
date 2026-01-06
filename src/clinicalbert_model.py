@@ -30,7 +30,7 @@ class ClinicalBERT_Transformer(nn.Module):
             nn.Linear(hidden_dim, 64),
             nn.GELU(),
             nn.Dropout(dropout),
-            nn.Linear(64, 3)
+            nn.Linear(64, 1) # Single logit for binary classification
         )
 
     def forward(self, bert_embs, structured_seq=None, visit_mask=None):

@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from collections import Counter
+from sklearn.preprocessing import StandardScaler
 
 # ---------------------------------------------------------------------
 # Reproducibility
@@ -17,53 +18,45 @@ np.random.seed(SEED)
 # 1) Load
 # ---------------------------------------------------------------------
 print("🔹 Loading data...")
-df = pd.read_csv("mimic_enriched_features_w_notes.csv")
+df = pd.read_csv("synthea_enriched_features_w_notes.csv")
 
 required_cols = {
-    "subject_id", "admittime", "multiclass_label",
-    "approx_age", "gender", "insurance_group", "admission_type",
-    "length_of_stay", "was_in_icu", "seen_by_psych", "polypharmacy_flag",
-    "diagnosis_count", "medication_count", "psych_or_pain_rx_count",
-    "transfer_count", "note_count", "avg_note_length", "sentiment", "note_cluster"
+    'id', 'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage',
+       'binary_label', 'age', 'is_female', 'num_conditions',
+       'avg_condition_duration', 'num_unique_meds', 'num_pain_meds',
+       'num_encounters', 'num_procedures', 'unique_procedures',
+       'pain_severity_0_10_verbal_numeric_rating_score_reported',
+       'body_height', 'body_weight', 'body_mass_index',
+       'systolic_blood_pressure', 'diastolic_blood_pressure', 'heart_rate',
+       'respiratory_rate', 'qaly', 'daly', 'qols', 'sentiment', 'note_cluster'
 }
 tfidf_terms = [
-    'pain', 'anxiety', 'depression', 'headache', 'fatigue', 'sleep',
-    'sad', 'crying', 'hopeless', 'tired', 'insomnia', 'nausea', 'vomiting'
+    "opioid", "acetaminophen", "ibuprofen", "gabapentin", "morphine",
+    "tramadol", "oxycodone", "hydrocodone", "meperidine", "fentanyl",
+    "pregabalin", "naproxen"
 ]
 topic_cols = [f"topic_{i+1}" for i in range(5)]
-feature_cols = list(required_cols - {"subject_id", "admittime", "multiclass_label"}) \
+feature_cols = list(required_cols - {"id", "binary_label"}) \
                + [f"tfidf_{t}" for t in tfidf_terms] + topic_cols
 
-missing = ({"subject_id", "admittime", "multiclass_label"} | set(feature_cols)) - set(df.columns)
+missing = ({"id", "binary_label"} | set(feature_cols)) - set(df.columns)
 if missing:
     raise ValueError(f"Missing required columns: {sorted(missing)}")
 
-# ensure timestamp sortable
-df["admittime"] = pd.to_datetime(df["admittime"], errors="coerce")
-
-label_col = "multiclass_label"
+label_col = "binary_label"
 
 # ---------------------------------------------------------------------
 # 2) Preprocess
 # ---------------------------------------------------------------------
 print("🔹 Preprocessing...")
 df[feature_cols] = df[feature_cols].fillna(0)
-df = df.dropna(subset=[label_col, "admittime", "subject_id"])
+df = df.dropna(subset=[label_col, "id"])
 df[label_col] = df[label_col].astype(int)
 
-# enforce known classes (0,1,2)
-bad_labels = set(df[label_col].unique()) - {0, 1, 2}
+# enforce known classes (0,1)
+bad_labels = set(df[label_col].unique()) - {0, 1}
 if bad_labels:
-    raise ValueError(f"Unexpected labels found: {bad_labels}. Expected only {{0,1,2}}.")
-
-# encode categoricals
-df["gender"] = df["gender"].map({"M": 1, "F": 0}).fillna(-1).astype(int)
-df["insurance_group"] = df["insurance_group"].astype("category").cat.codes
-df["admission_type"] = df["admission_type"].astype("category").cat.codes
-
-binary_cols = ["was_in_icu", "seen_by_psych", "polypharmacy_flag"]
-for col in binary_cols:
-    df[col] = df[col].fillna(0).astype(int)
+    raise ValueError(f"Unexpected labels found: {bad_labels}. Expected only {{0,1}}.")
 
 # ---------------------------------------------------------------------
 # 3) Build sequences + visit masks (left-pad) per subject
@@ -73,10 +66,7 @@ SEQUENCE_LENGTH = 10
 
 sequences, labels, masks, subj_ids = [], [], [], []
 
-# sort per-subject by time; keep groupby stable
-df = df.sort_values(["subject_id", "admittime"])
-
-for subject_id, group in df.groupby("subject_id", sort=False):
+for subject_id, group in df.groupby("id", sort=False):
     visit_feats = group[feature_cols].to_numpy(dtype=np.float32)  # (n_visits, F)
     label_seq = group[label_col].to_numpy()
 
@@ -98,12 +88,12 @@ for subject_id, group in df.groupby("subject_id", sort=False):
     sequences.append(visit_feats)
     labels.append(label)
     masks.append(mask)
-    subj_ids.append(int(subject_id))
+    subj_ids.append(subject_id)
 
 X = np.stack(sequences)              # (N, T, F)
 y = np.array(labels, dtype=np.int64) # (N,)
 M = np.stack(masks)                  # (N, T)
-S = np.array(subj_ids, dtype=np.int64)  # (N,)
+S = np.array(subj_ids, dtype=str)  # (N,)
 
 print(f"   → Built {len(y)} subject sequences; shape X={X.shape}, mask={M.shape}")
 
@@ -119,7 +109,7 @@ X_train, X_val, y_train, y_val, m_train, m_val, sid_train, sid_val = train_test_
 def check_class_coverage(y_arr, name):
     classes, counts = np.unique(y_arr, return_counts=True)
     print(f"📦 {name} class counts:", dict(zip(classes.tolist(), counts.tolist())))
-    missing = set([0, 1, 2]) - set(classes.tolist())
+    missing = set([0, 1]) - set(classes.tolist())
     if missing:
         print(f"⚠️ WARNING: {name} missing classes: {missing}")
     return missing
@@ -134,7 +124,7 @@ if missing:
 # ---------------------------------------------------------------------
 OVERSAMPLE_TARGET = int(os.getenv("OVERSAMPLE_TARGET", 100))
 train_counts = Counter(y_train)
-minority_class = 2
+minority_class = 1
 
 if train_counts.get(minority_class, 0) < OVERSAMPLE_TARGET:
     print("⚠️ Oversampling class 2 (co-morbid)...")
@@ -161,6 +151,21 @@ if train_counts.get(minority_class, 0) < OVERSAMPLE_TARGET:
         check_class_coverage(y_train, "Train (post-oversample)")
     else:
         print("⚠️ No samples of class 2 in training to oversample from.")
+
+# Standardization
+scaler = StandardScaler()
+
+# reshape to (N*T, F) to fit the scaler
+N, T, F = X_train.shape
+X_train_flat = X_train.reshape(-1, F)
+X_train_scaled_flat = scaler.fit_transform(X_train_flat)
+X_train = X_train_scaled_flat.reshape(N, T, F)
+
+# same for validation using the **same scaler**
+N_val, T_val, F_val = X_val.shape
+X_val_flat = X_val.reshape(-1, F_val)
+X_val_scaled_flat = scaler.transform(X_val_flat)
+X_val = X_val_scaled_flat.reshape(N_val, T_val, F_val)
 
 # ---------------------------------------------------------------------
 # 6) Save outputs (features, labels, masks, subject_ids, feature list)
