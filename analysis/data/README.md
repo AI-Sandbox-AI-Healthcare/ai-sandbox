@@ -1,20 +1,13 @@
-# README for data used in TBD
+# README
 
-## Overview 
-Data used for manuscript: TBD 
+## Synthea Data
 
-***
+Put all the csv files in 'rawData' folder
 
-## Purpose of the study 
-### To do some science! 
+Dataset Details:
 
+https://synthea.mitre.org/downloads
 
-## Structure of the data
-Note: Columns should have information about units, number of levels, or format where appropriate.
-#### data1.csv
-###### Data set #1
-* Column1: Column with no data because it does not exist
-* Column2: Another column with no data
-* Column3: A third column with no data
+COVID-19
 
-***
+COVID-19 10K, CSV | [mirror]: 54 MB
