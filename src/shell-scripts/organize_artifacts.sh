@@ -7,11 +7,11 @@ set -euo pipefail
 
 echo "📁 Organizing benchmark artifacts..."
 
-LOG_DIR="../analysis/logs"
-FIG_DIR="../analysis/results/figures"
-STACKING_FIG_DIR="../analysis/results/figures/stacking_meta_learner"
-MODEL_CARD_DIR="../analysis/results/model_cards"
-METRICS_DIR="../analysis/results/metrics"
+LOG_DIR="../../analysis/logs"
+FIG_DIR="../../analysis/results/figures"
+STACKING_FIG_DIR="../../analysis/results/figures/stacking_meta_learner"
+MODEL_CARD_DIR="../../analysis/results/model_cards"
+METRICS_DIR="../../analysis/results/metrics"
 
 # -------------------------------------------------------------------------
 # Create folders if they don't exist

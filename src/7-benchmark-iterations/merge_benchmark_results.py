@@ -12,7 +12,7 @@ import glob
 import os
 from collections import defaultdict
 
-Metric_BASE = "../analysis/results/metrics/"
+Metric_BASE = "../../analysis/results/metrics/"
 output_global = os.path.join(Metric_BASE, "results_summary_all_iterations.csv")
 
 # Detect all relevant *_metrics_iter*.csv files

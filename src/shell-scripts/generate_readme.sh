@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-README_FILE="../README.md"
+README_FILE="../../README.md"
 
 echo "📝 Generating $README_FILE..."
 

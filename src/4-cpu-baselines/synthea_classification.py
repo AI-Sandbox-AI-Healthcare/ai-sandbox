@@ -26,10 +26,10 @@ OFFSET = int(os.getenv("SEED_OFFSET", 0))
 SEED = BASE_SEED + OFFSET
 np.random.seed(SEED)
 
-BASE = "../analysis/data/derivedData"
-Models_BASE = "../analysis/models"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/xgb_randomforest"
+BASE = "../../analysis/data/derivedData"
+Models_BASE = "../../analysis/models"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/xgb_randomforest"
 
 # Create directories if not present
 os.makedirs(Plot_BASE, exist_ok=True)

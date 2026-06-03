@@ -27,7 +27,7 @@ parser.add_argument("--precomputed_path", type=str, default=None, help="Path to 
 args = parser.parse_args()
 
 METRIC_PREFIX = args.metric_prefix or os.getenv("METRIC_PREFIX", "iter1")
-PRECOMP_DEFAULT = f"../analysis/data/derivedData/precomputed_bert_cls_{METRIC_PREFIX}.npz"
+PRECOMP_DEFAULT = f"../../analysis/data/derivedData/precomputed_bert_cls_{METRIC_PREFIX}.npz"
 PRECOMP_PATH = args.precomputed_path or PRECOMP_DEFAULT
 USE_PRECOMPUTED = args.precomputed or os.path.exists(PRECOMP_PATH)
 print(f"🧩 Precomputed mode: {USE_PRECOMPUTED} | path: {PRECOMP_PATH if USE_PRECOMPUTED else 'N/A'}")
@@ -39,10 +39,10 @@ np.random.seed(SEED); torch.manual_seed(SEED)
 MAX_VISITS = 10
 
 # ----------------------------- Load Data --------------------------------
-BASE = "../analysis/data/derivedData"
-Models_BASE = "../analysis/models"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/clinicalbert"
+BASE = "../../analysis/data/derivedData"
+Models_BASE = "../../analysis/models"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/clinicalbert"
 
 # Create directories if not present
 os.makedirs(Plot_BASE, exist_ok=True)
@@ -268,7 +268,7 @@ if os.path.exists(BEST_PATH):
     plt.tight_layout(); plt.savefig(f"{Plot_BASE}/clinicalbert_confusion_{METRIC_PREFIX}.png"); plt.close()
     np.savez_compressed(f"{BASE}/clinicalbert_transformer_probs_{METRIC_PREFIX}.npz",
         probs=probs, y_true=trues.astype(np.int64), subject_ids=np.array(subj_out, dtype=str))
-    print(f"📦 Saved outputs → ../analysis/data/derivedData/clinicalbert_transformer_probs_{METRIC_PREFIX}.npz")
+    print(f"📦 Saved outputs → ../../analysis/data/derivedData/clinicalbert_transformer_probs_{METRIC_PREFIX}.npz")
 else:
     print(f"❌ No saved model found at {BEST_PATH}")
 

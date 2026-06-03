@@ -57,10 +57,10 @@ class LSTMClassifier(nn.Module):
 # ---------------------------------------------------------------------
 # 2. CLI & Paths
 # ---------------------------------------------------------------------
-BASE = "../analysis/data/derivedData"
-Models_BASE = "../analysis/models"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/lstm"
+BASE = "../../analysis/data/derivedData"
+Models_BASE = "../../analysis/models"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/lstm"
 
 # Create directories if not present
 os.makedirs(Plot_BASE, exist_ok=True)
@@ -210,6 +210,6 @@ np.savez_compressed(
     y_true=trues,
     subject_ids=subj_out
 )
-print(f"Saved LSTM probs → ../analysis/data/derivedData/lstm_probs_{METRIC_PREFIX}.npz")
+print(f"Saved LSTM probs → ../../analysis/data/derivedData/lstm_probs_{METRIC_PREFIX}.npz")
 
 print(f"✅ Finished LSTM training with shared val IDs [{METRIC_PREFIX}]")

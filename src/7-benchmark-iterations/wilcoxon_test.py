@@ -6,7 +6,7 @@ import glob, sys, itertools
 # ---------------------------------------------------------------------
 # 1. Load all iteration summaries
 # ---------------------------------------------------------------------
-RESULTS_DIR = "../analysis/results/metrics"
+RESULTS_DIR = "../../analysis/results/metrics"
 files = glob.glob(f"{RESULTS_DIR}/results_summary_iter*.csv")
 if not files:
     print("❌ No results_summary_iter*.csv files found.")

@@ -47,12 +47,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--metric_prefix", type=str, default=None)
 args = parser.parse_args()
 METRIC_PREFIX = args.metric_prefix or os.getenv("METRIC_PREFIX", "iter1")
-BASE = "../analysis/data/derivedData"
-Models_BASE = "../analysis/models"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/stacking_meta_learner"
-Card_BASE = "../analysis/results/model_cards"
-EXPERIMENTS_BASE = "../analysis/experiments"
+BASE = "../../analysis/data/derivedData"
+Models_BASE = "../../analysis/models"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/stacking_meta_learner"
+Card_BASE = "../../analysis/results/model_cards"
+EXPERIMENTS_BASE = "../../analysis/experiments"
 mlruns_dir = Path(EXPERIMENTS_BASE) / "mlruns"
 
 # Create directories if not present
@@ -87,7 +87,7 @@ model_paths = {
 # Validate files (log only, don't exit)
 missing = [m for m, path in model_paths.items() if not os.path.exists(path)]
 if missing:
-    log_path = f"../analysis/logs/stacking_missing_files_{METRIC_PREFIX}.txt"
+    log_path = f"../../analysis/logs/stacking_missing_files_{METRIC_PREFIX}.txt"
     with open(log_path, "w") as f:
         f.write("\n".join(f"{m}: {model_paths[m]}" for m in missing))
     print(f"⚠️ Missing model files logged to: {log_path}")
@@ -117,7 +117,7 @@ if len(set(num_class_dims)) != 1:
     print("Mismatch in number of predicted classes across models:")
     for name, p in probs_by_model.items():
         print(f"  {name}: shape {p.shape}")
-    Path(f"../analysis/logs/stacking_class_mismatch_{METRIC_PREFIX}.txt").touch()
+    Path(f"../../analysis/logs/stacking_class_mismatch_{METRIC_PREFIX}.txt").touch()
     sys.exit(1)
 
 # Intersect subject IDs
@@ -128,7 +128,7 @@ for ids in subj_by_model.values():
 
 if len(intersect_ids) == 0:
     print("No common subject_ids found across models.")
-    Path(f"../analysis/logs/stacking_inconsistent_{METRIC_PREFIX}.txt").touch()
+    Path(f"../../analysis/logs/stacking_inconsistent_{METRIC_PREFIX}.txt").touch()
     sys.exit(0)
 
 intersect_ids = sorted(intersect_ids)
@@ -160,7 +160,7 @@ for name in model_paths:
 # Final stacking matrix
 if len(X_parts) < 2:
     print("❌ Not enough models with matching subject_ids to stack. Exiting.")
-    Path(f"../analysis/logs/stacking_incomplete_{METRIC_PREFIX}.txt").touch()
+    Path(f"../../analysis/logs/stacking_incomplete_{METRIC_PREFIX}.txt").touch()
     sys.exit(1)
 
 X_meta = np.concatenate(X_parts, axis=1)
@@ -248,7 +248,7 @@ candidates = {
         class_weight="balanced", random_state=SEED,
         n_jobs=-1, verbose=-1
     ),
-    "CatBoost": CatBoostClassifier(verbose=0, random_seed=SEED, thread_count=-1, train_dir="../analysis/experiments/catboost_info"),
+    "CatBoost": CatBoostClassifier(verbose=0, random_seed=SEED, thread_count=-1, train_dir="../../analysis/experiments/catboost_info"),
     "MLP": MLPClassifier(hidden_layer_sizes=(128, 64), max_iter=500, random_state=SEED),
     "SVM": SVC(kernel="rbf", probability=True, class_weight="balanced", random_state=SEED),
     "NaiveBayes": GaussianNB(),

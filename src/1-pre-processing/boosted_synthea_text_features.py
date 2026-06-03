@@ -22,7 +22,7 @@ load_dotenv()
 # ---------------------------------------------------------------------
 # 1. Load Medications Data
 # ---------------------------------------------------------------------
-medications_path = os.getenv("synthea_medications_path", "../analysis/data/rawData/medications.csv")
+medications_path = os.getenv("synthea_medications_path", "../../analysis/data/rawData/medications.csv")
 medications_df = pd.read_csv(medications_path, low_memory=False)
 medications_df.columns = medications_df.columns.str.lower().str.strip()
 
@@ -98,7 +98,7 @@ medications_description_features = pd.concat([
 # ---------------------------------------------------------------------
 # 8. Merge with Boosted Structured Features
 # ---------------------------------------------------------------------
-features_path = "../analysis/data/derivedData/synthea_enriched_features.csv"
+features_path = "../../analysis/data/derivedData/synthea_enriched_features.csv"
 features_df = pd.read_csv(features_path)
 
 final_df = features_df.merge(medications_description_features, left_on='id', right_on='patient', how='left')
@@ -108,8 +108,8 @@ final_df.drop(columns='patient', inplace=True)
 # 9. Save
 # ---------------------------------------------------------------------
 print("Saving final dataset...")
-final_df.to_csv("../analysis/data/derivedData/synthea_enriched_features_w_notes.csv", index=False)
-print("✅ Saved final dataset with structured + note features → ../analysis/data/derivedData/synthea_enriched_features_w_notes.csv")
+final_df.to_csv("../../analysis/data/derivedData/synthea_enriched_features_w_notes.csv", index=False)
+print("✅ Saved final dataset with structured + note features → ../../analysis/data/derivedData/synthea_enriched_features_w_notes.csv")
 
 # ---------------------------------------------------------------------
 # 10. Save tokenization sequences for ClinicalBERT
@@ -119,11 +119,11 @@ for patient, group in medications_text.groupby('patient'):
     clean_notes = group["description"].tolist()
     medications_sequences.setdefault(patient, []).append(clean_notes)
 
-np.save("../analysis/data/derivedData/note_sequences_per_patient.npy", medications_sequences)
-print("✅ Saved ../analysis/data/derivedData/note_sequences_per_patient.npy for ClinicalBERT.")
+np.save("../../analysis/data/derivedData/note_sequences_per_patient.npy", medications_sequences)
+print("✅ Saved ../../analysis/data/derivedData/note_sequences_per_patient.npy for ClinicalBERT.")
 
 # ---------------------------------------------------------------------
 # 11. Save completion marker
 # ---------------------------------------------------------------------
-with open("../analysis/logs/boosted_features_complete.txt", "w") as f:
+with open("../../analysis/logs/boosted_features_complete.txt", "w") as f:
     f.write("Boosted structured + medications features completed successfully.\n")

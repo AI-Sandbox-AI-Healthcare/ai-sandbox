@@ -54,10 +54,10 @@ class GRUClassifier(nn.Module):
 # ---------------------------------------------------------------------
 # 2. CLI args & paths
 # ---------------------------------------------------------------------
-BASE = "../analysis/data/derivedData"
-Models_BASE = "../analysis/models"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/gru"
+BASE = "../../analysis/data/derivedData"
+Models_BASE = "../../analysis/models"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/gru"
 
 # Create directories if not present
 os.makedirs(Plot_BASE, exist_ok=True)
@@ -217,5 +217,5 @@ np.savez_compressed(
     y_true=trues,
     subject_ids=subj_out
 )
-print(f"Saved GRU probs → ../analysis/data/derivedData/gru_probs_{METRIC_PREFIX}.npz")
+print(f"Saved GRU probs → ../../analysis/data/derivedData/gru_probs_{METRIC_PREFIX}.npz")
 print(f"✅ Finished GRU training with shared val IDs [{METRIC_PREFIX}]")

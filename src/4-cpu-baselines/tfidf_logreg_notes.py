@@ -24,9 +24,9 @@ import argparse
 # ------------------------------------------------------------------
 SEED = 42
 np.random.seed(SEED)
-BASE = "../analysis/data/derivedData"
-Metrics_BASE = "../analysis/results/metrics"
-Plot_BASE = "../analysis/results/figures/tfidf_logreg"
+BASE = "../../analysis/data/derivedData"
+Metrics_BASE = "../../analysis/results/metrics"
+Plot_BASE = "../../analysis/results/figures/tfidf_logreg"
 
 # Create directories if not present
 os.makedirs(Metrics_BASE, exist_ok=True)

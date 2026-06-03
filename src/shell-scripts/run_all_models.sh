@@ -11,11 +11,15 @@ trap 'echo "⚠️ Error in run_all_models.sh at line $LINENO (exit code $?)" | 
 # 0. Setup logging
 # ---------------------------------------------------------------------
 BASE="./"
-DERIVED_DIR="../analysis/data/derivedData"
+DERIVED_DIR="../../analysis/data/derivedData"
+
+# Add resource_logger and other modules to Python path
+SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PYTHONPATH="${SRC_DIR}/8-resource-logger:${PYTHONPATH:-}"
 METRIC_PREFIX="${METRIC_PREFIX:-iter1}"
 SEED_OFFSET="${SEED_OFFSET:-0}"
-LOG_DIR="../analysis/logs"
-PYCACHE_DIR="../analysis/cache/pycache"
+LOG_DIR="../../analysis/logs"
+PYCACHE_DIR="../../analysis/cache/pycache"
 LOGFILE="${LOG_DIR}/timing_${METRIC_PREFIX}.txt"
 
 mkdir -p "$LOG_DIR"
@@ -45,12 +49,12 @@ echo "🔁 Starting run at $(date)" | tee -a "$LOGFILE"
 # ---------------------------------------------------------------------
 echo -e "\n=== [1] Text Preprocessing ===" | tee -a "$LOGFILE"
 
-PROCESSED_NOTES_FILE="../analysis/logs/boosted_features_complete.txt"
-TOKENIZED_MARKER="../analysis/logs/tokenization_complete_iter1.txt"
+PROCESSED_NOTES_FILE="../../analysis/logs/boosted_features_complete.txt"
+TOKENIZED_MARKER="../../analysis/logs/tokenization_complete_iter1.txt"
 
 if [ ! -f "$PROCESSED_NOTES_FILE" ]; then
   echo "🔹 Running process_noteevents_text.py..." | tee -a "$LOGFILE"
-  python process_noteevents_text.py 2>&1 | tee -a "$LOGFILE"
+  python ../1-pre-processing/process_noteevents_text.py 2>&1 | tee -a "$LOGFILE"
 else
   echo "✅ process_noteevents_text.py already run. Skipping." | tee -a "$LOGFILE"
 fi
@@ -59,8 +63,8 @@ fi
 if [ "$METRIC_PREFIX" = "iter1" ]; then
   if [ ! -f "$TOKENIZED_MARKER" ]; then
     echo "🔹 Running clinicalbert_tokenize_notes.py (iter1 only)..." | tee -a "$LOGFILE"
-    python clinicalbert_tokenize_notes.py --metric_prefix iter1 2>&1 | tee -a "$LOGFILE"
-    cp ../analysis/logs/tokenization_complete.txt "$TOKENIZED_MARKER"
+    python ../1-pre-processing/clinicalbert_tokenize_notes.py --metric_prefix iter1 2>&1 | tee -a "$LOGFILE"
+    cp ../../analysis/logs/tokenization_complete.txt "$TOKENIZED_MARKER"
   else
     echo "✅ Tokenization already completed for iter1. Skipping." | tee -a "$LOGFILE"
   fi
@@ -80,15 +84,15 @@ fi
 # 2. Shared Validation IDs
 # ---------------------------------------------------------------------
 echo -e "\n=== [2] Shared Validation IDs ===" | tee -a "$LOGFILE"
-python generate_shared_val_ids.py --seed_offset "$SEED_OFFSET" --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
+python ../2-shared-validation/generate_shared_val_ids.py --seed_offset "$SEED_OFFSET" --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 
 # ---------------------------------------------------------------------
 # 3. Visit Sequences
 # ---------------------------------------------------------------------
 echo -e "\n=== [3] Structured Visit Sequences ===" | tee -a "$LOGFILE"
 start=$(date +%s)
-SEED_OFFSET="$SEED_OFFSET" python lstm_sequences.py 2>&1 | tee -a "$LOGFILE"
-SEED_OFFSET="$SEED_OFFSET" python transformer_sequences.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
+SEED_OFFSET="$SEED_OFFSET" python ../3-visit-sequences/lstm_sequences.py 2>&1 | tee -a "$LOGFILE"
+SEED_OFFSET="$SEED_OFFSET" python ../3-visit-sequences/transformer_sequences.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 log_time "Generating structured visit sequences" "$start"
 
 # ---------------------------------------------------------------------
@@ -98,8 +102,8 @@ echo -e "\n=== [4] CPU Baselines ===" | tee -a "$LOGFILE"
 echo "🧩 Running in CPU-only mode (CUDA disabled)" | tee -a "$LOGFILE"
 
 start=$(date +%s)
-CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python tfidf_logreg_notes.py --metric_prefix "$METRIC_PREFIX" &
-CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python synthea_classification.py --metric_prefix "$METRIC_PREFIX" &
+CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python ../4-cpu-baselines/tfidf_logreg_notes.py --metric_prefix "$METRIC_PREFIX" &
+CUDA_VISIBLE_DEVICES="" SEED_OFFSET="$SEED_OFFSET" python ../4-cpu-baselines/synthea_classification.py --metric_prefix "$METRIC_PREFIX" &
 wait
 log_time "CPU model training (TF-IDF + RF/XGB)" "$start"
 
@@ -110,9 +114,9 @@ echo -e "\n=== [5] GPU Models ===" | tee -a "$LOGFILE"
 echo "🧩 Running in GPU (if available)" | tee -a "$LOGFILE"
 
 start=$(date +%s)
-SEED_OFFSET="$SEED_OFFSET" python train_lstm_synthea.py --metric_prefix "$METRIC_PREFIX" &
-SEED_OFFSET="$SEED_OFFSET" python train_gru_synthea.py --metric_prefix "$METRIC_PREFIX" &
-SEED_OFFSET="$SEED_OFFSET" python train_transformer_synthea.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python ../5-gpu-baselines/train_lstm_synthea.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python ../5-gpu-baselines/train_gru_synthea.py --metric_prefix "$METRIC_PREFIX" &
+SEED_OFFSET="$SEED_OFFSET" python ../5-gpu-baselines/train_transformer_synthea.py --metric_prefix "$METRIC_PREFIX" &
 wait
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -126,7 +130,7 @@ if [ "$METRIC_PREFIX" = "iter1" ]; then
   else
     echo "📝 [$METRIC_PREFIX] Precomputing BERT embeddings..."
     SEED_OFFSET="$SEED_OFFSET" METRIC_PREFIX="$METRIC_PREFIX" \
-        python precompute_bert_embeddings.py 2>&1 | tee -a "$LOGFILE"
+        python ../5-gpu-baselines/precompute_bert_embeddings.py 2>&1 | tee -a "$LOGFILE"
   fi
 else
   echo "🔄 [$METRIC_PREFIX] Reusing precomputed BERT embeddings from iter1..."
@@ -143,7 +147,7 @@ else
 fi
 
 echo "🚀 [$METRIC_PREFIX] Training ClinicalBERT..."
-SEED_OFFSET="$SEED_OFFSET" python clinicalbert_training.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
+SEED_OFFSET="$SEED_OFFSET" python ../5-gpu-baselines/clinicalbert_training.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 
 log_time "GPU-based model training" "$start"
 
@@ -168,7 +172,7 @@ for m in lstm gru transformer clinicalbert_transformer rf xgb tfidf; do
     missing=true
   fi
 done
-$missing && { echo "⚠️ Skipping stacking"; touch ../analysis/logs/stacking_skipped_"$METRIC_PREFIX".txt; exit 0; }
+$missing && { echo "⚠️ Skipping stacking"; touch ../../analysis/logs/stacking_skipped_"$METRIC_PREFIX".txt; exit 0; }
 
 # alignment check
 python3 - <<PY
@@ -178,28 +182,28 @@ derived_dir = "${DERIVED_DIR}"
 sets = [set(np.load(f"{derived_dir}/{m}_probs_${METRIC_PREFIX}.npz", allow_pickle=True)['subject_ids']) for m in mods]
 shared = set.intersection(*sets)
 print(f"✅ Aligned subjects: {len(shared)}")
-with open("../analysis/logs/aligned_ids_count_${METRIC_PREFIX}.txt","w") as f: f.write(str(len(shared)))
+with open("../../analysis/logs/aligned_ids_count_${METRIC_PREFIX}.txt","w") as f: f.write(str(len(shared)))
 PY
 log_time "Validating alignment" "$start"
 
 # run the meta-learner
-SEED_OFFSET="$SEED_OFFSET" CUDA_VISIBLE_DEVICES="" python stacking_meta_learner.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
+SEED_OFFSET="$SEED_OFFSET" CUDA_VISIBLE_DEVICES="" python ../6-stacking-meta-learner/stacking_meta_learner.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 log_time "Stacking meta-learner" "$start"
 
-if [ -f "../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt" ]; then
-  echo "🏆 Best meta-learner: $(< ../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt)" | tee -a "$LOGFILE"
+if [ -f "../../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt" ]; then
+  echo "🏆 Best meta-learner: $(< ../../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt)" | tee -a "$LOGFILE"
 fi
 
 # ---------------------------------------------------------------------
 # 7. Merge Metrics
 # ---------------------------------------------------------------------
-METRICS_DIR="../analysis/results/metrics"
+METRICS_DIR="../../analysis/results/metrics"
 echo -e "\n=== [7] Merging Metrics ===" | tee -a "$LOGFILE"
 start=$(date +%s)
 python3 - <<PY
 import pandas as pd, glob, os
 pref = os.getenv("METRIC_PREFIX","iter1")
-metrics_dir = "../analysis/results/metrics"
+metrics_dir = "../../analysis/results/metrics"
 files = glob.glob(f"{metrics_dir}/**/*{pref}*.csv",recursive=True)
 dfs=[]
 for fp in files:
@@ -213,7 +217,7 @@ for fp in files:
         pass
 if dfs:
     pd.concat(dfs).to_csv(f"{metrics_dir}/results_summary_{pref}.csv",index=False)
-    print("✅ Saved → ../analysis/results/metrics/results_summary_"+pref+".csv")
+    print("✅ Saved → ../../analysis/results/metrics/results_summary_"+pref+".csv")
 else:
     print("⚠️ No metrics found.")
 PY

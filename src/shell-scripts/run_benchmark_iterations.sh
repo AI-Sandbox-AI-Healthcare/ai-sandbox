@@ -9,8 +9,8 @@ set -euo pipefail
 
 TOTAL_ITERATIONS=4
 RUN_SCRIPT="./run_all_models.sh"
-LOG_DIR="../analysis/logs"
-SUMMARY_CSV="../analysis/results/metrics/benchmark_timing_summary.csv"
+LOG_DIR="../../analysis/logs"
+SUMMARY_CSV="../../analysis/results/metrics/benchmark_timing_summary.csv"
 GLOBAL_LOG="$LOG_DIR/full_benchmark.log"
 
 mkdir -p "$LOG_DIR"
@@ -130,7 +130,7 @@ done
 # STEP 2: Find Best Meta-Learner Across Iterations
 # ---------------------------------------------------------------------
 echo "=== STEP 2: Best Stacking Meta-Learner Across Iterations ===" | tee -a "$GLOBAL_LOG"
-python3 best_stacking_meta_learner_across_iterations.py | tee -a "$GLOBAL_LOG"
+python3 ../6-stacking-meta-learner/best_stacking_meta_learner_across_iterations.py | tee -a "$GLOBAL_LOG"
 
 # ---------------------------------------------------------------------
 # STEP 3–7: Postprocessing
@@ -138,10 +138,10 @@ python3 best_stacking_meta_learner_across_iterations.py | tee -a "$GLOBAL_LOG"
 echo "=== STEP 3: Merge Results ===" | tee -a "$GLOBAL_LOG"
 
 if compgen -G "$LOG_DIR/iter*.out" > /dev/null; then
-  python3 merge_benchmark_results.py | tee -a "$GLOBAL_LOG"
-  python3 wilcoxon_test.py | tee -a "$GLOBAL_LOG"
-  #python3 plot_f1_distributions.py | tee -a "$GLOBAL_LOG"
-  python3 summarize_benchmark.py | tee -a "$GLOBAL_LOG"
+  python3 ../7-benchmark-iterations/merge_benchmark_results.py | tee -a "$GLOBAL_LOG"
+  python3 ../7-benchmark-iterations/wilcoxon_test.py | tee -a "$GLOBAL_LOG"
+  #python3 ../7-benchmark-iterations/plot_f1_distributions.py | tee -a "$GLOBAL_LOG"
+  python3 ../7-benchmark-iterations/summarize_benchmark.py | tee -a "$GLOBAL_LOG"
   echo "🎉 Benchmarking complete! All outputs updated." | tee -a "$GLOBAL_LOG"
 else
   echo "⚠️  No iteration outputs found to merge. Skipping post-processing." | tee -a "$GLOBAL_LOG"
@@ -151,9 +151,9 @@ echo "=== STEP 4: Summarize Benchmark to MLflow ===" | tee -a "$GLOBAL_LOG"
 bash run_summarize_benchmarks.sh | tee -a "$GLOBAL_LOG"
 
 echo "=== STEP 5: Artifact Summary ===" | tee -a "$GLOBAL_LOG"
-ls -lh ../analysis/results/metrics/results_summary*.csv \
-       ../analysis/results/metrics/iteration_summary.csv \
-       ../analysis/logs/*.out 2>/dev/null \
+ls -lh ../../analysis/results/metrics/results_summary*.csv \
+       ../../analysis/results/metrics/iteration_summary.csv \
+       ../../analysis/logs/*.out 2>/dev/null \
   | grep -v '.err' | tee -a "$GLOBAL_LOG" || echo "⚠️  No artifacts found." | tee -a "$GLOBAL_LOG"
 
 echo "=== STEP 6: Organize Outputs ===" | tee -a "$GLOBAL_LOG"

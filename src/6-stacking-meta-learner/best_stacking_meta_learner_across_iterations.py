@@ -13,9 +13,9 @@ from collections import defaultdict
 # -----------------------------
 # Configuration
 # -----------------------------
-Metric_BASE = "../analysis/results/metrics/"
-Model_BASE = "../analysis/models/"
-Card_BASE = "../analysis/results/model_cards/"
+Metric_BASE = "../../analysis/results/metrics/"
+Model_BASE = "../../analysis/models/"
+Card_BASE = "../../analysis/results/model_cards/"
 
 output_model_card = os.path.join(Card_BASE, "best-stacker-model-across-iterations.md")
 
@@ -85,8 +85,8 @@ with open(output_model_card, "w") as f:
     f.write(f"**Best iteration:** `{best_iter}`\n")
     f.write(f"**Average Macro-F1:** {best_avg_f1:.4f}\n\n")
     f.write("## Saved Artifacts\n")
-    f.write("- `../analysis/results/metrics/stacker_best_model_across_iterations.txt`\n")
-    f.write("- `../analysis/models/stacker_best_model_across_iterations.pkl`\n")
+    f.write("- `../../analysis/results/metrics/stacker_best_model_across_iterations.txt`\n")
+    f.write("- `../../analysis/models/stacker_best_model_across_iterations.pkl`\n")
 
     for csv_file in metrics_files:  
         new_fname = os.path.basename(csv_file).replace(best_iter, "across_iterations")
