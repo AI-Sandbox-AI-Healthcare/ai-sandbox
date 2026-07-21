@@ -56,6 +56,9 @@ for run, files in grouped.items():
             if "Model" not in df.columns: df["Model"] = ""
             if "AUC" not in df.columns: df["AUC"] = ""
             if "Accuracy" not in df.columns: df["Accuracy"] = ""
+            if "Precision" not in df.columns: df["Precision"] = ""
+            if "Recall" not in df.columns: df["Recall"] = ""
+            if "F1-score" not in df.columns: df["F1-score"] = ""
 
         dfs.append(df)
 
