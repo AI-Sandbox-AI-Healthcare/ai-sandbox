@@ -1,0 +1,2 @@
+Tokenization completed successfully.
+Patients: 9566

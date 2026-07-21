@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-TOTAL_ITERATIONS=4
+TOTAL_ITERATIONS=30
 RUN_SCRIPT="./run_all_models.sh"
 LOG_DIR="../../analysis/logs"
 SUMMARY_CSV="../../analysis/results/metrics/benchmark_timing_summary.csv"

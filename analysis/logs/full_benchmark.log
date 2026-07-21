@@ -1,0 +1,360 @@
+⚠️  No existing iteration logs found. Starting from iteration 1.
+=== STEP 1: Benchmark Iterations ===
+⚙️  Running iteration 1...
+Iteration 1 exited with status 0
+✅ Iteration 1 completed successfully.
+🚀 Finished iteration 1.
+⚙️  Running iteration 2...
+Iteration 2 exited with status 0
+✅ Iteration 2 completed successfully.
+🚀 Finished iteration 2.
+=== STEP 2: Merge Results ===
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter1.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter2.csv
+✅ Saved global summary → ../../analysis/results/metrics/results_summary_all_iterations.csv
+📂 Loaded 2 iteration summaries (46 rows)
+✅ Using F1 column: f1_score
+📊 Pivot shape: (0, 0), models = []
+⚠️ No valid model pairs found for Wilcoxon testing.
+✅ Final Benchmark Summary saved to ../../analysis/results/metrics/final_benchmark_summary.csv
+🎉 Benchmarking complete! All outputs updated.
+=== STEP 3: Summarize Benchmark to MLflow ===
+📊 Benchmark Summary Report
+--------------------------------------------------
+🔢 Total Iterations Completed: 6
+⏱️  Total Wall Clock Time (Sum of All Iterations): 19.28 minutes
+🧮 Average Time per Iteration: 3.21 minutes
+
+🎯 Seeds Used:
+🎯 SEED_OFFSET   = 1
+🎯 SEED_OFFSET   = 2
+
+🕑 Iteration Durations:
+Iteration iter1 took 278 seconds
+Iteration iter2 took 84 seconds
+Iteration iter3 took 90 seconds
+Iteration iter4 took 91 seconds
+Iteration iter1 took 391 seconds
+Iteration iter2 took 223 seconds
+
+✅ Summary Complete!
+
+📝 Logging summary to MLflow...
+✅ MLflow logging complete.
+=== STEP 4: Artifact Summary ===
+-rw-rw-r-- 1 exouser exouser 135K Jul 21 06:35 ../../analysis/logs/iter1.out
+-rw-rw-r-- 1 exouser exouser  60K Jul 21 06:39 ../../analysis/logs/iter2.out
+-rw-rw-r-- 1 exouser exouser 120K Jul 21 06:39 ../../analysis/results/metrics/iteration_summary.csv
+-rw-rw-r-- 1 exouser exouser 2.5K Jul 21 06:39 ../../analysis/results/metrics/results_summary_all_iterations.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 06:39 ../../analysis/results/metrics/results_summary_iter1.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 06:39 ../../analysis/results/metrics/results_summary_iter2.csv
+=== STEP 5: Organize Outputs ===
+📁 Organizing benchmark artifacts...
+✅ Artifact organization complete!
+=== STEP 6: Generate README.md ===
+📝 Generating ../../README.md...
+✅ ../README.md created!
+✅ Full Benchmark Complete!
+🕔 Finished at: Tue Jul 21 06:39:17 UTC 2026
+🔄 Resuming from iteration 3 (last completed: 2)
+=== STEP 1: Benchmark Iterations ===
+⚙️  Running iteration 3...
+Iteration 3 exited with status 0
+✅ Iteration 3 completed successfully.
+🚀 Finished iteration 3.
+⚙️  Running iteration 4...
+Iteration 4 exited with status 0
+✅ Iteration 4 completed successfully.
+🚀 Finished iteration 4.
+⚙️  Running iteration 5...
+Iteration 5 exited with status 0
+✅ Iteration 5 completed successfully.
+🚀 Finished iteration 5.
+⚙️  Running iteration 6...
+Iteration 6 exited with status 0
+✅ Iteration 6 completed successfully.
+🚀 Finished iteration 6.
+⚙️  Running iteration 7...
+Iteration 7 exited with status 0
+✅ Iteration 7 completed successfully.
+🚀 Finished iteration 7.
+⚙️  Running iteration 8...
+Iteration 8 exited with status 0
+✅ Iteration 8 completed successfully.
+🚀 Finished iteration 8.
+⚙️  Running iteration 9...
+Iteration 9 exited with status 0
+✅ Iteration 9 completed successfully.
+🚀 Finished iteration 9.
+⚙️  Running iteration 10...
+Iteration 10 exited with status 0
+✅ Iteration 10 completed successfully.
+🚀 Finished iteration 10.
+⚙️  Running iteration 11...
+Iteration 11 exited with status 0
+✅ Iteration 11 completed successfully.
+🚀 Finished iteration 11.
+⚙️  Running iteration 12...
+Iteration 12 exited with status 0
+✅ Iteration 12 completed successfully.
+🚀 Finished iteration 12.
+⚙️  Running iteration 13...
+Iteration 13 exited with status 0
+✅ Iteration 13 completed successfully.
+🚀 Finished iteration 13.
+⚙️  Running iteration 14...
+Iteration 14 exited with status 0
+✅ Iteration 14 completed successfully.
+🚀 Finished iteration 14.
+⚙️  Running iteration 15...
+Iteration 15 exited with status 0
+✅ Iteration 15 completed successfully.
+🚀 Finished iteration 15.
+⚙️  Running iteration 16...
+Iteration 16 exited with status 0
+✅ Iteration 16 completed successfully.
+🚀 Finished iteration 16.
+⚙️  Running iteration 17...
+Iteration 17 exited with status 0
+✅ Iteration 17 completed successfully.
+🚀 Finished iteration 17.
+⚙️  Running iteration 18...
+Iteration 18 exited with status 0
+✅ Iteration 18 completed successfully.
+🚀 Finished iteration 18.
+⚙️  Running iteration 19...
+Iteration 19 exited with status 0
+✅ Iteration 19 completed successfully.
+🚀 Finished iteration 19.
+⚙️  Running iteration 20...
+Iteration 20 exited with status 0
+✅ Iteration 20 completed successfully.
+🚀 Finished iteration 20.
+⚙️  Running iteration 21...
+Iteration 21 exited with status 0
+✅ Iteration 21 completed successfully.
+🚀 Finished iteration 21.
+⚙️  Running iteration 22...
+Iteration 22 exited with status 0
+✅ Iteration 22 completed successfully.
+🚀 Finished iteration 22.
+⚙️  Running iteration 23...
+Iteration 23 exited with status 0
+✅ Iteration 23 completed successfully.
+🚀 Finished iteration 23.
+⚙️  Running iteration 24...
+Iteration 24 exited with status 0
+✅ Iteration 24 completed successfully.
+🚀 Finished iteration 24.
+⚙️  Running iteration 25...
+Iteration 25 exited with status 0
+✅ Iteration 25 completed successfully.
+🚀 Finished iteration 25.
+⚙️  Running iteration 26...
+Iteration 26 exited with status 0
+✅ Iteration 26 completed successfully.
+🚀 Finished iteration 26.
+⚙️  Running iteration 27...
+Iteration 27 exited with status 0
+✅ Iteration 27 completed successfully.
+🚀 Finished iteration 27.
+⚙️  Running iteration 28...
+Iteration 28 exited with status 0
+✅ Iteration 28 completed successfully.
+🚀 Finished iteration 28.
+⚙️  Running iteration 29...
+Iteration 29 exited with status 0
+✅ Iteration 29 completed successfully.
+🚀 Finished iteration 29.
+⚙️  Running iteration 30...
+Iteration 30 exited with status 0
+✅ Iteration 30 completed successfully.
+🚀 Finished iteration 30.
+=== STEP 2: Merge Results ===
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter1.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter10.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter11.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter12.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter13.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter14.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter15.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter16.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter17.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter18.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter19.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter2.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter20.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter21.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter22.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter23.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter24.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter25.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter26.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter27.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter28.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter29.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter3.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter30.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter4.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter5.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter6.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter7.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter8.csv
+✅ Saved per-iteration summary → ../../analysis/results/metrics/results_summary_iter9.csv
+✅ Saved global summary → ../../analysis/results/metrics/results_summary_all_iterations.csv
+📂 Loaded 30 iteration summaries (690 rows)
+✅ Using F1 column: f1_score
+📊 Pivot shape: (0, 0), models = []
+⚠️ No valid model pairs found for Wilcoxon testing.
+✅ Final Benchmark Summary saved to ../../analysis/results/metrics/final_benchmark_summary.csv
+🎉 Benchmarking complete! All outputs updated.
+=== STEP 3: Summarize Benchmark to MLflow ===
+📊 Benchmark Summary Report
+--------------------------------------------------
+🔢 Total Iterations Completed: 34
+⏱️  Total Wall Clock Time (Sum of All Iterations): 125.65 minutes
+🧮 Average Time per Iteration: 3.70 minutes
+
+🎯 Seeds Used:
+🎯 SEED_OFFSET   = 1
+🎯 SEED_OFFSET   = 10
+🎯 SEED_OFFSET   = 11
+🎯 SEED_OFFSET   = 12
+🎯 SEED_OFFSET   = 13
+🎯 SEED_OFFSET   = 14
+🎯 SEED_OFFSET   = 15
+🎯 SEED_OFFSET   = 16
+🎯 SEED_OFFSET   = 17
+🎯 SEED_OFFSET   = 18
+🎯 SEED_OFFSET   = 19
+🎯 SEED_OFFSET   = 2
+🎯 SEED_OFFSET   = 20
+🎯 SEED_OFFSET   = 21
+🎯 SEED_OFFSET   = 22
+🎯 SEED_OFFSET   = 23
+🎯 SEED_OFFSET   = 24
+🎯 SEED_OFFSET   = 25
+🎯 SEED_OFFSET   = 26
+🎯 SEED_OFFSET   = 27
+🎯 SEED_OFFSET   = 28
+🎯 SEED_OFFSET   = 29
+🎯 SEED_OFFSET   = 3
+🎯 SEED_OFFSET   = 30
+🎯 SEED_OFFSET   = 4
+🎯 SEED_OFFSET   = 5
+🎯 SEED_OFFSET   = 6
+🎯 SEED_OFFSET   = 7
+🎯 SEED_OFFSET   = 8
+🎯 SEED_OFFSET   = 9
+
+🕑 Iteration Durations:
+Iteration iter1 took 278 seconds
+Iteration iter2 took 84 seconds
+Iteration iter3 took 90 seconds
+Iteration iter4 took 91 seconds
+Iteration iter1 took 391 seconds
+Iteration iter2 took 223 seconds
+Iteration iter3 took 284 seconds
+Iteration iter4 took 226 seconds
+Iteration iter5 took 218 seconds
+Iteration iter6 took 204 seconds
+Iteration iter7 took 237 seconds
+Iteration iter8 took 236 seconds
+Iteration iter9 took 231 seconds
+Iteration iter10 took 238 seconds
+Iteration iter11 took 228 seconds
+Iteration iter12 took 230 seconds
+Iteration iter13 took 210 seconds
+Iteration iter14 took 224 seconds
+Iteration iter15 took 213 seconds
+Iteration iter16 took 230 seconds
+Iteration iter17 took 225 seconds
+Iteration iter18 took 251 seconds
+Iteration iter19 took 226 seconds
+Iteration iter20 took 216 seconds
+Iteration iter21 took 221 seconds
+Iteration iter22 took 216 seconds
+Iteration iter23 took 221 seconds
+Iteration iter24 took 232 seconds
+Iteration iter25 took 238 seconds
+Iteration iter26 took 228 seconds
+Iteration iter27 took 213 seconds
+Iteration iter28 took 223 seconds
+Iteration iter29 took 253 seconds
+Iteration iter30 took 210 seconds
+
+✅ Summary Complete!
+
+📝 Logging summary to MLflow...
+✅ MLflow logging complete.
+=== STEP 4: Artifact Summary ===
+-rw-rw-r-- 1 exouser exouser 135K Jul 21 06:35 ../../analysis/logs/iter1.out
+-rw-rw-r-- 1 exouser exouser  57K Jul 21 07:16 ../../analysis/logs/iter10.out
+-rw-rw-r-- 1 exouser exouser  63K Jul 21 07:20 ../../analysis/logs/iter11.out
+-rw-rw-r-- 1 exouser exouser  65K Jul 21 07:24 ../../analysis/logs/iter12.out
+-rw-rw-r-- 1 exouser exouser  59K Jul 21 07:27 ../../analysis/logs/iter13.out
+-rw-rw-r-- 1 exouser exouser  59K Jul 21 07:31 ../../analysis/logs/iter14.out
+-rw-rw-r-- 1 exouser exouser  57K Jul 21 07:35 ../../analysis/logs/iter15.out
+-rw-rw-r-- 1 exouser exouser  70K Jul 21 07:39 ../../analysis/logs/iter16.out
+-rw-rw-r-- 1 exouser exouser  65K Jul 21 07:42 ../../analysis/logs/iter17.out
+-rw-rw-r-- 1 exouser exouser  64K Jul 21 07:47 ../../analysis/logs/iter18.out
+-rw-rw-r-- 1 exouser exouser  58K Jul 21 07:50 ../../analysis/logs/iter19.out
+-rw-rw-r-- 1 exouser exouser  60K Jul 21 06:39 ../../analysis/logs/iter2.out
+-rw-rw-r-- 1 exouser exouser  60K Jul 21 07:54 ../../analysis/logs/iter20.out
+-rw-rw-r-- 1 exouser exouser  57K Jul 21 07:58 ../../analysis/logs/iter21.out
+-rw-rw-r-- 1 exouser exouser  55K Jul 21 08:01 ../../analysis/logs/iter22.out
+-rw-rw-r-- 1 exouser exouser  63K Jul 21 08:05 ../../analysis/logs/iter23.out
+-rw-rw-r-- 1 exouser exouser  59K Jul 21 08:09 ../../analysis/logs/iter24.out
+-rw-rw-r-- 1 exouser exouser  59K Jul 21 08:13 ../../analysis/logs/iter25.out
+-rw-rw-r-- 1 exouser exouser  69K Jul 21 08:17 ../../analysis/logs/iter26.out
+-rw-rw-r-- 1 exouser exouser  62K Jul 21 08:21 ../../analysis/logs/iter27.out
+-rw-rw-r-- 1 exouser exouser  70K Jul 21 08:24 ../../analysis/logs/iter28.out
+-rw-rw-r-- 1 exouser exouser  74K Jul 21 08:29 ../../analysis/logs/iter29.out
+-rw-rw-r-- 1 exouser exouser  69K Jul 21 06:50 ../../analysis/logs/iter3.out
+-rw-rw-r-- 1 exouser exouser  54K Jul 21 08:32 ../../analysis/logs/iter30.out
+-rw-rw-r-- 1 exouser exouser  60K Jul 21 06:53 ../../analysis/logs/iter4.out
+-rw-rw-r-- 1 exouser exouser  62K Jul 21 06:57 ../../analysis/logs/iter5.out
+-rw-rw-r-- 1 exouser exouser  55K Jul 21 07:00 ../../analysis/logs/iter6.out
+-rw-rw-r-- 1 exouser exouser  73K Jul 21 07:04 ../../analysis/logs/iter7.out
+-rw-rw-r-- 1 exouser exouser  63K Jul 21 07:08 ../../analysis/logs/iter8.out
+-rw-rw-r-- 1 exouser exouser  59K Jul 21 07:12 ../../analysis/logs/iter9.out
+-rw-rw-r-- 1 exouser exouser 152K Jul 21 08:32 ../../analysis/results/metrics/iteration_summary.csv
+-rw-rw-r-- 1 exouser exouser  37K Jul 21 08:32 ../../analysis/results/metrics/results_summary_all_iterations.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter1.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter10.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter11.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter12.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter13.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter14.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter15.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter16.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter17.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter18.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter19.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter2.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter20.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter21.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter22.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter23.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter24.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter25.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter26.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter27.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter28.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter29.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter3.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter30.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter4.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter5.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter6.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter7.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter8.csv
+-rw-rw-r-- 1 exouser exouser 1.3K Jul 21 08:32 ../../analysis/results/metrics/results_summary_iter9.csv
+=== STEP 5: Organize Outputs ===
+📁 Organizing benchmark artifacts...
+✅ Artifact organization complete!
+=== STEP 6: Generate README.md ===
+📝 Generating ../../README.md...
+✅ ../README.md created!
+✅ Full Benchmark Complete!
+🕔 Finished at: Tue Jul 21 08:32:39 UTC 2026

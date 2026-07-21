@@ -1,0 +1,1 @@
+Model,Training Time (min),GPU Instance,GPU Hours (avg),GPU Hours (std),CPU Utilization (avg),CPU Utilization (std),Disk Used (avg GB),Disk Used (std GB),Precision (avg),Precision (std),Recall (avg),Recall (std),F1-score (avg),F1-score (std)

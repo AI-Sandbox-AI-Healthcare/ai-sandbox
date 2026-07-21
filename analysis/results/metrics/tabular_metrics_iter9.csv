@@ -1,0 +1,3 @@
+Model,AUC
+RandomForest,0.8378
+XGBoost,0.8327
