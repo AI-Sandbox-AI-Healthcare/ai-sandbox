@@ -20,7 +20,6 @@ model_name_map = {
     "clinicalbert_multiclass_metrics": "ClinicalBERT-LSTM",
     "tfidf_logreg_notes_metrics": "TFIDF Logistic Regression",
     "tabular_logreg_multiclass_metrics": "Tabular Logistic Regression",
-    "stacker_multiclass_metrics": "Stacking Meta-Learner",
 }
 
 benchmark_df["model_clean"] = benchmark_df["model"].map(model_name_map)
@@ -32,7 +31,6 @@ resource_name_map = {
     "clinicalbert_lstm": "ClinicalBERT-LSTM",
     "lstm_multiclass": "LSTM",
     "gru_multiclass": "GRU",
-    "stacker": "Stacking Meta-Learner",
     "tfidf_logreg_notes": "TFIDF Logistic Regression",
     "tabular_logreg_multiclass": "Tabular Logistic Regression",
 }
@@ -78,7 +76,6 @@ training_time_estimates = {
     "ClinicalBERT-LSTM": 150,
     "TFIDF Logistic Regression": 5,
     "Tabular Logistic Regression": 5,
-    "Stacking Meta-Learner": 15,
 }
 
 hardware_notes = {
@@ -88,7 +85,6 @@ hardware_notes = {
     "ClinicalBERT-Transformer": "Jetstream2 GPU.xlarge",
     "TFIDF Logistic Regression": "CPU only",
     "Tabular Logistic Regression": "CPU only",
-    "Stacking Meta-Learner": "CPU only",
 }
 
 # Merge resource and performance

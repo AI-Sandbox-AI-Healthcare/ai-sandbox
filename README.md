@@ -45,7 +45,7 @@ chmod +x run_all_models.sh
 ./run_all_models.sh
 ```
 
-This script must be run from inside `src/shell-scripts/`. It runs the end-to-end modeling workflow: shared validation split generation, visit sequence building, CPU baseline training (Random Forest, XGBoost, TF-IDF LogReg), GPU model training (LSTM, GRU, Transformer, ClinicalBERT), stacking meta-learner evaluation, and timing/summary logs for one iteration.
+This script must be run from inside `src/shell-scripts/`. It runs the end-to-end modeling workflow: shared validation split generation, visit sequence building, CPU baseline training (Random Forest, XGBoost, TF-IDF LogReg), GPU model training (LSTM, GRU, Transformer, ClinicalBERT), and timing/summary logs for one iteration.
 
 ### 6. Run benchmark iterations
 
@@ -97,14 +97,11 @@ This script repeats the full pipeline across multiple iterations with different 
     |   |-- clinicalbert_training.py      # ClinicalBERT + structured fusion model
     |   |-- clinicalbert_dataset.py       # PyTorch dataset classes for ClinicalBERT
     |   `-- clinicalbert_model.py         # ClinicalBERT model architecture definition
-    |-- 6-stacking-meta-learner/          # ensemble stacking over base model outputs
-    |   |-- stacking_meta_learner.py      # evaluates candidate meta-learners, selects best
-    |   `-- best_stacking_meta_learner_across_iterations.py  # picks best model across all runs
-    |-- 7-benchmark-iterations/           # post-run aggregation and statistical tests
+    |-- 6-benchmark-iterations/           # post-run aggregation and statistical tests
     |   |-- merge_benchmark_results.py    # merges per-iteration metric CSVs into summaries
     |   |-- wilcoxon_test.py              # pairwise Wilcoxon signed-rank tests across models
     |   `-- summarize_benchmark.py        # final performance and resource usage summary
-    |-- 8-resource-logger/                # shared runtime instrumentation
+    |-- 7-resource-logger/                # shared runtime instrumentation
     |   `-- resource_logger.py            # context manager logging wall time, CPU, GPU, disk
     |-- shell-scripts/                    # orchestration scripts
     |   |-- run_all_models.sh             # end-to-end pipeline for a single iteration

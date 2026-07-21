@@ -22,7 +22,6 @@ This directory contains the results from the **AI Sandbox Benchmark Pipeline**. 
   - F1 over iterations
   - Confusion matrices
   - SHAP force/waterfall plots
-- \`analysis/results/figures/stacking_meta_learner/\` — Confusion matrices, SHAP plots, and coefficient plots for the meta-learner.
 - \`analysis/results/model_cards/\` — Human-readable model documentation:
   - Final model card (\`model_card_iterX.md\`)
   - Logistic regression coefficient plots
@@ -53,10 +52,6 @@ This project follows a standardized benchmark workflow:
 | \`analysis/results/metrics/iteration_summary.csv\` | Per-model metrics across iterations |
 | \`analysis/results/metrics/benchmark_timing_summary.csv\` | Timing info and seed logs |
 | \`analysis/results/metrics/results_summary.txt\` | High-level summary report |
-| \`analysis/results/metrics/stacker_preds_iterX.csv\` | Final predictions from the meta-learner |
-| \`analysis/results/metrics/stacker_candidate_scores_iterX.csv\` | Comparison of meta-learner candidates |
-| \`analysis/results/figures/stacking_meta_learner/logreg_coef_iterX.png\` | Logistic regression coefficient plot |
-| \`analysis/results/model_cards/model_card_iterX.md\` | Model card for the selected meta-learner |
 
 ## 🧠 About
 

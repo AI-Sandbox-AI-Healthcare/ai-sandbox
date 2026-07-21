@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # run_benchmark_iterations.sh
 # ---------------------------------------------------------------------
-# Run N iterations of full model training (or meta-only) and save benchmark results
+# Run N iterations of full model training and save benchmark results
 # Robust to missing log files.
 # ---------------------------------------------------------------------
 
@@ -127,39 +127,33 @@ for ((i = START_ITER; i <= TOTAL_ITERATIONS; i++)); do
 done
 
 # ---------------------------------------------------------------------
-# STEP 2: Find Best Meta-Learner Across Iterations
+# STEP 2–6: Postprocessing
 # ---------------------------------------------------------------------
-echo "=== STEP 2: Best Stacking Meta-Learner Across Iterations ===" | tee -a "$GLOBAL_LOG"
-python3 ../6-stacking-meta-learner/best_stacking_meta_learner_across_iterations.py | tee -a "$GLOBAL_LOG"
-
-# ---------------------------------------------------------------------
-# STEP 3–7: Postprocessing
-# ---------------------------------------------------------------------
-echo "=== STEP 3: Merge Results ===" | tee -a "$GLOBAL_LOG"
+echo "=== STEP 2: Merge Results ===" | tee -a "$GLOBAL_LOG"
 
 if compgen -G "$LOG_DIR/iter*.out" > /dev/null; then
-  python3 ../7-benchmark-iterations/merge_benchmark_results.py | tee -a "$GLOBAL_LOG"
-  python3 ../7-benchmark-iterations/wilcoxon_test.py | tee -a "$GLOBAL_LOG"
-  #python3 ../7-benchmark-iterations/plot_f1_distributions.py | tee -a "$GLOBAL_LOG"
-  python3 ../7-benchmark-iterations/summarize_benchmark.py | tee -a "$GLOBAL_LOG"
+  python3 ../6-benchmark-iterations/merge_benchmark_results.py | tee -a "$GLOBAL_LOG"
+  python3 ../6-benchmark-iterations/wilcoxon_test.py | tee -a "$GLOBAL_LOG"
+  #python3 ../6-benchmark-iterations/plot_f1_distributions.py | tee -a "$GLOBAL_LOG"
+  python3 ../6-benchmark-iterations/summarize_benchmark.py | tee -a "$GLOBAL_LOG"
   echo "🎉 Benchmarking complete! All outputs updated." | tee -a "$GLOBAL_LOG"
 else
   echo "⚠️  No iteration outputs found to merge. Skipping post-processing." | tee -a "$GLOBAL_LOG"
 fi
 
-echo "=== STEP 4: Summarize Benchmark to MLflow ===" | tee -a "$GLOBAL_LOG"
+echo "=== STEP 3: Summarize Benchmark to MLflow ===" | tee -a "$GLOBAL_LOG"
 bash run_summarize_benchmarks.sh | tee -a "$GLOBAL_LOG"
 
-echo "=== STEP 5: Artifact Summary ===" | tee -a "$GLOBAL_LOG"
+echo "=== STEP 4: Artifact Summary ===" | tee -a "$GLOBAL_LOG"
 ls -lh ../../analysis/results/metrics/results_summary*.csv \
        ../../analysis/results/metrics/iteration_summary.csv \
        ../../analysis/logs/*.out 2>/dev/null \
   | grep -v '.err' | tee -a "$GLOBAL_LOG" || echo "⚠️  No artifacts found." | tee -a "$GLOBAL_LOG"
 
-echo "=== STEP 6: Organize Outputs ===" | tee -a "$GLOBAL_LOG"
+echo "=== STEP 5: Organize Outputs ===" | tee -a "$GLOBAL_LOG"
 bash organize_artifacts.sh | tee -a "$GLOBAL_LOG"
 
-echo "=== STEP 7: Generate README.md ===" | tee -a "$GLOBAL_LOG"
+echo "=== STEP 6: Generate README.md ===" | tee -a "$GLOBAL_LOG"
 bash generate_readme.sh | tee -a "$GLOBAL_LOG"
 
 echo "✅ Full Benchmark Complete!" | tee -a "$GLOBAL_LOG"

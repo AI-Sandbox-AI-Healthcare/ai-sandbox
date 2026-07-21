@@ -15,7 +15,7 @@ DERIVED_DIR="../../analysis/data/derivedData"
 
 # Add resource_logger and other modules to Python path
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-export PYTHONPATH="${SRC_DIR}/8-resource-logger:${PYTHONPATH:-}"
+export PYTHONPATH="${SRC_DIR}/7-resource-logger:${PYTHONPATH:-}"
 METRIC_PREFIX="${METRIC_PREFIX:-iter1}"
 SEED_OFFSET="${SEED_OFFSET:-0}"
 LOG_DIR="../../analysis/logs"
@@ -158,47 +158,10 @@ if command -v nvidia-smi &> /dev/null; then
 fi
 
 # ---------------------------------------------------------------------
-# 6. Stacking Meta-Learner
-# ---------------------------------------------------------------------
-echo -e "\n=== [6] Stacking Meta-Learner ===" | tee -a "$LOGFILE"
-start=$(date +%s)
-
-# sanity-check that all .npz are present
-missing=false
-for m in lstm gru transformer clinicalbert_transformer rf xgb tfidf; do
-  f="${DERIVED_DIR}/${m}_probs_${METRIC_PREFIX}.npz"
-  if [ ! -f "$f" ]; then
-    echo "❌ Missing $f" | tee -a "$LOGFILE"
-    missing=true
-  fi
-done
-$missing && { echo "⚠️ Skipping stacking"; touch ../../analysis/logs/stacking_skipped_"$METRIC_PREFIX".txt; exit 0; }
-
-# alignment check
-python3 - <<PY
-import numpy as np
-mods = ['lstm','gru','transformer','clinicalbert_transformer','rf','xgb','tfidf']
-derived_dir = "${DERIVED_DIR}"
-sets = [set(np.load(f"{derived_dir}/{m}_probs_${METRIC_PREFIX}.npz", allow_pickle=True)['subject_ids']) for m in mods]
-shared = set.intersection(*sets)
-print(f"✅ Aligned subjects: {len(shared)}")
-with open("../../analysis/logs/aligned_ids_count_${METRIC_PREFIX}.txt","w") as f: f.write(str(len(shared)))
-PY
-log_time "Validating alignment" "$start"
-
-# run the meta-learner
-SEED_OFFSET="$SEED_OFFSET" CUDA_VISIBLE_DEVICES="" python ../6-stacking-meta-learner/stacking_meta_learner.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
-log_time "Stacking meta-learner" "$start"
-
-if [ -f "../../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt" ]; then
-  echo "🏆 Best meta-learner: $(< ../../analysis/results/metrics/stacker_best_model_${METRIC_PREFIX}.txt)" | tee -a "$LOGFILE"
-fi
-
-# ---------------------------------------------------------------------
-# 7. Merge Metrics
+# 6. Merge Metrics
 # ---------------------------------------------------------------------
 METRICS_DIR="../../analysis/results/metrics"
-echo -e "\n=== [7] Merging Metrics ===" | tee -a "$LOGFILE"
+echo -e "\n=== [6] Merging Metrics ===" | tee -a "$LOGFILE"
 start=$(date +%s)
 python3 - <<PY
 import pandas as pd, glob, os
@@ -235,8 +198,8 @@ if [ -f "$summ" ]; then
 fi
 
 # ---------------------------------------------------------------------
-# 8. Done
+# 7. Done
 # ---------------------------------------------------------------------
-echo -e "\n=== [8] Done ===" | tee -a "$LOGFILE"
+echo -e "\n=== [7] Done ===" | tee -a "$LOGFILE"
 echo "🎉 Finished at $(date)" | tee -a "$LOGFILE"
 exit 0
