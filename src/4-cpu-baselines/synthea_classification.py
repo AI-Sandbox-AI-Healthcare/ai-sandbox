@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, label_binarize
-from sklearn.metrics import classification_report, roc_auc_score, roc_curve, confusion_matrix
+from sklearn.metrics import classification_report, roc_auc_score, roc_curve, confusion_matrix, accuracy_score
 from imblearn.over_sampling import SMOTE, ADASYN, BorderlineSMOTE, SMOTENC
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
@@ -170,11 +170,20 @@ np.savez_compressed(
 # ------------------------------------------------------------------
 # 7. Metrics + ROC curve
 # ------------------------------------------------------------------
+acc_rf = accuracy_score(y_test, pred_rf)
+acc_xgb = accuracy_score(y_test, pred_xgb)
+report_rf = classification_report(y_test, pred_rf, labels=[0,1], zero_division=0, output_dict=True)
+report_xgb = classification_report(y_test, pred_xgb, labels=[0,1], zero_division=0, output_dict=True)
+
 with open(f"{Metrics_BASE}/tabular_metrics_{METRIC_PREFIX}.csv", "w", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Model", "AUC"])
-    writer.writerow(["RandomForest", f"{auc_rf:.4f}"])
-    writer.writerow(["XGBoost", f"{auc_xgb:.4f}"])
+    writer.writerow(["Model", "Accuracy", "AUC", "Precision_1", "Recall_1", "F1_1"])
+    writer.writerow(["RandomForest", f"{acc_rf:.4f}", f"{auc_rf:.4f}",
+                      f"{report_rf['1']['precision']:.4f}", f"{report_rf['1']['recall']:.4f}",
+                      f"{report_rf['1']['f1-score']:.4f}"])
+    writer.writerow(["XGBoost", f"{acc_xgb:.4f}", f"{auc_xgb:.4f}",
+                      f"{report_xgb['1']['precision']:.4f}", f"{report_xgb['1']['recall']:.4f}",
+                      f"{report_xgb['1']['f1-score']:.4f}"])
 
 # ROC curve (RF vs XGB)
 # RF

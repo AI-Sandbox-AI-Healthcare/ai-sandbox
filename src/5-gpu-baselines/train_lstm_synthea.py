@@ -173,6 +173,7 @@ probs = np.array(all_probs)
 subj_out = np.array(subj_out)
 acc = accuracy_score(trues, preds)
 auc = roc_auc_score(trues, probs)
+report = classification_report(trues, preds, labels=[0,1], zero_division=0, output_dict=True)
 
 # Save metrics
 with open(METRIC_CSV, "w", newline="") as f:
@@ -180,6 +181,9 @@ with open(METRIC_CSV, "w", newline="") as f:
     writer.writerow(["Metric", "Value"])
     writer.writerow(["Accuracy", acc])
     writer.writerow(["AUC", auc])
+    writer.writerow(["Precision_1", report["1"]["precision"]])
+    writer.writerow(["Recall_1", report["1"]["recall"]])
+    writer.writerow(["F1_1", report["1"]["f1-score"]])
 print(f"Metrics → {METRIC_CSV}")
 
 # Confusion matrix
