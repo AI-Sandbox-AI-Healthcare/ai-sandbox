@@ -1,3 +1,3 @@
-Model,AUC
-RandomForest,0.8162
-XGBoost,0.7759
+Model,Accuracy,AUC,Precision_1,Recall_1,F1_1
+RandomForest,0.7398,0.8168,0.7568,0.7137,0.7346
+XGBoost,0.7220,0.8076,0.7393,0.6937,0.7158
