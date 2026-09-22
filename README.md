@@ -1,22 +1,23 @@
 # AI Sandbox
 
-AI Sandbox is a browser-based learning environment for teaching neural networks and applied AI through interactive activities, reproducible experiments, reflection, and peer learning.
+AI Sandbox provides computational infrastructure and guided experimentation for teaching neural networks and applied AI. It brings together interactive activities, reproducible experiments, reflection, and peer learning in one learning environment.
 
-The project supports a Neural Networks course where students can explore AI concepts, run experiments, compare models, interpret results, and document what they learned. It is designed to make hands-on AI learning more structured, consistent, transparent, and reproducible.
+The project supports a Neural Networks course where students can explore AI concepts, run experiments, compare models, interpret results, and document what they learned. It is designed to make hands-on AI learning more structured, consistent, transparent, and reproducible while keeping the technical workflow accessible to students.
 
 ## Project Goals
 
-- Help students learn AI by interacting with models, data, metrics, and visualizations.
-- Connect visual exploration with code-based assignments.
-- Make experimentation reproducible through seeds, logs, parameters, and documented results.
-- Support responsible AI learning through reflection, peer review, and evidence-based decision making.
+- Provide computational infrastructure for AI learning.
+- Guide students through structured experimentation with models, data, metrics, and visualizations.
+- Connect interactive exploration with code-based assignments.
+- Make experiments reproducible through seeds, logs, parameters, and documented results.
+- Support reflection, peer learning, and evidence-based model decisions.
 - Provide a reusable sandbox that can be embedded in D2L or used as a standalone activity.
 
 ## Background
 
 Hands-on AI learning often lacks structure, consistency, and reproducibility. Students may run code and see outputs, but they may not always understand why results changed, how to compare models, or how to justify model choices.
 
-AI Sandbox addresses this by giving students one shared environment where they can:
+AI Sandbox addresses this by combining computational infrastructure with guided experimentation. It gives students one shared environment where they can:
 
 1. Explore AI concepts interactively.
 2. Run the same type of experiment with personalized settings.
@@ -40,17 +41,17 @@ Add or update the live links below after deployment.
 
 ## Learning Workflow
 
-The sandbox follows a simple learning flow:
+The sandbox follows a simple learning flow that connects interaction, experimentation, reflection, and reproducibility:
 
 ```text
 Explore -> Experiment -> Compare -> Explain -> Reflect -> Reproduce
 ```
 
-Students first interact with the sandbox, then complete a related assignment or discussion post in D2L. The goal is not only to get a correct answer, but also to explain what happened, why it happened, and how the result could be reproduced.
+Students first interact with the sandbox, then complete a related assignment or discussion post in D2L. The goal is not only to get a correct answer, but also to explain what happened, why it happened, how they addressed errors, and how the result could be reproduced.
 
 ## 1. Course Activity Structure
 
-The AI Sandbox activities are designed for browser-based learning. Students do not need to install software or configure an environment to complete the activity.
+The AI Sandbox activities are designed for browser-based learning. Students do not need to install software or configure an environment to complete the activity. The sandbox provides the computational infrastructure and guided interface needed to explore the concepts.
 
 Each activity may include:
 
@@ -91,11 +92,11 @@ Students may also respond to their group members by giving feedback, asking ques
 
 ## 2. Assignment Plan
 
-The course uses AI Sandbox assignments that connect interactive exploration with reproducible coding practice.
+The course uses AI Sandbox assignments that connect guided exploration with reproducible coding practice.
 
 Each assignment includes two parts:
 
-1. **Sandbox component**: Students explore the concept visually and experimentally.
+1. **Sandbox component**: Students explore the concept visually and experimentally through the guided interface.
 2. **Coding component**: Students reproduce, explain, or extend the workflow in code.
 
 A key design feature is seed-based customization. Each student may receive a slightly different data split, target, parameter setting, or experiment condition based on a student-specific seed. This helps students reason about their own results instead of copying one generic solution.
@@ -160,7 +161,7 @@ These artifacts can help answer questions about student understanding, reproduci
 
 ## Deployment and Access
 
-The AI Sandbox is intended to be maintained on Jetstream2 cloud services. After deployment, students should be able to access the sandbox directly through a browser without installing software.
+The AI Sandbox is intended to be maintained on Jetstream2 cloud services. This provides the computational infrastructure for running sandbox activities and experiments. After deployment, students should be able to access the sandbox directly through a browser without installing software.
 
 The goal is to make the sandbox easy to access, easy to maintain, and reusable across activities, datasets, AI topics, and future courses.
 
@@ -226,9 +227,9 @@ The final project explorer helps students move from a clinical AI question to mo
 
 ## Expected Outcome
 
-By the end of the course, students should be able to use AI as an experimental process. They should be able to test ideas, compare results, explain variation, document experiments, collaborate with peers, and justify model choices.
+By the end of the course, students should be able to use AI as an experimental process. They should be able to test ideas, compare results, explain variation, document experiments, reflect on errors, collaborate with peers, and justify model choices.
 
-The AI Sandbox plan is designed to make neural network learning more hands-on, reflective, and reproducible while keeping the classroom workflow simple and accessible.
+The AI Sandbox plan is designed to make neural network learning more hands-on, guided, reflective, and reproducible while keeping the classroom workflow simple and accessible.
 
 ## Contact
 
