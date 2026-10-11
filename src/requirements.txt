@@ -15,7 +15,7 @@ shap==0.47.1
 # Deep learning (GPU support)
 torch==2.6.0
 torchvision==0.21.0   # optional, for CNN/embedding extensions
-triton==3.2.0
+triton==3.2.0; sys_platform == "linux"
 pynvml==12.0.0
 
 # Transformers & NLP
@@ -23,6 +23,7 @@ transformers==4.50.1
 tokenizers==0.21.1
 nltk==3.9.1
 regex==2024.11.6
+textblob==0.19.0
 
 # Experiment tracking / logging
 mlflow==3.1.1
