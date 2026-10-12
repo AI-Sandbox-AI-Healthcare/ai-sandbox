@@ -45,13 +45,10 @@ METRIC_PREFIX = args.metric_prefix or os.getenv("METRIC_PREFIX", "iter1")
 df = pd.read_csv(f"{BASE}/synthea_enriched_features.csv")
 
 FEATURES = [
-    'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage', 'age', 'is_female', 'num_conditions',
-       'avg_condition_duration', 'num_unique_meds', 'num_pain_meds',
-       'num_encounters', 'num_procedures', 'unique_procedures',
-       'pain_severity_0_10_verbal_numeric_rating_score_reported',
+    'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage', 'age', 'is_female',
        'body_height', 'body_weight', 'body_mass_index',
        'systolic_blood_pressure', 'diastolic_blood_pressure', 'heart_rate',
-       'respiratory_rate', 'qaly', 'daly', 'qols']
+       'respiratory_rate']
 
 X = df[FEATURES]
 y = df["binary_label"]
@@ -63,20 +60,32 @@ if y.isnull().any():
 y = y.astype(int)
 
 # ------------------------------------------------------------------
-# 2. Train/val split with shared validation IDs
+# 2. Apply shared train/validation/test patient IDs
 # ------------------------------------------------------------------
+train_ids = np.load(f"{BASE}/shared_train_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
 val_ids = np.load(f"{BASE}/shared_val_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
+test_ids = np.load(f"{BASE}/shared_test_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
+df["id"] = df["id"].astype(str)
+is_train = df["id"].isin(train_ids)
 is_val = df["id"].isin(val_ids)
-df_train = df[~is_val]
-df_test  = df[is_val]
+is_test = df["id"].isin(test_ids)
+if (is_train.astype(int) + is_val.astype(int) + is_test.astype(int)).ne(1).any():
+    raise ValueError("Shared train/validation/test IDs do not partition the dataset.")
+
+df_train = df[is_train]
+df_val = df[is_val]
+df_test = df[is_test]
 
 X_train = df_train[FEATURES]
 y_train = df_train["binary_label"].astype(int)
-X_test  = df_test[FEATURES]
-y_test  = df_test["binary_label"].astype(int)
+X_val = df_val[FEATURES]
+y_val = df_val["binary_label"].astype(int)
+X_test = df_test[FEATURES]
+y_test = df_test["binary_label"].astype(int)
 
 subj_train = df_train["id"].values
-subj_test  = df_test["id"].values
+subj_val = df_val["id"].values
+subj_test = df_test["id"].values
 
 cat_indices = [FEATURES.index("race"), FEATURES.index("ethnicity"), FEATURES.index("is_female")]
 scaler = StandardScaler()
@@ -99,7 +108,7 @@ def resample_data(X, y, method, categorical_features=None):
         raise ValueError(f"Unknown method: {method}")
     return sampler.fit_resample(X, y)
 
-best_method, best_score, best_data = None, -np.inf, None
+best_method, best_score = None, -np.inf
 methods = ["smote", "adasyn", "borderline", "smotenc"]
 
 for method in methods:
@@ -108,26 +117,32 @@ for method in methods:
         X_res, y_res = resample_data(X_train, y_train, method, cat_indices)
     else:
         X_res, y_res = resample_data(X_train, y_train, method)
-    X_res_scaled = scaler.fit_transform(X_res)
-    X_test_scaled = scaler.transform(X_test)
+    search_scaler = StandardScaler()
+    X_res_scaled = search_scaler.fit_transform(X_res)
+    X_val_scaled = search_scaler.transform(X_val)
 
     rf = RandomForestClassifier(n_estimators=200, class_weight="balanced", random_state=SEED)
     rf.fit(X_res_scaled, y_res)
-    f1_rf = classification_report(y_test, rf.predict(X_test_scaled),
+    f1_rf = classification_report(y_val, rf.predict(X_val_scaled),
                                   output_dict=True)["macro avg"]["f1-score"]
 
     if f1_rf > best_score:
         best_score = f1_rf
         best_method = method
-        best_data = (X_res_scaled, y_res)
         print(f"✅ New best method: {method} (Macro F1: {f1_rf:.3f})")
 
 # ------------------------------------------------------------------
-# 4. Finalize best data
+# 4. Refit the selected resampling/model pipeline on training data
 # ------------------------------------------------------------------
-if best_data is None:
-    raise RuntimeError("No resampling method produced a valid dataset.")
-X_train_final, y_train_final = best_data
+if best_method is None:
+    raise RuntimeError("No resampling method produced a valid validation score.")
+if best_method == "smotenc":
+    X_res, y_res = resample_data(X_train, y_train, best_method, cat_indices)
+else:
+    X_res, y_res = resample_data(X_train, y_train, best_method)
+y_train_final = y_res
+scaler = StandardScaler()
+X_train_final = scaler.fit_transform(X_res)
 X_test_final = scaler.transform(X_test)
 
 # ------------------------------------------------------------------

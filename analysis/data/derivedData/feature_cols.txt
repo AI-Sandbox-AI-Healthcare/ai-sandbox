@@ -4,14 +4,6 @@ healthcare_expenses
 healthcare_coverage
 age
 is_female
-num_conditions
-avg_condition_duration
-num_unique_meds
-num_pain_meds
-num_encounters
-num_procedures
-unique_procedures
-pain_severity_0_10_verbal_numeric_rating_score_reported
 body_height
 body_weight
 body_mass_index
@@ -19,9 +11,6 @@ systolic_blood_pressure
 diastolic_blood_pressure
 heart_rate
 respiratory_rate
-qaly
-daly
-qols
 tfidf_opioid
 tfidf_acetaminophen
 tfidf_ibuprofen

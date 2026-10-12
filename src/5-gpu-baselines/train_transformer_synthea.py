@@ -86,9 +86,16 @@ y_val = np.load(f"{BASE}/y_val_transformer.npy")
 m_val = np.load(f"{BASE}/mask_val_transformer.npy")
 sid_val = np.load(f"{BASE}/subject_ids_val_transformer.npy")
 
+X_test = np.load(f"{BASE}/X_test_transformer.npy")
+y_test = np.load(f"{BASE}/y_test_transformer.npy")
+m_test = np.load(f"{BASE}/mask_test_transformer.npy")
+sid_test = np.load(f"{BASE}/subject_ids_test_transformer.npy")
+
 train_loader = DataLoader(SequenceDataset(X_train, y_train, m_train, sid_train),
                           batch_size=32, shuffle=True, num_workers=2)
 val_loader   = DataLoader(SequenceDataset(X_val,   y_val,   m_val,   sid_val),
+                          batch_size=32, shuffle=False, num_workers=2)
+test_loader  = DataLoader(SequenceDataset(X_test,  y_test,  m_test,  sid_test),
                           batch_size=32, shuffle=False, num_workers=2)
 
 # ------------------------------------------------------------------
@@ -154,7 +161,7 @@ with ResourceLogger(tag=f"transformer_{METRIC_PREFIX}"):
 model.load_state_dict(torch.load(BEST_PATH)); model.eval()
 preds, trues, all_probs, subj_out = [], [], [], []
 with torch.no_grad():
-    for xb, yb, mb, sids in val_loader:
+    for xb, yb, mb, sids in test_loader:
         xb, mb = xb.to(device), mb.to(device)
         logits = model(xb, mask=mb)
         probs = torch.sigmoid(logits).cpu().numpy().flatten()
@@ -184,6 +191,7 @@ with open(METRIC_CSV, "w", newline="") as f:
     writer.writerow(["Recall_1", report["1"]["recall"]])
     writer.writerow(["F1_1", report["1"]["f1-score"]])
 print(f"Metrics → {METRIC_CSV}")
+print(f"Reported metrics are from held-out test set ({len(trues)} patients).")
 
 # ------------------------------------------------------------------
 # 8. Confusion Matrix + ROC curves

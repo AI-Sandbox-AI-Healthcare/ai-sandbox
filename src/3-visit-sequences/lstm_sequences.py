@@ -25,13 +25,10 @@ df = pd.read_csv("../../analysis/data/derivedData/synthea_enriched_features_w_no
 # ---------------------------------------------------------------------
 feature_cols = [
     'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage',
-       'age', 'is_female', 'num_conditions',
-       'avg_condition_duration', 'num_unique_meds', 'num_pain_meds',
-       'num_encounters', 'num_procedures', 'unique_procedures',
-       'pain_severity_0_10_verbal_numeric_rating_score_reported',
+       'age', 'is_female',
        'body_height', 'body_weight', 'body_mass_index',
        'systolic_blood_pressure', 'diastolic_blood_pressure', 'heart_rate',
-       'respiratory_rate', 'qaly', 'daly', 'qols',
+       'respiratory_rate',
 ] + [f"tfidf_{term}" for term in [
     "opioid", "acetaminophen", "ibuprofen", "gabapentin", "morphine",
     "tramadol", "oxycodone", "hydrocodone", "meperidine", "fentanyl",
@@ -87,15 +84,24 @@ y = np.array(labels)
 subject_ids = np.array(subject_ids)
 
 # ---------------------------------------------------------------------
-# 5. Shared validation split
+# 5. Shared train/validation/test split
 # ---------------------------------------------------------------------
-print("🔹 Splitting train/val with shared IDs...")
+print("🔹 Applying shared train/validation/test IDs...")
+train_ids = np.load(f"../../analysis/data/derivedData/shared_train_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
 val_ids = np.load(f"../../analysis/data/derivedData/shared_val_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
+test_ids = np.load(f"../../analysis/data/derivedData/shared_test_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
 
-is_val = np.isin(subject_ids, val_ids)
-X_train, X_val = X[~is_val], X[is_val]
-y_train, y_val = y[~is_val], y[is_val]
-subj_train, subj_val = subject_ids[~is_val], subject_ids[is_val]
+split_masks = {
+    "train": np.isin(subject_ids, train_ids),
+    "val": np.isin(subject_ids, val_ids),
+    "test": np.isin(subject_ids, test_ids),
+}
+if not np.all(sum(mask.astype(np.int8) for mask in split_masks.values()) == 1):
+    raise ValueError("Shared train/validation/test IDs do not partition all subjects exactly once.")
+
+X_train, X_val, X_test = (X[split_masks[s]] for s in ("train", "val", "test"))
+y_train, y_val, y_test = (y[split_masks[s]] for s in ("train", "val", "test"))
+subj_train, subj_val, subj_test = (subject_ids[split_masks[s]] for s in ("train", "val", "test"))
 
 # Diagnostic: check class coverage
 def check_class_coverage(y, label):
@@ -108,6 +114,7 @@ def check_class_coverage(y, label):
 
 check_class_coverage(y_train, "Train")
 check_class_coverage(y_val, "Validation")
+check_class_coverage(y_test, "Test")
 
 # Optional oversampling of co-morbid (class 2)
 OVERSAMPLE_TARGET = int(os.getenv("OVERSAMPLE_TARGET", 100))
@@ -140,6 +147,9 @@ np.save(f"{out_dir}/X_val_seq.npy", X_val)
 np.save(f"{out_dir}/y_val_seq.npy", y_val)
 np.save(f"{out_dir}/subject_ids_train_seq.npy", subj_train)
 np.save(f"{out_dir}/subject_ids_val_seq.npy", subj_val)
+np.save(f"{out_dir}/X_test_seq.npy", X_test)
+np.save(f"{out_dir}/y_test_seq.npy", y_test)
+np.save(f"{out_dir}/subject_ids_test_seq.npy", subj_test)
 
 # Save full set
 np.save(f"{out_dir}/X_seq.npy", X)
@@ -158,6 +168,7 @@ print("✅ Saved sequence arrays aligned with shared validation IDs.")
 # ---------------------------------------------------------------------
 print("\n📋 Summary Report:")
 print(f"Training Set: {X_train.shape}, Validation Set: {X_val.shape}")
+print(f"Test Set: {X_test.shape}")
 print(f"Feature Dimensions: {X_train.shape[-1]}")
 print(f"Class Distribution (Train):", dict(Counter(y_train)))
 print(f"Class Distribution (Validation):", dict(Counter(y_val)))

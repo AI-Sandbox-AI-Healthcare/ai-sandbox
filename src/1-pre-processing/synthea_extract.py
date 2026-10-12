@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine, text
 from sklearn.preprocessing import LabelEncoder
+
 load_dotenv()
 
 # ---------------------------------------------------------------------
@@ -48,10 +49,7 @@ def load_csv(file, usecols=None):
 try:
     patients_df = load_csv("../../analysis/data/rawData/patients.csv")
     conditions_df = load_csv("../../analysis/data/rawData/conditions.csv")
-    medications_df = load_csv("../../analysis/data/rawData/medications.csv")
-    encounters_df = load_csv("../../analysis/data/rawData/encounters.csv")
     observations_df = load_csv("../../analysis/data/rawData/observations.csv")
-    procedures_df = load_csv("../../analysis/data/rawData/procedures.csv")
 except Exception as e:
     print("Error loading tables:", e)
     raise
@@ -60,10 +58,7 @@ print(
     "Loaded:",
     f"patients={len(patients_df):,}\n",
     f"conditions={len(conditions_df):,}\n",
-    f"medications={len(medications_df):,}\n",
-    f"encounters={len(encounters_df):,}\n",
-    f"observations={len(observations_df):,}\n",
-    f"procedures={len(procedures_df)}"
+    f"observations={len(observations_df):,}"
 )
 
 
@@ -76,10 +71,7 @@ def lc_cols(df):
 
 patients_df = lc_cols(patients_df)
 conditions_df = lc_cols(conditions_df)
-medications_df = lc_cols(medications_df)
-encounters_df = lc_cols(encounters_df)
 observations_df = lc_cols(observations_df)
-procedures_df = lc_cols(procedures_df)
 
 # ---------------------------------------------------------------------
 # 4. Feature Engineering
@@ -96,7 +88,6 @@ pain_keywords = [
 ]
 
 pain_pattern = r'\b(?:' + '|'.join(map(re.escape, pain_keywords)) + r')\b'
-
 conditions_df["description"] = conditions_df["description"].str.lower()
 
 pain_patients = conditions_df[
@@ -108,108 +99,6 @@ patients_df["binary_label"] = patients_df["id"].isin(pain_patients).astype(int)
 patients_df["age"] = (pd.Timestamp.today() - pd.to_datetime(patients_df["birthdate"])).dt.days // 365
 patients_df["is_female"] = (patients_df["gender"] == "F").astype(int)
 
-# Convert date columns to datetime
-conditions_df["start"] = pd.to_datetime(conditions_df["start"], errors="coerce")
-conditions_df["stop"] = pd.to_datetime(conditions_df["stop"], errors="coerce")
-
-# Compute duration in days
-conditions_df["duration_days"] = (conditions_df["stop"] - conditions_df["start"]).dt.days
-
-# Fill missing durations with median
-median_duration = conditions_df["duration_days"].median(skipna=True)
-conditions_df["duration_days"] = conditions_df["duration_days"].fillna(median_duration)
-
-# Aggregate features per patient
-cond_features = (
-    conditions_df.groupby("patient")
-    .agg(
-        num_conditions=("description", pd.Series.nunique),
-        avg_condition_duration=("duration_days", "mean")
-    )
-    .reset_index()
-    .rename(columns={"patient": "id"})
-)
-
-# Merge features
-patients_df = pd.merge(patients_df, cond_features, on="id", how="left")
-patients_df[["num_conditions", "avg_condition_duration"]] = (patients_df[["num_conditions", "avg_condition_duration"]].fillna(0))
-
-# Convert description to lowercase
-medications_df["description"] = medications_df["description"].str.lower()
-
-# Count unique meds per patient
-med_feat = (
-    medications_df.groupby("patient")["description"]
-    .nunique()
-    .reset_index()
-    .rename(columns={"description": "num_unique_meds", "patient": "id"})
-)
-
-# Define common pain-related medications
-pain_medications = [
-    "opioid", "acetaminophen", "ibuprofen", "gabapentin", "morphine",
-    "tramadol", "oxycodone", "hydrocodone", "meperidine", "fentanyl",
-    "pregabalin", "naproxen"
-]
-
-# Regex pattern for keyword matching
-pain_pattern = r'\b(?:' + '|'.join(map(re.escape, pain_medications)) + r')\b'
-
-# Filter for pain-related meds
-pain_meds = medications_df[
-    medications_df["description"].str.contains(pain_pattern, na=False, regex=True)
-]
-
-# Count pain-related meds per patient
-pain_feat = (
-    pain_meds.groupby("patient")["description"]
-    .count()
-    .reset_index()
-    .rename(columns={"description": "num_pain_meds", "patient": "id"})
-)
-
-# Merge both medication features ===
-med_features = pd.merge(med_feat, pain_feat, on="id", how="left")
-med_features["num_pain_meds"] = med_features["num_pain_meds"].fillna(0).astype(int)
-
-# Merge into patients dataframe ===
-patients_df = pd.merge(patients_df, med_features, on="id", how="left")
-
-# Fill missing medication info
-patients_df[["num_unique_meds", "num_pain_meds"]] = (patients_df[["num_unique_meds", "num_pain_meds"]].fillna(0).astype(int))
-
-# Count number of encounters per patient ===
-encounter_counts = (
-    encounters_df.groupby("patient")
-    .size()
-    .reset_index(name="num_encounters")
-    .rename(columns={"patient": "id"})
-)
-
-# Merge with patients dataframe ===
-patients_df = pd.merge(patients_df, encounter_counts, on="id", how="left")
-
-# Fill patients with 0 encounters
-patients_df["num_encounters"] = patients_df["num_encounters"].fillna(0).astype(int)
-
-# Aggregate procedure features per patient ===
-proc_feat = (
-    procedures_df.groupby("patient")
-    .agg(
-        num_procedures=("description", "count"),
-        unique_procedures=("description", pd.Series.nunique)
-    )
-    .reset_index()
-    .rename(columns={"patient": "id"})
-)
-
-# Merge with patients dataframe ===
-patients_df = pd.merge(patients_df, proc_feat, on="id", how="left")
-
-# Fill patients with 0 procedures
-patients_df["num_procedures"] = patients_df["num_procedures"].fillna(0).astype(int)
-patients_df["unique_procedures"] = patients_df["unique_procedures"].fillna(0).astype(int)
-
 columns_to_keep = [
     'id',
     'race',
@@ -218,14 +107,7 @@ columns_to_keep = [
     'healthcare_coverage',
     'binary_label',
     'age',
-    'is_female',
-    'num_conditions',
-    'avg_condition_duration',
-    'num_unique_meds',
-    'num_pain_meds',
-    'num_encounters',
-    'num_procedures',
-    'unique_procedures'
+    'is_female'
 ]
 
 patients_df = patients_df[columns_to_keep].copy()
@@ -248,7 +130,7 @@ obs_pivot.columns = (
 )
 
 relevant_features = [
-    "pain_severity_0_10_verbal_numeric_rating_score_reported",
+    # "pain_severity_0_10_verbal_numeric_rating_score_reported",
     "body_height",
     "body_weight",
     "body_mass_index",
@@ -257,9 +139,9 @@ relevant_features = [
     "diastolic_blood_pressure",
     "heart_rate",
     "respiratory_rate",
-    "qaly",
-    "daly",
-    "qols"
+    #"qaly",
+    #"daly",
+    #"qols"
 ]
 
 # Select relevant features (assuming 'patient' column is lowercase)
@@ -297,13 +179,14 @@ merged_df[numeric_cols] = merged_df[numeric_cols].fillna(merged_df[numeric_cols]
 # Save Output
 # ---------------------------------------------------------------------
 final_cols = ['id', 'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage',
-       'binary_label', 'age', 'is_female', 'num_conditions',
-       'avg_condition_duration', 'num_unique_meds', 'num_pain_meds',
-       'num_encounters', 'num_procedures', 'unique_procedures',
-       'pain_severity_0_10_verbal_numeric_rating_score_reported',
+       'binary_label', 'age', 'is_female',
        'body_height', 'body_weight', 'body_mass_index',
        'systolic_blood_pressure', 'diastolic_blood_pressure', 'heart_rate',
-       'respiratory_rate', 'qaly', 'daly', 'qols']
+       'respiratory_rate',
+       # 'qaly',
+       # 'daly',
+       # 'qols'
+       ]
 
 # Class counts
 counts = merged_df["binary_label"].value_counts(dropna=False).sort_index()

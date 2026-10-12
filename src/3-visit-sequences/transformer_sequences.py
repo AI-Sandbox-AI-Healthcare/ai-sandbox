@@ -1,10 +1,14 @@
+import argparse
 import os
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.utils import resample
 from collections import Counter
 from sklearn.preprocessing import StandardScaler
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--metric_prefix", type=str, default=os.getenv("METRIC_PREFIX", "iter1"))
+METRIC_PREFIX = parser.parse_args().metric_prefix
 
 # ---------------------------------------------------------------------
 # Reproducibility
@@ -19,16 +23,14 @@ np.random.seed(SEED)
 # ---------------------------------------------------------------------
 print("🔹 Loading data...")
 df = pd.read_csv("../../analysis/data/derivedData/synthea_enriched_features_w_notes.csv")
+df["id"] = df["id"].astype(str)
 
 required_cols = {
     'id', 'race', 'ethnicity', 'healthcare_expenses', 'healthcare_coverage',
-       'binary_label', 'age', 'is_female', 'num_conditions',
-       'avg_condition_duration', 'num_unique_meds', 'num_pain_meds',
-       'num_encounters', 'num_procedures', 'unique_procedures',
-       'pain_severity_0_10_verbal_numeric_rating_score_reported',
+       'binary_label', 'age', 'is_female',
        'body_height', 'body_weight', 'body_mass_index',
        'systolic_blood_pressure', 'diastolic_blood_pressure', 'heart_rate',
-       'respiratory_rate', 'qaly', 'daly', 'qols', 'sentiment', 'note_cluster'
+       'respiratory_rate', 'sentiment', 'note_cluster'
 }
 tfidf_terms = [
     "opioid", "acetaminophen", "ibuprofen", "gabapentin", "morphine",
@@ -36,7 +38,7 @@ tfidf_terms = [
     "pregabalin", "naproxen"
 ]
 topic_cols = [f"topic_{i+1}" for i in range(5)]
-feature_cols = list(required_cols - {"id", "binary_label"}) \
+feature_cols = sorted(required_cols - {"id", "binary_label"}) \
                + [f"tfidf_{t}" for t in tfidf_terms] + topic_cols
 
 missing = ({"id", "binary_label"} | set(feature_cols)) - set(df.columns)
@@ -98,12 +100,32 @@ S = np.array(subj_ids, dtype=str)  # (N,)
 print(f"   → Built {len(y)} subject sequences; shape X={X.shape}, mask={M.shape}")
 
 # ---------------------------------------------------------------------
-# 4) Train/Val split (carry masks + subject_ids)
+# 4) Apply shared train/validation/test patient IDs
 # ---------------------------------------------------------------------
-print("🔹 Splitting train/val...")
+print("🔹 Applying shared train/validation/test IDs...")
+split_ids = {
+    split: np.load(
+        f"../../analysis/data/derivedData/shared_{split}_ids_{METRIC_PREFIX}.npy",
+        allow_pickle=True
+    ).astype(str)
+    for split in ("train", "val", "test")
+}
+split_masks = {name: np.isin(S, ids) for name, ids in split_ids.items()}
+split_membership = sum(mask.astype(np.int8) for mask in split_masks.values())
+if not np.all(split_membership == 1):
+    raise ValueError("Shared split IDs do not partition all patients exactly once.")
 
-X_train, X_val, y_train, y_val, m_train, m_val, sid_train, sid_val = train_test_split(
-    X, y, M, S, stratify=y, test_size=0.2, random_state=SEED
+X_train, y_train, m_train, sid_train = (
+    X[split_masks["train"]], y[split_masks["train"]],
+    M[split_masks["train"]], S[split_masks["train"]]
+)
+X_val, y_val, m_val, sid_val = (
+    X[split_masks["val"]], y[split_masks["val"]],
+    M[split_masks["val"]], S[split_masks["val"]]
+)
+X_test, y_test, m_test, sid_test = (
+    X[split_masks["test"]], y[split_masks["test"]],
+    M[split_masks["test"]], S[split_masks["test"]]
 )
 
 def check_class_coverage(y_arr, name):
@@ -116,6 +138,7 @@ def check_class_coverage(y_arr, name):
 
 missing = check_class_coverage(y_train, "Train")
 check_class_coverage(y_val, "Validation")
+check_class_coverage(y_test, "Test")
 if missing:
     raise ValueError(f"🚨 Training data missing class(es): {missing}")
 
@@ -167,6 +190,11 @@ X_val_flat = X_val.reshape(-1, F_val)
 X_val_scaled_flat = scaler.transform(X_val_flat)
 X_val = X_val_scaled_flat.reshape(N_val, T_val, F_val)
 
+N_test, T_test, F_test = X_test.shape
+X_test_flat = X_test.reshape(-1, F_test)
+X_test_scaled_flat = scaler.transform(X_test_flat)
+X_test = X_test_scaled_flat.reshape(N_test, T_test, F_test)
+
 # ---------------------------------------------------------------------
 # 6) Save outputs (features, labels, masks, subject_ids, feature list)
 # ---------------------------------------------------------------------
@@ -183,6 +211,11 @@ np.save(f"{out_dir}/X_val_transformer.npy", X_val)
 np.save(f"{out_dir}/y_val_transformer.npy", y_val)
 np.save(f"{out_dir}/mask_val_transformer.npy", m_val)
 np.save(f"{out_dir}/subject_ids_val_transformer.npy", sid_val)
+
+np.save(f"{out_dir}/X_test_transformer.npy", X_test)
+np.save(f"{out_dir}/y_test_transformer.npy", y_test)
+np.save(f"{out_dir}/mask_test_transformer.npy", m_test)
+np.save(f"{out_dir}/subject_ids_test_transformer.npy", sid_test)
 
 with open(f"{out_dir}/feature_cols_transformer.txt", "w") as f:
     for col in feature_cols:

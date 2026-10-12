@@ -18,6 +18,7 @@ SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export PYTHONPATH="${SRC_DIR}/7-resource-logger:${PYTHONPATH:-}"
 METRIC_PREFIX="${METRIC_PREFIX:-iter1}"
 SEED_OFFSET="${SEED_OFFSET:-0}"
+export METRIC_PREFIX SEED_OFFSET
 LOG_DIR="../../analysis/logs"
 PYCACHE_DIR="../../analysis/cache/pycache"
 LOGFILE="${LOG_DIR}/timing_${METRIC_PREFIX}.txt"
@@ -91,7 +92,7 @@ python ../2-shared-validation/generate_shared_val_ids.py --seed_offset "$SEED_OF
 # ---------------------------------------------------------------------
 echo -e "\n=== [3] Structured Visit Sequences ===" | tee -a "$LOGFILE"
 start=$(date +%s)
-SEED_OFFSET="$SEED_OFFSET" python ../3-visit-sequences/lstm_sequences.py 2>&1 | tee -a "$LOGFILE"
+SEED_OFFSET="$SEED_OFFSET" METRIC_PREFIX="$METRIC_PREFIX" python ../3-visit-sequences/lstm_sequences.py 2>&1 | tee -a "$LOGFILE"
 SEED_OFFSET="$SEED_OFFSET" python ../3-visit-sequences/transformer_sequences.py --metric_prefix "$METRIC_PREFIX" 2>&1 | tee -a "$LOGFILE"
 log_time "Generating structured visit sequences" "$start"
 
@@ -167,7 +168,7 @@ python3 - <<PY
 import pandas as pd, glob, os
 pref = os.getenv("METRIC_PREFIX","iter1")
 metrics_dir = "../../analysis/results/metrics"
-files = glob.glob(f"{metrics_dir}/**/*{pref}*.csv",recursive=True)
+files = glob.glob(f"{metrics_dir}/*_metrics_{pref}.csv")
 dfs=[]
 for fp in files:
     tag = os.path.basename(fp).replace(f"_metrics_{pref}.csv","")
@@ -195,6 +196,8 @@ if [ -f "$summ" ]; then
   else
     tail -n +2 "$summ" >> "$glob"
   fi
+
+  touch "${LOG_DIR}/test_metrics_complete_${METRIC_PREFIX}.txt"
 fi
 
 # ---------------------------------------------------------------------

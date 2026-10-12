@@ -59,6 +59,10 @@ X_val   = np.load(f"{BASE}/X_val_transformer.npy")
 y_val   = np.load(f"{BASE}/y_val_transformer.npy")
 m_val   = np.load(f"{BASE}/mask_val_transformer.npy")
 sid_val = np.load(f"{BASE}/subject_ids_val_transformer.npy")
+X_test = np.load(f"{BASE}/X_test_transformer.npy")
+y_test = np.load(f"{BASE}/y_test_transformer.npy")
+m_test = np.load(f"{BASE}/mask_test_transformer.npy")
+sid_test = np.load(f"{BASE}/subject_ids_test_transformer.npy")
 
 # Notes or embeddings
 if USE_PRECOMPUTED:
@@ -91,11 +95,12 @@ def align_split(X, y, m, sids):
 
 X_train, y_train, m_train, sid_train, A_train, B_train = align_split(X_train, y_train, m_train, sid_train)
 X_val,   y_val,   m_val,   sid_val,   A_val,   B_val   = align_split(X_val,   y_val,   m_val,   sid_val)
+X_test,  y_test,  m_test,  sid_test,  A_test,  B_test  = align_split(X_test,  y_test,  m_test,  sid_test)
 
 if USE_PRECOMPUTED:
-    print(f"📊 Train embs={A_train.shape}, Val embs={A_val.shape}")
+    print(f"📊 Train embs={A_train.shape}, Val embs={A_val.shape}, Test embs={A_test.shape}")
 else:
-    print(f"📊 Train notes={A_train.shape}, Val notes={A_val.shape}")
+    print(f"📊 Train notes={A_train.shape}, Val notes={A_val.shape}, Test notes={A_test.shape}")
 
 # ----------------------------- Class Weights ----------------------------
 pos_weight = torch.tensor((y_train==0).sum() / (y_train==1).sum(), dtype=torch.float32).to(device)
@@ -108,15 +113,19 @@ NUM_WORKERS = 2 if (args.low_mem_mode or os.getenv("LOW_MEM_MODE") == "1") else 
 if USE_PRECOMPUTED:
     train_ds = ClinicalBERTPrecomputedDataset(X_train, y_train, A_train, m_train, sid_train, max_visits=MAX_VISITS)
     val_ds   = ClinicalBERTPrecomputedDataset(X_val,   y_val,   A_val,   m_val,   sid_val,   max_visits=MAX_VISITS)
+    test_ds  = ClinicalBERTPrecomputedDataset(X_test,  y_test,  A_test,  m_test,  sid_test,  max_visits=MAX_VISITS)
     _collate = collate_precomputed
 else:
     train_ds = ClinicalBERTFastDatasetWithIDs(X_train, y_train, A_train, B_train, m_train, sid_train, max_visits=MAX_VISITS)
     val_ds   = ClinicalBERTFastDatasetWithIDs(X_val,   y_val,   A_val,   B_val,   m_val,   sid_val,   max_visits=MAX_VISITS)
+    test_ds  = ClinicalBERTFastDatasetWithIDs(X_test,  y_test,  A_test,  B_test,  m_test,  sid_test,  max_visits=MAX_VISITS)
     _collate = collate_fn
 
 train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, collate_fn=_collate,
                           num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=(NUM_WORKERS > 0))
 val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False, collate_fn=_collate,
+                          num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=(NUM_WORKERS > 0))
+test_loader  = DataLoader(test_ds,  batch_size=BATCH_SIZE, shuffle=False, collate_fn=_collate,
                           num_workers=NUM_WORKERS, pin_memory=True, persistent_workers=(NUM_WORKERS > 0))
 
 # ----------------------------- Models ----------------------------------
@@ -236,7 +245,7 @@ if os.path.exists(BEST_PATH):
     model.load_state_dict(torch.load(BEST_PATH, map_location=device)); model.eval()
     probs, preds, trues, subj_out = [], [], [], []
     with torch.no_grad():
-        for batch in tqdm(val_loader, desc="Saving Probs"):
+        for batch in tqdm(test_loader, desc="Saving Test Probs"):
             if USE_PRECOMPUTED:
                 bert_embs, struct_seq, visit_mask, labels, subj_ids = batch
                 bert_embs, struct_seq, visit_mask, labels = (
@@ -262,6 +271,7 @@ if os.path.exists(BEST_PATH):
         w.writerow(["Precision_1",report["1"]["precision"]])
         w.writerow(["Recall_1",report["1"]["recall"]])
         w.writerow(["F1_1",report["1"]["f1-score"]])
+    print(f"Reported metrics are from held-out test set ({len(trues)} patients).")
     cm = confusion_matrix(trues, preds)
     plt.figure(figsize=(5,4)); sns.heatmap(cm,annot=True,fmt="d",cmap="Blues")
     plt.xlabel("Predicted"); plt.ylabel("True"); plt.title("Confusion Matrix")

@@ -68,36 +68,60 @@ print(f"Patients with notes & valid label: {len(subj_ids)}")
 print("Class distribution:", np.bincount(y))
 
 # ------------------------------------------------------------------
-# 3. Shared validation split
+# 3. Shared train/validation/test split
 # ------------------------------------------------------------------
+train_ids = np.load(f"{BASE}/shared_train_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
 val_ids = np.load(f"{BASE}/shared_val_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
+test_ids = np.load(f"{BASE}/shared_test_ids_{METRIC_PREFIX}.npy", allow_pickle=True)
+is_train = np.isin(subj_ids, train_ids)
 is_val = np.isin(subj_ids, val_ids)
+is_test = np.isin(subj_ids, test_ids)
 
-train_idx = np.where(~is_val)[0]
-val_idx   = np.where(is_val)[0]
+train_idx = np.where(is_train)[0]
+val_idx = np.where(is_val)[0]
+test_idx = np.where(is_test)[0]
 
 X_train_txt = [corpus[i] for i in train_idx]
 y_train     = y[train_idx]
-X_test_txt  = [corpus[i] for i in val_idx]
-y_test      = y[val_idx]
-subj_test   = subj_ids[val_idx]
+X_val_txt = [corpus[i] for i in val_idx]
+y_val = y[val_idx]
+X_test_txt = [corpus[i] for i in test_idx]
+y_test = y[test_idx]
+subj_test = subj_ids[test_idx]
 
 # ------------------------------------------------------------------
 # 4. Vectorise + train
 # ------------------------------------------------------------------
 vectorizer = TfidfVectorizer(max_features=20000, ngram_range=(1, 2), stop_words='english')
 X_train = vectorizer.fit_transform(X_train_txt)
-X_test  = vectorizer.transform(X_test_txt)
+X_val = vectorizer.transform(X_val_txt)
+X_test = vectorizer.transform(X_test_txt)
 
+best_auc = -np.inf
+best_c = None
+logreg = None
 with ResourceLogger(tag=f"tfidf_logreg_notes_{METRIC_PREFIX}"):
-    logreg = LogisticRegression(
-        max_iter=1000,
-        class_weight="balanced",
-        #multi_class="multinomial",
-        solver="saga",
-        random_state=SEED
-    )
-    logreg.fit(X_train, y_train)
+    for c_value in [0.01, 0.1, 1.0, 10.0]:
+        candidate = LogisticRegression(
+            max_iter=1000,
+            class_weight="balanced",
+            solver="saga",
+            random_state=SEED,
+            C=c_value
+        )
+        candidate.fit(X_train, y_train)
+        val_prob = candidate.predict_proba(X_val)[:, 1]
+        val_auc = roc_auc_score(y_val, val_prob)
+        print(f"Validation AUC for C={c_value}: {val_auc:.4f}")
+        if val_auc > best_auc:
+            best_auc = val_auc
+            best_c = c_value
+            logreg = candidate
+
+    if logreg is None:
+        raise RuntimeError("TF-IDF validation did not select a LogisticRegression model.")
+
+    print(f"Selected C={best_c} using validation AUC={best_auc:.4f}")
     prob = logreg.predict_proba(X_test)
     preds = logreg.predict(X_test)
 

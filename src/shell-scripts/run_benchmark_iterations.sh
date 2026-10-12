@@ -24,23 +24,19 @@ if [ ! -f "$RUN_SCRIPT" ]; then
 fi
 
 # ---------------------------------------------------------------------
-# Detect where to resume
+# Resume only from iterations completed with the current held-out-test
+# workflow. Legacy logs alone do not count as completed runs.
 # ---------------------------------------------------------------------
-existing_iters=()
-shopt -s nullglob
-for f in "$LOG_DIR"/iter*.out; do
-  [[ $f =~ iter([0-9]+)\.out$ ]] && existing_iters+=("${BASH_REMATCH[1]}")
+START_ITER=1
+for ((i = 1; i <= TOTAL_ITERATIONS; i++)); do
+  if [ ! -f "${LOG_DIR}/test_metrics_complete_iter${i}.txt" ]; then
+    START_ITER=$i
+    break
+  fi
+  START_ITER=$((i + 1))
 done
-shopt -u nullglob
-
-if [ ${#existing_iters[@]} -gt 0 ]; then
-  IFS=$'\n' sorted=($(sort -n <<<"${existing_iters[*]}")); unset IFS
-  last_completed=${sorted[-1]}
-  START_ITER=$((last_completed + 1))
-  echo "🔄 Resuming from iteration $START_ITER (last completed: $last_completed)" | tee -a "$GLOBAL_LOG"
-else
-  echo "⚠️  No existing iteration logs found. Starting from iteration 1." | tee -a "$GLOBAL_LOG"
-  START_ITER=1
+if (( START_ITER <= TOTAL_ITERATIONS )); then
+  echo "🔄 Starting at first incomplete test-evaluation iteration $START_ITER" | tee -a "$GLOBAL_LOG"
 fi
 
 # ---------------------------------------------------------------------
@@ -102,6 +98,10 @@ fi
 echo "=== STEP 1: Benchmark Iterations ===" | tee -a "$GLOBAL_LOG"
 
 for ((i = START_ITER; i <= TOTAL_ITERATIONS; i++)); do
+  if [ -f "${LOG_DIR}/test_metrics_complete_iter${i}.txt" ]; then
+    echo "⏭️  Iteration $i already has completed test metrics; skipping." | tee -a "$GLOBAL_LOG"
+    continue
+  fi
   echo "⚙️  Running iteration $i..." | tee -a "$GLOBAL_LOG"
 
   (

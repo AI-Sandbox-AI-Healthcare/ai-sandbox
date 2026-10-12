@@ -78,7 +78,11 @@ X_val = np.load(f"{BASE}/X_val_transformer.npy")
 y_val = np.load(f"{BASE}/y_val_transformer.npy")
 sid_val = np.load(f"{BASE}/subject_ids_val_transformer.npy")
 
-print(f"Train size: {len(y_train)} | Val size: {len(y_val)}")
+X_test = np.load(f"{BASE}/X_test_transformer.npy")
+y_test = np.load(f"{BASE}/y_test_transformer.npy")
+sid_test = np.load(f"{BASE}/subject_ids_test_transformer.npy")
+
+print(f"Train size: {len(y_train)} | Val size: {len(y_val)} | Test size: {len(y_test)}")
 
 # ---------------------------------------------------------------------
 # 4. DataLoaders
@@ -88,6 +92,8 @@ train_loader = DataLoader(SeqDS(X_train, y_train, sid_train), batch_size=32,
                           shuffle=True, num_workers=2, pin_memory=True)
 val_loader = DataLoader(SeqDS(X_val, y_val, sid_val), batch_size=32,
                         shuffle=False, num_workers=2, pin_memory=True)
+test_loader = DataLoader(SeqDS(X_test, y_test, sid_test), batch_size=32,
+                         shuffle=False, num_workers=2, pin_memory=True)
 
 # ---------------------------------------------------------------------
 # 5. Model, optimizer, loss
@@ -156,7 +162,7 @@ model.load_state_dict(torch.load(BEST))
 model.eval()
 preds, trues, all_probs, subj_out = [], [], [], []
 with torch.no_grad():
-    for xb, yb, sids in val_loader:
+    for xb, yb, sids in test_loader:
         xb = xb.to(device)
         logits = model(xb)
         prob_batch = torch.sigmoid(logits).cpu().numpy().flatten()
@@ -184,6 +190,7 @@ with open(METRIC, "w", newline="") as f:
     writer.writerow(["Recall_1", report["1"]["recall"]])
     writer.writerow(["F1_1", report["1"]["f1-score"]])
 print(f"Metrics → {METRIC}")
+print(f"Reported metrics are from held-out test set ({len(trues)} patients).")
 
 # Confusion Matrix
 cm = confusion_matrix(trues, preds, labels=[0,1])

@@ -1,330 +1,317 @@
-🚀 [iter4] Starting on GPU 0 at Wed Jul 22 00:44:32 UTC 2026
+🚀 [iter4] Starting on GPU 0 at Mon Oct 12 03:47:47 UTC 2026
 💡 METRIC_PREFIX = iter4
 🎯 SEED_OFFSET   = 4
-🔁 Starting run at Wed Jul 22 00:44:32 UTC 2026
+🔁 Starting run at Mon Oct 12 03:47:47 UTC 2026
 
 === [1] Text Preprocessing ===
 ✅ process_noteevents_text.py already run. Skipping.
 🔄 [iter4] Reusing tokenized files from iter1...
 
 === [2] Shared Validation IDs ===
-✅ Saved shared validation IDs to ../../analysis/data/derivedData/shared_val_ids_iter4.npy (2471 IDs)
-📊 Validation class distribution:
-  Class 0: 1224
-  Class 1: 1247
+✅ Saved shared train IDs to ../../analysis/data/derivedData/shared_train_ids_iter4.npy (8646 IDs)
+✅ Saved shared val IDs to ../../analysis/data/derivedData/shared_val_ids_iter4.npy (1853 IDs)
+✅ Saved shared test IDs to ../../analysis/data/derivedData/shared_test_ids_iter4.npy (1853 IDs)
+✅ Saved split metadata to ../../analysis/data/derivedData/shared_split_metadata_iter4.json
+📊 Train: 8646 patients (70.0%)
+  Class 0: 4281 (49.5%)
+  Class 1: 4365 (50.5%)
+📊 Val: 1853 patients (15.0%)
+  Class 0: 918 (49.5%)
+  Class 1: 935 (50.5%)
+📊 Test: 1853 patients (15.0%)
+  Class 0: 918 (49.5%)
+  Class 1: 935 (50.5%)
 
 === [3] Structured Visit Sequences ===
 🔹 Loading data...
 🔹 Preprocessing...
 🔹 Building sequences...
-🔹 Splitting train/val with shared IDs...
-📦 Train: {np.int64(0): np.int64(4893), np.int64(1): np.int64(4988)}
-📦 Validation: {np.int64(0): np.int64(1224), np.int64(1): np.int64(1247)}
+🔹 Applying shared train/validation/test IDs...
+📦 Train: {np.int64(0): np.int64(4281), np.int64(1): np.int64(4365)}
+📦 Validation: {np.int64(0): np.int64(918), np.int64(1): np.int64(935)}
+📦 Test: {np.int64(0): np.int64(918), np.int64(1): np.int64(935)}
 🔹 Saving sequences...
 ✅ Saved sequence arrays aligned with shared validation IDs.
 
 📋 Summary Report:
-Training Set: (9881, 10, 45), Validation Set: (2471, 10, 45)
-Feature Dimensions: 45
-Class Distribution (Train): {np.int64(0): 4893, np.int64(1): 4988}
-Class Distribution (Validation): {np.int64(1): 1247, np.int64(0): 1224}
+Training Set: (8646, 10, 34), Validation Set: (1853, 10, 34)
+Test Set: (1853, 10, 34)
+Feature Dimensions: 34
+Class Distribution (Train): {np.int64(1): 4365, np.int64(0): 4281}
+Class Distribution (Validation): {np.int64(0): 918, np.int64(1): 935}
 Seed Used: 46, Metric Prefix: iter4
 🔹 Loading data...
 🔹 Preprocessing...
 🔹 Building sequences...
-   → Built 12352 subject sequences; shape X=(12352, 10, 43), mask=(12352, 10)
-🔹 Splitting train/val...
-📦 Train class counts: {0: 4893, 1: 4988}
-📦 Validation class counts: {0: 1224, 1: 1247}
+   → Built 12352 subject sequences; shape X=(12352, 10, 32), mask=(12352, 10)
+🔹 Applying shared train/validation/test IDs...
+📦 Train class counts: {0: 4281, 1: 4365}
+📦 Validation class counts: {0: 918, 1: 935}
+📦 Test class counts: {0: 918, 1: 935}
 🔹 Saving sequences...
 
 📋 Transformer Sequence Summary
 --------------------------------------------------
-🔢 Features per visit: 43
+🔢 Features per visit: 32
 🧮 Sequence length (T): 10
-👩‍💻 Training samples: 9881
-👨‍💻 Validation samples: 2471
-🪪 Train subject IDs:   9881
-🪪 Val subject IDs:     2471
+👩‍💻 Training samples: 8646
+👨‍💻 Validation samples: 1853
+🪪 Train subject IDs:   8646
+🪪 Val subject IDs:     1853
 🔎 Seed used: 46
 ✅ Saved Transformer-ready sequences, visit masks, and subject IDs.
-⏱️ Generating structured visit sequences took 15s
+⏱️ Generating structured visit sequences took 23s
 
 === [4] CPU Baselines ===
 🧩 Running in CPU-only mode (CUDA disabled)
 Patients with notes & valid label: 9566
 Class distribution: [4154 5412]
+Validation AUC for C=0.01: 0.7215
+Validation AUC for C=0.1: 0.7445
+Validation AUC for C=1.0: 0.7616
+Validation AUC for C=10.0: 0.7715
+Selected C=10.0 using validation AUC=0.7715
 [ResourceLogger] logged resources for tfidf_logreg_notes_iter4 → ../../analysis/logs/resource_usage.csv
 
 Metrics saved to ../../analysis/results/metrics/tfidf_metrics_iter4.csv
-Accuracy: 0.6889 | AUC: 0.7681
+Accuracy: 0.6941 | AUC: 0.7855
               precision    recall  f1-score   support
 
-           0     0.6070    0.8074    0.6930       836
-           1     0.8012    0.5976    0.6846      1086
+           0     0.6144    0.8189    0.7021       646
+           1     0.8072    0.5961    0.6858       822
 
-    accuracy                         0.6889      1922
-   macro avg     0.7041    0.7025    0.6888      1922
-weighted avg     0.7168    0.6889    0.6883      1922
+    accuracy                         0.6941      1468
+   macro avg     0.7108    0.7075    0.6939      1468
+weighted avg     0.7224    0.6941    0.6930      1468
 
-/home/exouser/Desktop/myenv/lib/python3.12/site-packages/xgboost/training.py:183: UserWarning: [00:45:18] WARNING: /workspace/src/learner.cc:738: 
+/home/exouser/Desktop/myenv/lib/python3.12/site-packages/xgboost/training.py:183: UserWarning: [03:48:37] WARNING: /workspace/src/learner.cc:738: 
 Parameters: { "use_label_encoder" } are not used.
 
   bst.update(dtrain, iteration=i, fobj=obj)
 🔁 Testing SMOTE
-✅ New best method: smote (Macro F1: 0.744)
+✅ New best method: smote (Macro F1: 0.682)
 🔁 Testing ADASYN
-✅ New best method: adasyn (Macro F1: 0.747)
 🔁 Testing BORDERLINE
+✅ New best method: borderline (Macro F1: 0.683)
 🔁 Testing SMOTENC
-✅ New best method: smotenc (Macro F1: 0.749)
 [ResourceLogger] logged resources for tabular_rf_xgb_iter4 → ../../analysis/logs/resource_usage.csv
-📊 Metrics saved using best resampling method: SMOTENC (Macro F1: 0.749)
+📊 Metrics saved using best resampling method: BORDERLINE (Macro F1: 0.683)
 
 RandomForest Report:
               precision    recall  f1-score   support
 
-           0       0.74      0.76      0.75      1224
-           1       0.76      0.74      0.75      1247
+           0       0.66      0.70      0.68       918
+           1       0.69      0.65      0.67       935
 
-    accuracy                           0.75      2471
-   macro avg       0.75      0.75      0.75      2471
-weighted avg       0.75      0.75      0.75      2471
+    accuracy                           0.67      1853
+   macro avg       0.68      0.67      0.67      1853
+weighted avg       0.68      0.67      0.67      1853
 
 
 XGBoost Report:
               precision    recall  f1-score   support
 
-           0       0.74      0.74      0.74      1224
-           1       0.75      0.74      0.74      1247
+           0       0.64      0.66      0.65       918
+           1       0.66      0.64      0.65       935
 
-    accuracy                           0.74      2471
-   macro avg       0.74      0.74      0.74      2471
-weighted avg       0.74      0.74      0.74      2471
+    accuracy                           0.65      1853
+   macro avg       0.65      0.65      0.65      1853
+weighted avg       0.65      0.65      0.65      1853
 
-Class distribution (train after resampling): [4988 4988]
-⏱️ CPU model training (TF-IDF + RF/XGB) took 31s
+Class distribution (train after resampling): [4365 4365]
+⏱️ CPU model training (TF-IDF + RF/XGB) took 27s
 
 === [5] GPU Models ===
 🧩 Running in GPU (if available)
-Train size: 9881 | Val size: 2471
-Epoch 01 Training:   0%|          | 0/309 [00:00<?, ?it/s]Train size: 9881 | Val size: 2471
-Epoch 01 Training:   0%|          | 1/309 [00:00<01:39,  3.09it/s]Epoch 01 Training:  12%|█▏        | 38/309 [00:00<00:02, 114.97it/s]Epoch 01 Training:  24%|██▎       | 73/309 [00:00<00:01, 186.08it/s]Epoch 01 Training:  36%|███▌      | 110/309 [00:00<00:00, 239.80it/s]Epoch 01 Training:  48%|████▊     | 147/309 [00:00<00:00, 277.42it/s]Epoch 01 Training:  60%|█████▉    | 184/309 [00:00<00:00, 304.50it/s]Epoch 01 Training:  71%|███████   | 219/309 [00:00<00:00, 317.35it/s]Epoch 01 Training:  82%|████████▏ | 254/309 [00:01<00:00, 325.71it/s]Epoch 01 Training:  94%|█████████▍| 290/309 [00:01<00:00, 333.66it/s]Epoch 01 Training: 100%|██████████| 309/309 [00:01<00:00, 248.19it/s]
-Ep01 Train 0.5381
-Ep01 Val 0.5172
+Train size: 8646 | Val size: 1853 | Test size: 1853
+Train size: 8646 | Val size: 1853 | Test size: 1853
+Epoch 01 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 01 Training:   0%|          | 1/271 [00:00<01:29,  3.01it/s]Epoch 01 Training:  14%|█▍        | 38/271 [00:00<00:02, 112.61it/s]Epoch 01 Training:  28%|██▊       | 77/271 [00:00<00:00, 194.33it/s]Epoch 01 Training:  42%|████▏     | 115/271 [00:00<00:00, 249.25it/s]Epoch 01 Training:  57%|█████▋    | 154/271 [00:00<00:00, 290.23it/s]Epoch 01 Training:  72%|███████▏  | 194/271 [00:00<00:00, 321.15it/s]Epoch 01 Training:  86%|████████▌ | 233/271 [00:00<00:00, 339.50it/s]Epoch 01 Training: 100%|██████████| 271/271 [00:01<00:00, 343.77it/s]Epoch 01 Training: 100%|██████████| 271/271 [00:01<00:00, 248.83it/s]
+Ep01 Train 0.5693
+Ep01 Val 0.5645
   ✓ checkpoint saved
-Epoch 02 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 02 Training:   0%|          | 1/309 [00:00<00:32,  9.51it/s]Epoch 01 | TrainLoss 0.5561
-Epoch 02 Training:  11%|█         | 34/309 [00:00<00:01, 191.61it/s]Epoch 02 Training:  21%|██▏       | 66/309 [00:00<00:00, 247.42it/s]Epoch 02 Training:  32%|███▏      | 98/309 [00:00<00:00, 273.06it/s]Epoch 02 Training:  42%|████▏     | 131/309 [00:00<00:00, 291.99it/s]Epoch 02 Training:  52%|█████▏    | 162/309 [00:00<00:00, 297.35it/s]Epoch 01 | ValLoss  0.5257
+Epoch 02 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 01 | TrainLoss 0.5850
+Epoch 02 Training:   1%|          | 2/271 [00:00<00:14, 18.46it/s]Epoch 02 Training:  14%|█▍        | 39/271 [00:00<00:01, 216.92it/s]Epoch 02 Training:  28%|██▊       | 75/271 [00:00<00:00, 278.47it/s]Epoch 02 Training:  41%|████      | 111/271 [00:00<00:00, 306.83it/s]Epoch 01 | ValLoss  0.5444
   ✓ checkpoint saved
-Epoch 02 Training:  63%|██████▎   | 196/309 [00:00<00:00, 311.01it/s]Epoch 02 Training:  74%|███████▍  | 228/309 [00:00<00:00, 310.78it/s]Epoch 02 Training:  84%|████████▍ | 260/309 [00:00<00:00, 309.81it/s]Epoch 02 Training:  94%|█████████▍| 292/309 [00:01<00:00, 311.39it/s]Epoch 02 Training: 100%|██████████| 309/309 [00:01<00:00, 272.32it/s]
-Ep02 Train 0.5052
-Ep02 Val 0.5076
+Epoch 02 Training:  55%|█████▍    | 148/271 [00:00<00:00, 328.09it/s]Epoch 02 Training:  69%|██████▊   | 186/271 [00:00<00:00, 342.78it/s]Epoch 02 Training:  82%|████████▏ | 221/271 [00:00<00:00, 341.50it/s]Epoch 02 Training:  94%|█████████▍| 256/271 [00:00<00:00, 341.62it/s]Epoch 02 Training: 100%|██████████| 271/271 [00:00<00:00, 292.26it/s]
+Ep02 Train 0.5459
+Ep02 Val 0.5397
   ✓ checkpoint saved
-Epoch 03 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 03 Training:   1%|          | 2/309 [00:00<00:15, 19.86it/s]Epoch 03 Training:  10%|█         | 32/309 [00:00<00:01, 180.79it/s]Epoch 03 Training:  21%|██        | 64/309 [00:00<00:01, 242.77it/s]Epoch 03 Training:  30%|███       | 94/309 [00:00<00:00, 264.91it/s]Epoch 03 Training:  40%|████      | 125/309 [00:00<00:00, 278.58it/s]Epoch 03 Training:  50%|█████     | 156/309 [00:00<00:00, 288.01it/s]Epoch 03 Training:  60%|██████    | 186/309 [00:00<00:00, 289.71it/s]Epoch 02 | TrainLoss 0.5181
-Epoch 03 Training:  70%|███████   | 217/309 [00:00<00:00, 295.03it/s]Epoch 03 Training:  80%|████████  | 248/309 [00:00<00:00, 298.27it/s]Epoch 03 Training:  90%|████████▉ | 278/309 [00:01<00:00, 298.34it/s]Epoch 01 | TrainLoss 0.5475
-Epoch 03 Training: 100%|██████████| 309/309 [00:01<00:00, 262.95it/s]
-Ep03 Train 0.4980
-Epoch 02 | ValLoss  0.5116
+Epoch 03 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 03 Training:   0%|          | 1/271 [00:00<00:31,  8.62it/s]Epoch 03 Training:  13%|█▎        | 35/271 [00:00<00:01, 190.49it/s]Epoch 03 Training:  26%|██▌       | 71/271 [00:00<00:00, 262.15it/s]Epoch 03 Training:  39%|███▉      | 107/271 [00:00<00:00, 297.94it/s]Epoch 03 Training:  53%|█████▎    | 144/271 [00:00<00:00, 320.61it/s]Epoch 03 Training:  67%|██████▋   | 182/271 [00:00<00:00, 339.24it/s]Epoch 02 | TrainLoss 0.5510
+Epoch 03 Training:  82%|████████▏ | 222/271 [00:00<00:00, 355.95it/s]Epoch 01 | TrainLoss 0.5834
+Epoch 03 Training:  96%|█████████▋| 261/271 [00:00<00:00, 364.56it/s]Epoch 03 Training: 100%|██████████| 271/271 [00:00<00:00, 292.90it/s]
+Ep03 Train 0.5421
+Epoch 02 | ValLoss  0.5447
+Ep03 Val 0.5360
   ✓ checkpoint saved
-Ep03 Val 0.5007
+Epoch 04 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 01 | ValLoss  0.5497
   ✓ checkpoint saved
-Epoch 04 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 01 | ValLoss  0.5294
+Epoch 04 Training:   1%|          | 2/271 [00:00<00:18, 14.72it/s]Epoch 04 Training:  14%|█▍        | 38/271 [00:00<00:01, 191.58it/s]Epoch 04 Training:  26%|██▌       | 71/271 [00:00<00:00, 249.14it/s]Epoch 04 Training:  39%|███▉      | 106/271 [00:00<00:00, 284.16it/s]Epoch 04 Training:  53%|█████▎    | 143/271 [00:00<00:00, 311.56it/s]Epoch 04 Training:  66%|██████▌   | 178/271 [00:00<00:00, 321.37it/s]Epoch 04 Training:  78%|███████▊  | 212/271 [00:00<00:00, 325.48it/s]Epoch 04 Training:  92%|█████████▏| 248/271 [00:00<00:00, 333.84it/s]Epoch 04 Training: 100%|██████████| 271/271 [00:00<00:00, 281.74it/s]
+Ep04 Train 0.5415
+Epoch 03 | TrainLoss 0.5448
+Ep04 Val 0.5380
+Epoch 05 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 03 | ValLoss  0.5396
   ✓ checkpoint saved
-Epoch 04 Training:   0%|          | 1/309 [00:00<00:33,  9.31it/s]Epoch 04 Training:  11%|█         | 34/309 [00:00<00:01, 190.60it/s]Epoch 04 Training:  20%|██        | 62/309 [00:00<00:01, 226.44it/s]Epoch 04 Training:  30%|███       | 94/309 [00:00<00:00, 258.18it/s]Epoch 04 Training:  40%|███▉      | 123/309 [00:00<00:00, 268.69it/s]Epoch 04 Training:  50%|█████     | 156/309 [00:00<00:00, 286.24it/s]Epoch 04 Training:  60%|██████    | 186/309 [00:00<00:00, 288.22it/s]Epoch 04 Training:  70%|███████   | 217/309 [00:00<00:00, 291.96it/s]Epoch 04 Training:  80%|████████  | 248/309 [00:00<00:00, 294.92it/s]Epoch 04 Training:  90%|████████▉ | 278/309 [00:01<00:00, 295.44it/s]Epoch 04 Training: 100%|█████████▉| 308/309 [00:01<00:00, 296.78it/s]Epoch 04 Training: 100%|██████████| 309/309 [00:01<00:00, 259.15it/s]
-Ep04 Train 0.4897
-Epoch 03 | TrainLoss 0.5040
-Ep04 Val 0.5036
-Epoch 05 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 03 | ValLoss  0.5095
+Epoch 05 Training:   0%|          | 1/271 [00:00<00:31,  8.68it/s]Epoch 05 Training:  13%|█▎        | 34/271 [00:00<00:01, 186.23it/s]Epoch 05 Training:  26%|██▌       | 70/271 [00:00<00:00, 262.14it/s]Epoch 05 Training:  39%|███▊      | 105/271 [00:00<00:00, 293.34it/s]Epoch 05 Training:  52%|█████▏    | 140/271 [00:00<00:00, 311.16it/s]Epoch 05 Training:  65%|██████▍   | 175/271 [00:00<00:00, 323.96it/s]Epoch 05 Training:  78%|███████▊  | 211/271 [00:00<00:00, 333.72it/s]Epoch 05 Training:  91%|█████████ | 247/271 [00:00<00:00, 340.19it/s]Epoch 05 Training: 100%|██████████| 271/271 [00:00<00:00, 283.16it/s]
+Ep05 Train 0.5396
+Epoch 02 | TrainLoss 0.5608
+Ep05 Val 0.5353
   ✓ checkpoint saved
-Epoch 05 Training:   0%|          | 1/309 [00:00<00:40,  7.53it/s]Epoch 05 Training:  11%|█         | 34/309 [00:00<00:01, 172.90it/s]Epoch 05 Training:  21%|██        | 65/309 [00:00<00:01, 230.21it/s]Epoch 05 Training:  31%|███▏      | 97/309 [00:00<00:00, 262.56it/s]Epoch 05 Training:  41%|████      | 127/309 [00:00<00:00, 272.76it/s]Epoch 05 Training:  51%|█████     | 158/309 [00:00<00:00, 284.66it/s]Epoch 05 Training:  61%|██████    | 188/309 [00:00<00:00, 289.14it/s]Epoch 05 Training:  71%|███████   | 219/309 [00:00<00:00, 293.50it/s]Epoch 05 Training:  81%|████████  | 250/309 [00:00<00:00, 296.43it/s]Epoch 05 Training:  91%|█████████▏| 282/309 [00:01<00:00, 300.57it/s]Epoch 05 Training: 100%|██████████| 309/309 [00:01<00:00, 259.54it/s]
-Ep05 Train 0.4871
-Ep05 Val 0.4970
+Epoch 06 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 06 Training:   0%|          | 1/271 [00:00<00:27,  9.87it/s]Epoch 04 | TrainLoss 0.5423
+Epoch 06 Training:  13%|█▎        | 34/271 [00:00<00:01, 196.45it/s]Epoch 06 Training:  27%|██▋       | 74/271 [00:00<00:00, 285.48it/s]Epoch 02 | ValLoss  0.5563
+Epoch 06 Training:  42%|████▏     | 114/271 [00:00<00:00, 329.55it/s]Epoch 06 Training:  57%|█████▋    | 154/271 [00:00<00:00, 352.99it/s]Epoch 04 | ValLoss  0.5404
+Epoch 06 Training:  71%|███████   | 193/271 [00:00<00:00, 362.73it/s]Epoch 06 Training:  85%|████████▍ | 230/271 [00:00<00:00, 358.37it/s]Epoch 06 Training:  98%|█████████▊| 266/271 [00:00<00:00, 356.16it/s]Epoch 06 Training: 100%|██████████| 271/271 [00:00<00:00, 302.36it/s]
+Ep06 Train 0.5377
+Ep06 Val 0.5400
+Epoch 07 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 07 Training:   1%|          | 2/271 [00:00<00:13, 19.29it/s]Epoch 07 Training:  14%|█▎        | 37/271 [00:00<00:01, 209.83it/s]Epoch 07 Training:  27%|██▋       | 72/271 [00:00<00:00, 272.66it/s]Epoch 07 Training:  39%|███▉      | 107/271 [00:00<00:00, 301.76it/s]Epoch 07 Training:  53%|█████▎    | 143/271 [00:00<00:00, 320.73it/s]Epoch 05 | TrainLoss 0.5399
+Epoch 07 Training:  67%|██████▋   | 181/271 [00:00<00:00, 338.93it/s]Epoch 07 Training:  79%|███████▉  | 215/271 [00:00<00:00, 338.94it/s]Epoch 07 Training:  92%|█████████▏| 249/271 [00:00<00:00, 336.11it/s]Epoch 05 | ValLoss  0.5388
   ✓ checkpoint saved
-Epoch 06 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 02 | TrainLoss 0.5271
-Epoch 06 Training:   0%|          | 1/309 [00:00<00:39,  7.83it/s]Epoch 04 | TrainLoss 0.4988
-Epoch 06 Training:  13%|█▎        | 40/309 [00:00<00:01, 207.52it/s]Epoch 06 Training:  24%|██▍       | 75/309 [00:00<00:00, 266.52it/s]Epoch 06 Training:  36%|███▌      | 111/309 [00:00<00:00, 298.67it/s]Epoch 06 Training:  47%|████▋     | 146/309 [00:00<00:00, 316.15it/s]Epoch 04 | ValLoss  0.5048
+Epoch 07 Training: 100%|██████████| 271/271 [00:00<00:00, 286.83it/s]
+Ep07 Train 0.5367
+Ep07 Val 0.5333
   ✓ checkpoint saved
-Epoch 06 Training:  60%|█████▉    | 184/309 [00:00<00:00, 335.01it/s]Epoch 02 | ValLoss  0.5188
+Epoch 08 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 08 Training:   1%|          | 2/271 [00:00<00:15, 17.60it/s]Epoch 08 Training:  14%|█▎        | 37/271 [00:00<00:01, 200.82it/s]Epoch 03 | TrainLoss 0.5560
+Epoch 08 Training:  28%|██▊       | 75/271 [00:00<00:00, 278.16it/s]Epoch 08 Training:  42%|████▏     | 113/271 [00:00<00:00, 314.52it/s]Epoch 08 Training:  55%|█████▍    | 148/271 [00:00<00:00, 326.41it/s]Epoch 08 Training:  68%|██████▊   | 183/271 [00:00<00:00, 333.30it/s]Epoch 08 Training:  81%|████████  | 220/271 [00:00<00:00, 342.94it/s]Epoch 03 | ValLoss  0.5619
+Epoch 08 Training:  95%|█████████▌| 258/271 [00:00<00:00, 352.37it/s]Epoch 08 Training: 100%|██████████| 271/271 [00:00<00:00, 296.35it/s]
+Ep08 Train 0.5349
+Epoch 06 | TrainLoss 0.5414
+Ep08 Val 0.5319
   ✓ checkpoint saved
-Epoch 06 Training:  72%|███████▏  | 222/309 [00:00<00:00, 347.60it/s]Epoch 06 Training:  83%|████████▎ | 258/309 [00:00<00:00, 348.63it/s]Epoch 06 Training:  95%|█████████▌| 294/309 [00:00<00:00, 339.49it/s]Epoch 06 Training: 100%|██████████| 309/309 [00:01<00:00, 286.39it/s]
-Ep06 Train 0.4813
-Ep06 Val 0.5021
-Epoch 07 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 07 Training:   1%|▏         | 4/309 [00:00<00:07, 38.73it/s]Epoch 07 Training:  11%|█▏        | 35/309 [00:00<00:01, 193.66it/s]Epoch 07 Training:  21%|██▏       | 66/309 [00:00<00:00, 243.75it/s]Epoch 07 Training:  32%|███▏      | 99/309 [00:00<00:00, 274.43it/s]Epoch 07 Training:  42%|████▏     | 130/309 [00:00<00:00, 286.59it/s]Epoch 07 Training:  52%|█████▏    | 162/309 [00:00<00:00, 295.46it/s]Epoch 07 Training:  63%|██████▎   | 194/309 [00:00<00:00, 303.03it/s]Epoch 05 | TrainLoss 0.4931
-Epoch 07 Training:  73%|███████▎  | 226/309 [00:00<00:00, 307.44it/s]Epoch 07 Training:  83%|████████▎ | 257/309 [00:00<00:00, 304.42it/s]Epoch 07 Training:  93%|█████████▎| 288/309 [00:01<00:00, 299.62it/s]Epoch 07 Training: 100%|██████████| 309/309 [00:01<00:00, 265.50it/s]
-Ep07 Train 0.4787
-Epoch 05 | ValLoss  0.5034
+Epoch 09 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 06 | ValLoss  0.5327
   ✓ checkpoint saved
-Ep07 Val 0.4996
-Epoch 08 Training:   0%|          | 0/309 [00:00<?, ?it/s]Epoch 08 Training:   0%|          | 1/309 [00:00<00:35,  8.76it/s]Epoch 08 Training:  10%|▉         | 30/309 [00:00<00:01, 163.34it/s]Epoch 08 Training:  19%|█▉        | 60/309 [00:00<00:01, 222.13it/s]Epoch 08 Training:  29%|██▉       | 90/309 [00:00<00:00, 250.19it/s]Epoch 08 Training:  39%|███▉      | 120/309 [00:00<00:00, 267.53it/s]Epoch 03 | TrainLoss 0.5224
-Epoch 08 Training:  50%|█████     | 155/309 [00:00<00:00, 293.91it/s]Epoch 08 Training:  61%|██████    | 189/309 [00:00<00:00, 305.72it/s]Epoch 08 Training:  72%|███████▏  | 222/309 [00:00<00:00, 310.31it/s]Epoch 08 Training:  82%|████████▏ | 254/309 [00:00<00:00, 312.07it/s]Epoch 08 Training:  93%|█████████▎| 287/309 [00:01<00:00, 314.77it/s]Epoch 03 | ValLoss  0.5274
-Epoch 08 Training: 100%|██████████| 309/309 [00:01<00:00, 266.11it/s]
-Ep08 Train 0.4760
-Epoch 06 | TrainLoss 0.4913
-Ep08 Val 0.4980
-Early stopping
-[ResourceLogger] logged resources for gru_binary_iter4 → ../../analysis/logs/resource_usage.csv
-Epoch 06 | ValLoss  0.5019
+Epoch 09 Training:   1%|          | 2/271 [00:00<00:15, 17.04it/s]Epoch 09 Training:  14%|█▎        | 37/271 [00:00<00:01, 197.87it/s]Epoch 09 Training:  27%|██▋       | 72/271 [00:00<00:00, 263.26it/s]Epoch 09 Training:  39%|███▉      | 106/271 [00:00<00:00, 289.90it/s]Epoch 09 Training:  51%|█████▏    | 139/271 [00:00<00:00, 301.94it/s]Epoch 09 Training:  63%|██████▎   | 172/271 [00:00<00:00, 309.82it/s]Epoch 09 Training:  75%|███████▌  | 204/271 [00:00<00:00, 310.60it/s]Epoch 09 Training:  87%|████████▋ | 237/271 [00:00<00:00, 315.56it/s]Epoch 09 Training: 100%|█████████▉| 270/271 [00:00<00:00, 318.26it/s]Epoch 09 Training: 100%|██████████| 271/271 [00:00<00:00, 275.11it/s]
+Ep09 Train 0.5349
+Ep09 Val 0.5336
+Epoch 10 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 07 | TrainLoss 0.5382
+Epoch 10 Training:   0%|          | 1/271 [00:00<00:33,  7.98it/s]Epoch 10 Training:  13%|█▎        | 36/271 [00:00<00:01, 188.03it/s]Epoch 10 Training:  26%|██▌       | 70/271 [00:00<00:00, 251.68it/s]Epoch 10 Training:  39%|███▉      | 106/271 [00:00<00:00, 291.37it/s]Epoch 07 | ValLoss  0.5313
   ✓ checkpoint saved
-Metrics → ../../analysis/results/metrics/gru_metrics_iter4.csv
-Saved GRU probs → ../../analysis/data/derivedData/gru_probs_iter4.npz
-✅ Finished GRU training with shared val IDs [iter4]
-Epoch 07 | TrainLoss 0.4859
-Epoch 07 | ValLoss  0.4971
-  ✓ checkpoint saved
-Epoch 04 | TrainLoss 0.5137
-Epoch 04 | ValLoss  0.5139
-  ✓ checkpoint saved
-Epoch 08 | TrainLoss 0.4829
-Epoch 08 | ValLoss  0.4968
-  ✓ checkpoint saved
-Epoch 09 | TrainLoss 0.4791
-Epoch 09 | ValLoss  0.5103
-Epoch 05 | TrainLoss 0.5160
-Epoch 05 | ValLoss  0.5170
-Epoch 10 | TrainLoss 0.4777
-Epoch 10 | ValLoss  0.4947
-  ✓ checkpoint saved
-Epoch 11 | TrainLoss 0.4722
-Epoch 06 | TrainLoss 0.5048
-Epoch 11 | ValLoss  0.4990
-Epoch 06 | ValLoss  0.5112
-  ✓ checkpoint saved
-Epoch 12 | TrainLoss 0.4722
-Epoch 12 | ValLoss  0.4927
-  ✓ checkpoint saved
-Epoch 07 | TrainLoss 0.5036
-Epoch 13 | TrainLoss 0.4716
-Epoch 07 | ValLoss  0.5131
-Epoch 13 | ValLoss  0.4971
-Epoch 14 | TrainLoss 0.4682
-Epoch 14 | ValLoss  0.4983
-Epoch 08 | TrainLoss 0.5082
-Epoch 08 | ValLoss  0.5053
-  ✓ checkpoint saved
-Epoch 15 | TrainLoss 0.4654
-Epoch 15 | ValLoss  0.5006
-Early stopping
-[ResourceLogger] logged resources for lstm_binary_iter4 → ../../analysis/logs/resource_usage.csv
-Metrics → ../../analysis/results/metrics/lstm_metrics_iter4.csv
-Saved LSTM probs → ../../analysis/data/derivedData/lstm_probs_iter4.npz
-✅ Finished LSTM training with shared val IDs [iter4]
-Epoch 09 | TrainLoss 0.4973
-Epoch 09 | ValLoss  0.5157
-Epoch 10 | TrainLoss 0.4988
-Epoch 10 | ValLoss  0.5349
-Epoch 11 | TrainLoss 0.4989
-Epoch 11 | ValLoss  0.5417
+Epoch 10 Training:  52%|█████▏    | 142/271 [00:00<00:00, 315.00it/s]Epoch 10 Training:  66%|██████▌   | 179/271 [00:00<00:00, 332.91it/s]Epoch 04 | TrainLoss 0.5550
+Epoch 10 Training:  79%|███████▉  | 214/271 [00:00<00:00, 337.36it/s]Epoch 10 Training:  93%|█████████▎| 251/271 [00:00<00:00, 345.70it/s]Epoch 10 Training: 100%|██████████| 271/271 [00:00<00:00, 284.53it/s]
+Ep10 Train 0.5327
+Epoch 04 | ValLoss  0.5684
 Early stopping
 [ResourceLogger] logged resources for transformer_iter4 → ../../analysis/logs/resource_usage.csv
-Metrics → ../../analysis/results/metrics/transformer_metrics_iter4.csv
+Ep10 Val 0.5307
+  ✓ checkpoint saved
+Epoch 11 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 11 Training:   1%|          | 2/271 [00:00<00:14, 18.83it/s]Epoch 11 Training:  13%|█▎        | 35/271 [00:00<00:01, 197.06it/s]Epoch 11 Training:  27%|██▋       | 74/271 [00:00<00:00, 280.94it/s]Epoch 11 Training:  42%|████▏     | 113/271 [00:00<00:00, 322.21it/s]Epoch 08 | TrainLoss 0.5375
+Epoch 11 Training:  54%|█████▍    | 146/271 [00:00<00:00, 322.82it/s]Metrics → ../../analysis/results/metrics/transformer_metrics_iter4.csv
+Reported metrics are from held-out test set (1853 patients).
 Saved Transformer probs → ../../analysis/data/derivedData/transformer_probs_iter4.npz
 ✅ Finished Transformer training with split files [iter4]
+Epoch 11 Training:  69%|██████▉   | 187/271 [00:00<00:00, 350.07it/s]Epoch 11 Training:  83%|████████▎ | 226/271 [00:00<00:00, 362.90it/s]Epoch 08 | ValLoss  0.5376
+Epoch 11 Training:  99%|█████████▊| 267/271 [00:00<00:00, 376.17it/s]Epoch 11 Training: 100%|██████████| 271/271 [00:00<00:00, 306.45it/s]
+Ep11 Train 0.5321
+Ep11 Val 0.5334
+Epoch 12 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 12 Training:   0%|          | 1/271 [00:00<00:27,  9.85it/s]Epoch 12 Training:  12%|█▏        | 33/271 [00:00<00:01, 188.87it/s]Epoch 12 Training:  26%|██▌       | 70/271 [00:00<00:00, 270.48it/s]Epoch 12 Training:  39%|███▉      | 107/271 [00:00<00:00, 307.20it/s]Epoch 12 Training:  54%|█████▎    | 145/271 [00:00<00:00, 330.49it/s]Epoch 12 Training:  67%|██████▋   | 182/271 [00:00<00:00, 341.78it/s]Epoch 12 Training:  81%|████████  | 219/271 [00:00<00:00, 348.83it/s]Epoch 09 | TrainLoss 0.5367
+Epoch 12 Training:  95%|█████████▍| 257/271 [00:00<00:00, 357.76it/s]Epoch 12 Training: 100%|██████████| 271/271 [00:00<00:00, 297.55it/s]
+Ep12 Train 0.5318
+Epoch 09 | ValLoss  0.5360
+Ep12 Val 0.5318
+Epoch 13 Training:   0%|          | 0/271 [00:00<?, ?it/s]Epoch 13 Training:   1%|          | 2/271 [00:00<00:13, 19.67it/s]Epoch 13 Training:  14%|█▍        | 39/271 [00:00<00:01, 223.36it/s]Epoch 13 Training:  29%|██▉       | 79/271 [00:00<00:00, 301.54it/s]Epoch 13 Training:  44%|████▎     | 118/271 [00:00<00:00, 333.09it/s]Epoch 13 Training:  58%|█████▊    | 158/271 [00:00<00:00, 354.17it/s]Epoch 13 Training:  73%|███████▎  | 198/271 [00:00<00:00, 366.28it/s]Epoch 13 Training:  87%|████████▋ | 236/271 [00:00<00:00, 369.73it/s]Epoch 13 Training: 100%|██████████| 271/271 [00:00<00:00, 317.44it/s]
+Ep13 Train 0.5303
+Ep13 Val 0.5307
+Early stopping
+[ResourceLogger] logged resources for gru_binary_iter4 → ../../analysis/logs/resource_usage.csv
+Epoch 10 | TrainLoss 0.5339
+Epoch 10 | ValLoss  0.5325
+Early stopping
+[ResourceLogger] logged resources for lstm_binary_iter4 → ../../analysis/logs/resource_usage.csv
+Metrics → ../../analysis/results/metrics/gru_metrics_iter4.csv
+Reported metrics are from held-out test set (1853 patients).
+Saved GRU probs → ../../analysis/data/derivedData/gru_probs_iter4.npz
+✅ Finished GRU training with shared val IDs [iter4]
+Metrics → ../../analysis/results/metrics/lstm_metrics_iter4.csv
+Reported metrics are from held-out test set (1853 patients).
+Saved LSTM probs → ../../analysis/data/derivedData/lstm_probs_iter4.npz
+✅ Finished LSTM training with shared val IDs [iter4]
 🔄 [iter4] Reusing precomputed BERT embeddings from iter1...
 🚀 [iter4] Training ClinicalBERT...
 🧩 Precomputed mode: True | path: ../../analysis/data/derivedData/precomputed_bert_cls_iter4.npz
 📥 Loaded precomputed embeddings: (9566, 10, 768)
-📊 Train embs=(7644, 10, 768), Val embs=(1922, 10, 768)
+📊 Train embs=(6695, 10, 768), Val embs=(1403, 10, 768), Test embs=(1468, 10, 768)
 🧠 Using EmbeddingVisitTransformer (no BERT in training).
-Epoch 1 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 1 Training:   0%|          | 1/239 [00:00<03:53,  1.02it/s]Epoch 1 Training:   5%|▍         | 11/239 [00:01<00:16, 13.53it/s]Epoch 1 Training:   9%|▉         | 22/239 [00:01<00:07, 27.94it/s]Epoch 1 Training:  14%|█▍        | 33/239 [00:01<00:04, 41.93it/s]Epoch 1 Training:  18%|█▊        | 44/239 [00:01<00:03, 54.77it/s]Epoch 1 Training:  23%|██▎       | 55/239 [00:01<00:02, 66.44it/s]Epoch 1 Training:  27%|██▋       | 65/239 [00:01<00:02, 73.05it/s]Epoch 1 Training:  31%|███▏      | 75/239 [00:01<00:02, 79.59it/s]Epoch 1 Training:  36%|███▌      | 86/239 [00:01<00:01, 85.82it/s]Epoch 1 Training:  41%|████      | 97/239 [00:01<00:01, 91.05it/s]Epoch 1 Training:  45%|████▌     | 108/239 [00:02<00:01, 93.27it/s]Epoch 1 Training:  49%|████▉     | 118/239 [00:02<00:01, 94.94it/s]Epoch 1 Training:  54%|█████▍    | 129/239 [00:02<00:01, 96.73it/s]Epoch 1 Training:  59%|█████▊    | 140/239 [00:02<00:01, 97.54it/s]Epoch 1 Training:  63%|██████▎   | 151/239 [00:02<00:00, 98.31it/s]Epoch 1 Training:  68%|██████▊   | 162/239 [00:02<00:00, 99.49it/s]Epoch 1 Training:  72%|███████▏  | 173/239 [00:02<00:00, 102.13it/s]Epoch 1 Training:  77%|███████▋  | 184/239 [00:02<00:00, 102.38it/s]Epoch 1 Training:  82%|████████▏ | 195/239 [00:02<00:00, 102.28it/s]Epoch 1 Training:  86%|████████▌ | 206/239 [00:03<00:00, 101.65it/s]Epoch 1 Training:  91%|█████████ | 217/239 [00:03<00:00, 101.68it/s]Epoch 1 Training:  95%|█████████▌| 228/239 [00:03<00:00, 102.66it/s]Epoch 1 Training: 100%|██████████| 239/239 [00:03<00:00, 104.44it/s]Epoch 1 Training: 100%|██████████| 239/239 [00:03<00:00, 71.93it/s] 
-Epoch 1 Train Loss: 0.5846
-Epoch 1 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 1 Validation:   2%|▏         | 1/61 [00:00<00:37,  1.58it/s]Epoch 1 Validation:  62%|██████▏   | 38/61 [00:00<00:00, 69.21it/s]Epoch 1 Validation: 100%|██████████| 61/61 [00:00<00:00, 75.15it/s]
-Epoch 1 Val Loss: 0.5445
+Epoch 1 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 1 Training:   0%|          | 1/210 [00:00<02:53,  1.20it/s]Epoch 1 Training:   6%|▌         | 13/210 [00:00<00:10, 18.53it/s]Epoch 1 Training:  12%|█▏        | 26/210 [00:01<00:04, 37.29it/s]Epoch 1 Training:  19%|█▊        | 39/210 [00:01<00:03, 54.89it/s]Epoch 1 Training:  25%|██▍       | 52/210 [00:01<00:02, 69.88it/s]Epoch 1 Training:  31%|███       | 65/210 [00:01<00:01, 82.59it/s]Epoch 1 Training:  37%|███▋      | 78/210 [00:01<00:01, 92.90it/s]Epoch 1 Training:  43%|████▎     | 91/210 [00:01<00:01, 100.95it/s]Epoch 1 Training:  50%|████▉     | 104/210 [00:01<00:00, 106.64it/s]Epoch 1 Training:  56%|█████▌    | 117/210 [00:01<00:00, 110.60it/s]Epoch 1 Training:  62%|██████▏   | 130/210 [00:01<00:00, 113.89it/s]Epoch 1 Training:  68%|██████▊   | 143/210 [00:02<00:00, 116.28it/s]Epoch 1 Training:  74%|███████▍  | 156/210 [00:02<00:00, 117.74it/s]Epoch 1 Training:  80%|████████  | 169/210 [00:02<00:00, 118.92it/s]Epoch 1 Training:  87%|████████▋ | 182/210 [00:02<00:00, 119.61it/s]Epoch 1 Training:  93%|█████████▎| 195/210 [00:02<00:00, 120.22it/s]Epoch 1 Training: 100%|█████████▉| 209/210 [00:02<00:00, 123.39it/s]Epoch 1 Training: 100%|██████████| 210/210 [00:02<00:00, 82.45it/s] 
+Epoch 1 Train Loss: 0.6006
+Epoch 1 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 1 Validation:   2%|▏         | 1/44 [00:00<00:32,  1.31it/s]Epoch 1 Validation:  93%|█████████▎| 41/44 [00:00<00:00, 63.94it/s]Epoch 1 Validation: 100%|██████████| 44/44 [00:00<00:00, 50.33it/s]
+Epoch 1 Val Loss: 0.5721
   ✅ Saved best model at epoch 1
-Epoch 2 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 2 Training:   2%|▏         | 4/239 [00:00<00:06, 37.67it/s]Epoch 2 Training:   6%|▋         | 15/239 [00:00<00:02, 76.22it/s]Epoch 2 Training:  11%|█         | 26/239 [00:00<00:02, 90.83it/s]Epoch 2 Training:  15%|█▌        | 36/239 [00:00<00:02, 92.25it/s]Epoch 2 Training:  20%|█▉        | 47/239 [00:00<00:01, 97.85it/s]Epoch 2 Training:  24%|██▍       | 58/239 [00:00<00:01, 99.05it/s]Epoch 2 Training:  29%|██▉       | 69/239 [00:00<00:01, 99.69it/s]Epoch 2 Training:  33%|███▎      | 80/239 [00:00<00:01, 100.90it/s]Epoch 2 Training:  38%|███▊      | 91/239 [00:00<00:01, 102.27it/s]Epoch 2 Training:  43%|████▎     | 103/239 [00:01<00:01, 105.29it/s]Epoch 2 Training:  48%|████▊     | 114/239 [00:01<00:01, 104.51it/s]Epoch 2 Training:  52%|█████▏    | 125/239 [00:01<00:01, 104.58it/s]Epoch 2 Training:  57%|█████▋    | 136/239 [00:01<00:00, 104.16it/s]Epoch 2 Training:  62%|██████▏   | 147/239 [00:01<00:00, 104.34it/s]Epoch 2 Training:  66%|██████▌   | 158/239 [00:01<00:00, 104.64it/s]Epoch 2 Training:  71%|███████   | 169/239 [00:01<00:00, 103.67it/s]Epoch 2 Training:  76%|███████▌  | 181/239 [00:01<00:00, 108.10it/s]Epoch 2 Training:  81%|████████  | 193/239 [00:01<00:00, 111.28it/s]Epoch 2 Training:  86%|████████▌ | 206/239 [00:02<00:00, 114.20it/s]Epoch 2 Training:  92%|█████████▏| 219/239 [00:02<00:00, 116.33it/s]Epoch 2 Training:  97%|█████████▋| 232/239 [00:02<00:00, 118.43it/s]Epoch 2 Training: 100%|██████████| 239/239 [00:02<00:00, 105.21it/s]
-Epoch 2 Train Loss: 0.5116
-Epoch 2 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 2 Validation:  48%|████▊     | 29/61 [00:00<00:00, 282.21it/s]Epoch 2 Validation: 100%|██████████| 61/61 [00:00<00:00, 304.09it/s]
-Epoch 2 Val Loss: 0.4666
+Epoch 2 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 2 Training:   3%|▎         | 7/210 [00:00<00:03, 67.49it/s]Epoch 2 Training:   9%|▉         | 19/210 [00:00<00:01, 97.18it/s]Epoch 2 Training:  15%|█▍        | 31/210 [00:00<00:01, 107.13it/s]Epoch 2 Training:  20%|██        | 43/210 [00:00<00:01, 112.11it/s]Epoch 2 Training:  26%|██▌       | 55/210 [00:00<00:01, 113.61it/s]Epoch 2 Training:  32%|███▏      | 67/210 [00:00<00:01, 115.37it/s]Epoch 2 Training:  38%|███▊      | 79/210 [00:00<00:01, 116.26it/s]Epoch 2 Training:  43%|████▎     | 91/210 [00:00<00:01, 116.24it/s]Epoch 2 Training:  49%|████▉     | 103/210 [00:00<00:00, 116.65it/s]Epoch 2 Training:  55%|█████▍    | 115/210 [00:01<00:00, 116.97it/s]Epoch 2 Training:  60%|██████    | 127/210 [00:01<00:00, 117.50it/s]Epoch 2 Training:  66%|██████▌   | 139/210 [00:01<00:00, 117.72it/s]Epoch 2 Training:  72%|███████▏  | 151/210 [00:01<00:00, 117.88it/s]Epoch 2 Training:  78%|███████▊  | 163/210 [00:01<00:00, 118.10it/s]Epoch 2 Training:  83%|████████▎ | 175/210 [00:01<00:00, 118.37it/s]Epoch 2 Training:  89%|████████▉ | 187/210 [00:01<00:00, 116.70it/s]Epoch 2 Training:  95%|█████████▍| 199/210 [00:01<00:00, 114.72it/s]Epoch 2 Training: 100%|██████████| 210/210 [00:01<00:00, 114.41it/s]
+Epoch 2 Train Loss: 0.5435
+Epoch 2 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 2 Validation:  45%|████▌     | 20/44 [00:00<00:00, 199.15it/s]Epoch 2 Validation: 100%|██████████| 44/44 [00:00<00:00, 258.25it/s]
+Epoch 2 Val Loss: 0.4864
   ✅ Saved best model at epoch 2
-Epoch 3 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 3 Training:   3%|▎         | 7/239 [00:00<00:03, 63.20it/s]Epoch 3 Training:   8%|▊         | 18/239 [00:00<00:02, 86.15it/s]Epoch 3 Training:  12%|█▏        | 29/239 [00:00<00:02, 94.96it/s]Epoch 3 Training:  17%|█▋        | 40/239 [00:00<00:02, 99.18it/s]Epoch 3 Training:  21%|██▏       | 51/239 [00:00<00:01, 100.93it/s]Epoch 3 Training:  26%|██▌       | 62/239 [00:00<00:01, 102.17it/s]Epoch 3 Training:  31%|███       | 73/239 [00:00<00:01, 102.75it/s]Epoch 3 Training:  35%|███▌      | 84/239 [00:00<00:01, 103.23it/s]Epoch 3 Training:  40%|████      | 96/239 [00:00<00:01, 106.29it/s]Epoch 3 Training:  46%|████▌     | 110/239 [00:01<00:01, 113.89it/s]Epoch 3 Training:  51%|█████▏    | 123/239 [00:01<00:00, 118.17it/s]Epoch 3 Training:  56%|█████▋    | 135/239 [00:01<00:00, 115.55it/s]Epoch 3 Training:  62%|██████▏   | 147/239 [00:01<00:00, 112.48it/s]Epoch 3 Training:  67%|██████▋   | 159/239 [00:01<00:00, 113.36it/s]Epoch 3 Training:  72%|███████▏  | 172/239 [00:01<00:00, 115.55it/s]Epoch 3 Training:  77%|███████▋  | 184/239 [00:01<00:00, 114.13it/s]Epoch 3 Training:  82%|████████▏ | 196/239 [00:01<00:00, 113.89it/s]Epoch 3 Training:  87%|████████▋ | 208/239 [00:01<00:00, 115.62it/s]Epoch 3 Training:  92%|█████████▏| 221/239 [00:02<00:00, 117.29it/s]Epoch 3 Training:  98%|█████████▊| 234/239 [00:02<00:00, 118.87it/s]Epoch 3 Training: 100%|██████████| 239/239 [00:02<00:00, 110.41it/s]
-Epoch 3 Train Loss: 0.4688
-Epoch 3 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 3 Validation:  44%|████▍     | 27/61 [00:00<00:00, 268.19it/s]Epoch 3 Validation:  90%|█████████ | 55/61 [00:00<00:00, 274.78it/s]Epoch 3 Validation: 100%|██████████| 61/61 [00:00<00:00, 283.53it/s]
-Epoch 3 Val Loss: 0.4566
+Epoch 3 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 3 Training:   3%|▎         | 7/210 [00:00<00:02, 69.90it/s]Epoch 3 Training:   8%|▊         | 17/210 [00:00<00:02, 87.30it/s]Epoch 3 Training:  13%|█▎        | 27/210 [00:00<00:02, 90.68it/s]Epoch 3 Training:  18%|█▊        | 38/210 [00:00<00:01, 95.92it/s]Epoch 3 Training:  24%|██▍       | 50/210 [00:00<00:01, 102.55it/s]Epoch 3 Training:  30%|██▉       | 62/210 [00:00<00:01, 107.93it/s]Epoch 3 Training:  36%|███▌      | 76/210 [00:00<00:01, 115.46it/s]Epoch 3 Training:  42%|████▏     | 89/210 [00:00<00:01, 119.68it/s]Epoch 3 Training:  48%|████▊     | 101/210 [00:00<00:00, 119.64it/s]Epoch 3 Training:  54%|█████▍    | 113/210 [00:01<00:00, 119.40it/s]Epoch 3 Training:  60%|██████    | 126/210 [00:01<00:00, 119.92it/s]Epoch 3 Training:  66%|██████▌   | 139/210 [00:01<00:00, 121.34it/s]Epoch 3 Training:  72%|███████▏  | 152/210 [00:01<00:00, 121.36it/s]Epoch 3 Training:  79%|███████▊  | 165/210 [00:01<00:00, 121.61it/s]Epoch 3 Training:  85%|████████▍ | 178/210 [00:01<00:00, 121.48it/s]Epoch 3 Training:  91%|█████████ | 191/210 [00:01<00:00, 122.41it/s]Epoch 3 Training:  98%|█████████▊| 205/210 [00:01<00:00, 125.10it/s]Epoch 3 Training: 100%|██████████| 210/210 [00:01<00:00, 116.10it/s]
+Epoch 3 Train Loss: 0.4962
+Epoch 3 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 3 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 271.95it/s]Epoch 3 Validation: 100%|██████████| 44/44 [00:00<00:00, 269.40it/s]
+Epoch 3 Val Loss: 0.4784
   ✅ Saved best model at epoch 3
-Epoch 4 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 4 Training:   3%|▎         | 6/239 [00:00<00:03, 58.69it/s]Epoch 4 Training:   7%|▋         | 17/239 [00:00<00:02, 86.02it/s]Epoch 4 Training:  12%|█▏        | 28/239 [00:00<00:02, 96.61it/s]Epoch 4 Training:  17%|█▋        | 40/239 [00:00<00:01, 105.69it/s]Epoch 4 Training:  21%|██▏       | 51/239 [00:00<00:01, 100.66it/s]Epoch 4 Training:  26%|██▌       | 62/239 [00:00<00:01, 100.17it/s]Epoch 4 Training:  31%|███       | 73/239 [00:00<00:01, 99.94it/s] Epoch 4 Training:  35%|███▌      | 84/239 [00:00<00:01, 102.31it/s]Epoch 4 Training:  40%|████      | 96/239 [00:00<00:01, 106.53it/s]Epoch 4 Training:  45%|████▌     | 108/239 [00:01<00:01, 110.15it/s]Epoch 4 Training:  50%|█████     | 120/239 [00:01<00:01, 112.95it/s]Epoch 4 Training:  56%|█████▌    | 133/239 [00:01<00:00, 115.47it/s]Epoch 4 Training:  61%|██████    | 145/239 [00:01<00:00, 116.30it/s]Epoch 4 Training:  66%|██████▌   | 157/239 [00:01<00:00, 116.99it/s]Epoch 4 Training:  71%|███████   | 170/239 [00:01<00:00, 118.27it/s]Epoch 4 Training:  76%|███████▌  | 182/239 [00:01<00:00, 117.65it/s]Epoch 4 Training:  81%|████████  | 194/239 [00:01<00:00, 116.12it/s]Epoch 4 Training:  87%|████████▋ | 207/239 [00:01<00:00, 117.78it/s]Epoch 4 Training:  92%|█████████▏| 220/239 [00:01<00:00, 118.84it/s]Epoch 4 Training:  97%|█████████▋| 233/239 [00:02<00:00, 119.74it/s]Epoch 4 Training: 100%|██████████| 239/239 [00:02<00:00, 111.12it/s]
-Epoch 4 Train Loss: 0.4603
-Epoch 4 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 4 Validation:  46%|████▌     | 28/61 [00:00<00:00, 278.14it/s]Epoch 4 Validation:  98%|█████████▊| 60/61 [00:00<00:00, 295.78it/s]Epoch 4 Validation: 100%|██████████| 61/61 [00:00<00:00, 295.88it/s]
-Epoch 4 Val Loss: 0.4529
+Epoch 4 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 4 Training:   4%|▍         | 9/210 [00:00<00:02, 88.15it/s]Epoch 4 Training:  10%|█         | 22/210 [00:00<00:01, 109.96it/s]Epoch 4 Training:  17%|█▋        | 35/210 [00:00<00:01, 116.72it/s]Epoch 4 Training:  23%|██▎       | 48/210 [00:00<00:01, 120.04it/s]Epoch 4 Training:  29%|██▉       | 61/210 [00:00<00:01, 121.75it/s]Epoch 4 Training:  35%|███▌      | 74/210 [00:00<00:01, 122.83it/s]Epoch 4 Training:  41%|████▏     | 87/210 [00:00<00:00, 123.76it/s]Epoch 4 Training:  48%|████▊     | 101/210 [00:00<00:00, 126.02it/s]Epoch 4 Training:  54%|█████▍    | 114/210 [00:00<00:00, 125.18it/s]Epoch 4 Training:  60%|██████    | 127/210 [00:01<00:00, 125.00it/s]Epoch 4 Training:  67%|██████▋   | 140/210 [00:01<00:00, 125.17it/s]Epoch 4 Training:  73%|███████▎  | 153/210 [00:01<00:00, 124.09it/s]Epoch 4 Training:  79%|███████▉  | 166/210 [00:01<00:00, 125.73it/s]Epoch 4 Training:  85%|████████▌ | 179/210 [00:01<00:00, 124.51it/s]Epoch 4 Training:  91%|█████████▏| 192/210 [00:01<00:00, 122.63it/s]Epoch 4 Training:  98%|█████████▊| 206/210 [00:01<00:00, 125.36it/s]Epoch 4 Training: 100%|██████████| 210/210 [00:01<00:00, 123.01it/s]
+Epoch 4 Train Loss: 0.4867
+Epoch 4 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 4 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 274.91it/s]Epoch 4 Validation: 100%|██████████| 44/44 [00:00<00:00, 270.43it/s]
+Epoch 4 Val Loss: 0.4742
   ✅ Saved best model at epoch 4
-Epoch 5 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 5 Training:   3%|▎         | 8/239 [00:00<00:02, 78.70it/s]Epoch 5 Training:   9%|▉         | 21/239 [00:00<00:02, 104.87it/s]Epoch 5 Training:  14%|█▍        | 34/239 [00:00<00:01, 113.14it/s]Epoch 5 Training:  20%|█▉        | 47/239 [00:00<00:01, 117.17it/s]Epoch 5 Training:  25%|██▌       | 60/239 [00:00<00:01, 118.46it/s]Epoch 5 Training:  31%|███       | 73/239 [00:00<00:01, 118.96it/s]Epoch 5 Training:  36%|███▌      | 86/239 [00:00<00:01, 119.93it/s]Epoch 5 Training:  41%|████      | 98/239 [00:00<00:01, 117.05it/s]Epoch 5 Training:  46%|████▋     | 111/239 [00:00<00:01, 118.90it/s]Epoch 5 Training:  51%|█████▏    | 123/239 [00:01<00:00, 116.96it/s]Epoch 5 Training:  57%|█████▋    | 136/239 [00:01<00:00, 118.30it/s]Epoch 5 Training:  62%|██████▏   | 148/239 [00:01<00:00, 115.79it/s]Epoch 5 Training:  67%|██████▋   | 160/239 [00:01<00:00, 116.72it/s]Epoch 5 Training:  72%|███████▏  | 172/239 [00:01<00:00, 115.51it/s]Epoch 5 Training:  77%|███████▋  | 184/239 [00:01<00:00, 116.35it/s]Epoch 5 Training:  82%|████████▏ | 196/239 [00:01<00:00, 114.97it/s]Epoch 5 Training:  87%|████████▋ | 208/239 [00:01<00:00, 113.38it/s]Epoch 5 Training:  92%|█████████▏| 220/239 [00:01<00:00, 114.73it/s]Epoch 5 Training:  97%|█████████▋| 232/239 [00:02<00:00, 116.05it/s]Epoch 5 Training: 100%|██████████| 239/239 [00:02<00:00, 115.75it/s]
-Epoch 5 Train Loss: 0.4521
-Epoch 5 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 5 Validation:  48%|████▊     | 29/61 [00:00<00:00, 283.07it/s]Epoch 5 Validation: 100%|██████████| 61/61 [00:00<00:00, 310.16it/s]
-Epoch 5 Val Loss: 0.4501
-  ✅ Saved best model at epoch 5
-Epoch 6 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 6 Training:   3%|▎         | 8/239 [00:00<00:02, 79.28it/s]Epoch 6 Training:   8%|▊         | 20/239 [00:00<00:02, 100.83it/s]Epoch 6 Training:  13%|█▎        | 32/239 [00:00<00:01, 105.79it/s]Epoch 6 Training:  18%|█▊        | 44/239 [00:00<00:01, 109.24it/s]Epoch 6 Training:  23%|██▎       | 55/239 [00:00<00:01, 109.41it/s]Epoch 6 Training:  28%|██▊       | 66/239 [00:00<00:01, 109.06it/s]Epoch 6 Training:  32%|███▏      | 77/239 [00:00<00:01, 108.57it/s]Epoch 6 Training:  37%|███▋      | 88/239 [00:00<00:01, 108.00it/s]Epoch 6 Training:  42%|████▏     | 100/239 [00:00<00:01, 110.86it/s]Epoch 6 Training:  47%|████▋     | 112/239 [00:01<00:01, 110.37it/s]Epoch 6 Training:  52%|█████▏    | 124/239 [00:01<00:01, 110.91it/s]Epoch 6 Training:  57%|█████▋    | 136/239 [00:01<00:00, 112.27it/s]Epoch 6 Training:  62%|██████▏   | 148/239 [00:01<00:00, 112.62it/s]Epoch 6 Training:  67%|██████▋   | 160/239 [00:01<00:00, 113.89it/s]Epoch 6 Training:  72%|███████▏  | 172/239 [00:01<00:00, 113.73it/s]Epoch 6 Training:  77%|███████▋  | 184/239 [00:01<00:00, 114.31it/s]Epoch 6 Training:  82%|████████▏ | 196/239 [00:01<00:00, 112.99it/s]Epoch 6 Training:  87%|████████▋ | 208/239 [00:01<00:00, 114.82it/s]Epoch 6 Training:  92%|█████████▏| 220/239 [00:01<00:00, 113.52it/s]Epoch 6 Training:  97%|█████████▋| 233/239 [00:02<00:00, 115.60it/s]Epoch 6 Training: 100%|██████████| 239/239 [00:02<00:00, 111.53it/s]
-Epoch 6 Train Loss: 0.4459
-Epoch 6 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 6 Validation:  46%|████▌     | 28/61 [00:00<00:00, 272.99it/s]Epoch 6 Validation:  92%|█████████▏| 56/61 [00:00<00:00, 262.46it/s]Epoch 6 Validation: 100%|██████████| 61/61 [00:00<00:00, 277.08it/s]
-Epoch 6 Val Loss: 0.4476
+Epoch 5 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 5 Training:   4%|▍         | 8/210 [00:00<00:02, 79.42it/s]Epoch 5 Training:  10%|▉         | 20/210 [00:00<00:01, 99.42it/s]Epoch 5 Training:  14%|█▍        | 30/210 [00:00<00:01, 97.06it/s]Epoch 5 Training:  20%|██        | 42/210 [00:00<00:01, 103.19it/s]Epoch 5 Training:  26%|██▌       | 54/210 [00:00<00:01, 107.39it/s]Epoch 5 Training:  31%|███       | 65/210 [00:00<00:01, 108.10it/s]Epoch 5 Training:  36%|███▌      | 76/210 [00:00<00:01, 107.26it/s]Epoch 5 Training:  42%|████▏     | 88/210 [00:00<00:01, 110.29it/s]Epoch 5 Training:  48%|████▊     | 100/210 [00:00<00:01, 109.17it/s]Epoch 5 Training:  53%|█████▎    | 112/210 [00:01<00:00, 111.27it/s]Epoch 5 Training:  59%|█████▉    | 124/210 [00:01<00:00, 110.17it/s]Epoch 5 Training:  65%|██████▍   | 136/210 [00:01<00:00, 111.68it/s]Epoch 5 Training:  70%|███████   | 148/210 [00:01<00:00, 109.84it/s]Epoch 5 Training:  76%|███████▌  | 160/210 [00:01<00:00, 110.64it/s]Epoch 5 Training:  82%|████████▏ | 172/210 [00:01<00:00, 107.99it/s]Epoch 5 Training:  88%|████████▊ | 184/210 [00:01<00:00, 109.91it/s]Epoch 5 Training:  93%|█████████▎| 196/210 [00:01<00:00, 107.57it/s]Epoch 5 Training:  99%|█████████▉| 208/210 [00:01<00:00, 109.17it/s]Epoch 5 Training: 100%|██████████| 210/210 [00:01<00:00, 107.91it/s]
+Epoch 5 Train Loss: 0.4831
+Epoch 5 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 5 Validation:  57%|█████▋    | 25/44 [00:00<00:00, 245.04it/s]Epoch 5 Validation: 100%|██████████| 44/44 [00:00<00:00, 273.28it/s]
+Epoch 5 Val Loss: 0.4756
+Epoch 6 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 6 Training:   3%|▎         | 7/210 [00:00<00:03, 67.16it/s]Epoch 6 Training:   9%|▊         | 18/210 [00:00<00:02, 89.06it/s]Epoch 6 Training:  14%|█▍        | 29/210 [00:00<00:01, 95.53it/s]Epoch 6 Training:  19%|█▉        | 40/210 [00:00<00:01, 98.60it/s]Epoch 6 Training:  24%|██▍       | 51/210 [00:00<00:01, 100.76it/s]Epoch 6 Training:  30%|███       | 63/210 [00:00<00:01, 105.12it/s]Epoch 6 Training:  35%|███▌      | 74/210 [00:00<00:01, 103.87it/s]Epoch 6 Training:  41%|████▏     | 87/210 [00:00<00:01, 109.86it/s]Epoch 6 Training:  48%|████▊     | 100/210 [00:00<00:00, 115.42it/s]Epoch 6 Training:  54%|█████▍    | 113/210 [00:01<00:00, 118.47it/s]Epoch 6 Training:  60%|██████    | 126/210 [00:01<00:00, 120.44it/s]Epoch 6 Training:  66%|██████▌   | 139/210 [00:01<00:00, 121.58it/s]Epoch 6 Training:  72%|███████▏  | 152/210 [00:01<00:00, 122.67it/s]Epoch 6 Training:  79%|███████▊  | 165/210 [00:01<00:00, 122.05it/s]Epoch 6 Training:  85%|████████▍ | 178/210 [00:01<00:00, 121.66it/s]Epoch 6 Training:  91%|█████████ | 191/210 [00:01<00:00, 120.86it/s]Epoch 6 Training:  97%|█████████▋| 204/210 [00:01<00:00, 122.87it/s]Epoch 6 Training: 100%|██████████| 210/210 [00:01<00:00, 114.34it/s]
+Epoch 6 Train Loss: 0.4843
+Epoch 6 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 6 Validation:  61%|██████▏   | 27/44 [00:00<00:00, 265.93it/s]Epoch 6 Validation: 100%|██████████| 44/44 [00:00<00:00, 268.80it/s]
+Epoch 6 Val Loss: 0.4733
   ✅ Saved best model at epoch 6
-Epoch 7 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 7 Training:   3%|▎         | 8/239 [00:00<00:03, 74.98it/s]Epoch 7 Training:   8%|▊         | 19/239 [00:00<00:02, 94.44it/s]Epoch 7 Training:  13%|█▎        | 30/239 [00:00<00:02, 97.58it/s]Epoch 7 Training:  17%|█▋        | 41/239 [00:00<00:01, 100.95it/s]Epoch 7 Training:  22%|██▏       | 52/239 [00:00<00:01, 102.13it/s]Epoch 7 Training:  26%|██▋       | 63/239 [00:00<00:01, 104.42it/s]Epoch 7 Training:  32%|███▏      | 76/239 [00:00<00:01, 111.91it/s]Epoch 7 Training:  37%|███▋      | 88/239 [00:00<00:01, 110.35it/s]Epoch 7 Training:  42%|████▏     | 100/239 [00:00<00:01, 112.57it/s]Epoch 7 Training:  47%|████▋     | 112/239 [00:01<00:01, 113.57it/s]Epoch 7 Training:  52%|█████▏    | 124/239 [00:01<00:01, 113.15it/s]Epoch 7 Training:  57%|█████▋    | 136/239 [00:01<00:00, 113.11it/s]Epoch 7 Training:  62%|██████▏   | 148/239 [00:01<00:00, 114.24it/s]Epoch 7 Training:  67%|██████▋   | 160/239 [00:01<00:00, 114.20it/s]Epoch 7 Training:  72%|███████▏  | 172/239 [00:01<00:00, 114.45it/s]Epoch 7 Training:  77%|███████▋  | 184/239 [00:01<00:00, 114.76it/s]Epoch 7 Training:  82%|████████▏ | 197/239 [00:01<00:00, 116.63it/s]Epoch 7 Training:  87%|████████▋ | 209/239 [00:01<00:00, 116.72it/s]Epoch 7 Training:  92%|█████████▏| 221/239 [00:01<00:00, 114.70it/s]Epoch 7 Training:  98%|█████████▊| 234/239 [00:02<00:00, 116.61it/s]Epoch 7 Training: 100%|██████████| 239/239 [00:02<00:00, 111.54it/s]
-Epoch 7 Train Loss: 0.4446
-Epoch 7 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 7 Validation:  41%|████      | 25/61 [00:00<00:00, 248.86it/s]Epoch 7 Validation:  82%|████████▏ | 50/61 [00:00<00:00, 220.25it/s]Epoch 7 Validation: 100%|██████████| 61/61 [00:00<00:00, 238.89it/s]
-Epoch 7 Val Loss: 0.4540
-Epoch 8 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 8 Training:   3%|▎         | 8/239 [00:00<00:03, 74.72it/s]Epoch 8 Training:   8%|▊         | 20/239 [00:00<00:02, 100.09it/s]Epoch 8 Training:  13%|█▎        | 32/239 [00:00<00:01, 106.81it/s]Epoch 8 Training:  18%|█▊        | 44/239 [00:00<00:01, 109.84it/s]Epoch 8 Training:  23%|██▎       | 56/239 [00:00<00:01, 111.97it/s]Epoch 8 Training:  28%|██▊       | 68/239 [00:00<00:01, 113.46it/s]Epoch 8 Training:  33%|███▎      | 80/239 [00:00<00:01, 114.97it/s]Epoch 8 Training:  38%|███▊      | 92/239 [00:00<00:01, 113.73it/s]Epoch 8 Training:  44%|████▎     | 104/239 [00:00<00:01, 112.92it/s]Epoch 8 Training:  49%|████▊     | 116/239 [00:01<00:01, 114.51it/s]Epoch 8 Training:  54%|█████▎    | 128/239 [00:01<00:00, 113.88it/s]Epoch 8 Training:  59%|█████▊    | 140/239 [00:01<00:00, 110.48it/s]Epoch 8 Training:  64%|██████▎   | 152/239 [00:01<00:00, 107.32it/s]Epoch 8 Training:  68%|██████▊   | 163/239 [00:01<00:00, 107.74it/s]Epoch 8 Training:  73%|███████▎  | 174/239 [00:01<00:00, 105.59it/s]Epoch 8 Training:  77%|███████▋  | 185/239 [00:01<00:00, 104.35it/s]Epoch 8 Training:  82%|████████▏ | 196/239 [00:01<00:00, 102.96it/s]Epoch 8 Training:  87%|████████▋ | 207/239 [00:01<00:00, 104.65it/s]Epoch 8 Training:  91%|█████████ | 218/239 [00:02<00:00, 102.85it/s]Epoch 8 Training:  96%|█████████▌| 229/239 [00:02<00:00, 102.69it/s]Epoch 8 Training: 100%|██████████| 239/239 [00:02<00:00, 107.29it/s]
-Epoch 8 Train Loss: 0.4423
-Epoch 8 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 8 Validation:  39%|███▉      | 24/61 [00:00<00:00, 239.31it/s]Epoch 8 Validation:  79%|███████▊  | 48/61 [00:00<00:00, 232.70it/s]Epoch 8 Validation: 100%|██████████| 61/61 [00:00<00:00, 263.93it/s]
-Epoch 8 Val Loss: 0.4449
-  ✅ Saved best model at epoch 8
-Epoch 9 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 9 Training:   3%|▎         | 8/239 [00:00<00:03, 75.81it/s]Epoch 9 Training:   8%|▊         | 20/239 [00:00<00:02, 98.73it/s]Epoch 9 Training:  13%|█▎        | 32/239 [00:00<00:01, 105.02it/s]Epoch 9 Training:  18%|█▊        | 43/239 [00:00<00:01, 101.70it/s]Epoch 9 Training:  23%|██▎       | 55/239 [00:00<00:01, 105.18it/s]Epoch 9 Training:  28%|██▊       | 67/239 [00:00<00:01, 109.02it/s]Epoch 9 Training:  33%|███▎      | 79/239 [00:00<00:01, 111.44it/s]Epoch 9 Training:  38%|███▊      | 91/239 [00:00<00:01, 113.98it/s]Epoch 9 Training:  44%|████▎     | 104/239 [00:00<00:01, 115.93it/s]Epoch 9 Training:  49%|████▊     | 116/239 [00:01<00:01, 115.26it/s]Epoch 9 Training:  54%|█████▍    | 129/239 [00:01<00:00, 116.70it/s]Epoch 9 Training:  59%|█████▉    | 142/239 [00:01<00:00, 118.58it/s]Epoch 9 Training:  65%|██████▍   | 155/239 [00:01<00:00, 118.84it/s]Epoch 9 Training:  70%|██████▉   | 167/239 [00:01<00:00, 116.69it/s]Epoch 9 Training:  75%|███████▍  | 179/239 [00:01<00:00, 116.16it/s]Epoch 9 Training:  80%|███████▉  | 191/239 [00:01<00:00, 114.90it/s]Epoch 9 Training:  85%|████████▍ | 203/239 [00:01<00:00, 113.49it/s]Epoch 9 Training:  90%|████████▉ | 215/239 [00:01<00:00, 112.09it/s]Epoch 9 Training:  95%|█████████▍| 227/239 [00:02<00:00, 109.70it/s]Epoch 9 Training: 100%|██████████| 239/239 [00:02<00:00, 109.85it/s]Epoch 9 Training: 100%|██████████| 239/239 [00:02<00:00, 111.55it/s]
-Epoch 9 Train Loss: 0.4346
-Epoch 9 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 9 Validation:  41%|████      | 25/61 [00:00<00:00, 247.89it/s]Epoch 9 Validation:  90%|█████████ | 55/61 [00:00<00:00, 275.60it/s]Epoch 9 Validation: 100%|██████████| 61/61 [00:00<00:00, 276.02it/s]
-Epoch 9 Val Loss: 0.4455
-Epoch 10 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 10 Training:   3%|▎         | 7/239 [00:00<00:03, 68.15it/s]Epoch 10 Training:   8%|▊         | 18/239 [00:00<00:02, 87.79it/s]Epoch 10 Training:  12%|█▏        | 28/239 [00:00<00:02, 92.80it/s]Epoch 10 Training:  16%|█▋        | 39/239 [00:00<00:02, 97.63it/s]Epoch 10 Training:  21%|██        | 50/239 [00:00<00:01, 100.10it/s]Epoch 10 Training:  26%|██▌       | 61/239 [00:00<00:01, 99.31it/s] Epoch 10 Training:  30%|██▉       | 71/239 [00:00<00:01, 98.04it/s]Epoch 10 Training:  34%|███▍      | 81/239 [00:00<00:01, 98.44it/s]Epoch 10 Training:  39%|███▉      | 93/239 [00:00<00:01, 102.79it/s]Epoch 10 Training:  44%|████▍     | 105/239 [00:01<00:01, 105.19it/s]Epoch 10 Training:  49%|████▊     | 116/239 [00:01<00:01, 104.15it/s]Epoch 10 Training:  53%|█████▎    | 127/239 [00:01<00:01, 105.83it/s]Epoch 10 Training:  58%|█████▊    | 138/239 [00:01<00:00, 105.71it/s]Epoch 10 Training:  62%|██████▏   | 149/239 [00:01<00:00, 103.24it/s]Epoch 10 Training:  67%|██████▋   | 161/239 [00:01<00:00, 105.14it/s]Epoch 10 Training:  72%|███████▏  | 172/239 [00:01<00:00, 103.51it/s]Epoch 10 Training:  77%|███████▋  | 183/239 [00:01<00:00, 105.07it/s]Epoch 10 Training:  81%|████████  | 194/239 [00:01<00:00, 103.95it/s]Epoch 10 Training:  86%|████████▌ | 205/239 [00:02<00:00, 105.30it/s]Epoch 10 Training:  90%|█████████ | 216/239 [00:02<00:00, 104.19it/s]Epoch 10 Training:  95%|█████████▍| 227/239 [00:02<00:00, 105.52it/s]Epoch 10 Training: 100%|█████████▉| 238/239 [00:02<00:00, 105.91it/s]Epoch 10 Training: 100%|██████████| 239/239 [00:02<00:00, 102.42it/s]
-Epoch 10 Train Loss: 0.4352
-Epoch 10 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 10 Validation:  48%|████▊     | 29/61 [00:00<00:00, 285.54it/s]Epoch 10 Validation:  98%|█████████▊| 60/61 [00:00<00:00, 298.20it/s]Epoch 10 Validation: 100%|██████████| 61/61 [00:00<00:00, 298.83it/s]
-Epoch 10 Val Loss: 0.4427
-  ✅ Saved best model at epoch 10
-Epoch 11 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 11 Training:   3%|▎         | 8/239 [00:00<00:03, 76.74it/s]Epoch 11 Training:   9%|▉         | 21/239 [00:00<00:02, 103.45it/s]Epoch 11 Training:  13%|█▎        | 32/239 [00:00<00:02, 101.17it/s]Epoch 11 Training:  18%|█▊        | 43/239 [00:00<00:01, 99.66it/s] Epoch 11 Training:  23%|██▎       | 54/239 [00:00<00:01, 101.98it/s]Epoch 11 Training:  27%|██▋       | 65/239 [00:00<00:01, 102.92it/s]Epoch 11 Training:  32%|███▏      | 76/239 [00:00<00:01, 101.32it/s]Epoch 11 Training:  36%|███▋      | 87/239 [00:00<00:01, 99.44it/s] Epoch 11 Training:  41%|████      | 98/239 [00:00<00:01, 101.91it/s]Epoch 11 Training:  46%|████▌     | 109/239 [00:01<00:01, 100.37it/s]Epoch 11 Training:  50%|█████     | 120/239 [00:01<00:01, 98.84it/s] Epoch 11 Training:  55%|█████▌    | 132/239 [00:01<00:01, 104.74it/s]Epoch 11 Training:  60%|██████    | 144/239 [00:01<00:00, 106.38it/s]Epoch 11 Training:  65%|██████▍   | 155/239 [00:01<00:00, 106.09it/s]Epoch 11 Training:  69%|██████▉   | 166/239 [00:01<00:00, 105.90it/s]Epoch 11 Training:  74%|███████▍  | 177/239 [00:01<00:00, 104.12it/s]Epoch 11 Training:  79%|███████▊  | 188/239 [00:01<00:00, 105.28it/s]Epoch 11 Training:  83%|████████▎ | 199/239 [00:01<00:00, 103.47it/s]Epoch 11 Training:  88%|████████▊ | 210/239 [00:02<00:00, 104.20it/s]Epoch 11 Training:  92%|█████████▏| 221/239 [00:02<00:00, 102.70it/s]Epoch 11 Training:  97%|█████████▋| 232/239 [00:02<00:00, 103.63it/s]Epoch 11 Training: 100%|██████████| 239/239 [00:02<00:00, 102.83it/s]
-Epoch 11 Train Loss: 0.4344
-Epoch 11 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 11 Validation:  43%|████▎     | 26/61 [00:00<00:00, 257.04it/s]Epoch 11 Validation:  85%|████████▌ | 52/61 [00:00<00:00, 252.07it/s]Epoch 11 Validation: 100%|██████████| 61/61 [00:00<00:00, 251.71it/s]
-Epoch 11 Val Loss: 0.4425
-  ✅ Saved best model at epoch 11
-Epoch 12 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 12 Training:   3%|▎         | 8/239 [00:00<00:03, 75.82it/s]Epoch 12 Training:   8%|▊         | 19/239 [00:00<00:02, 91.21it/s]Epoch 12 Training:  13%|█▎        | 30/239 [00:00<00:02, 97.27it/s]Epoch 12 Training:  17%|█▋        | 40/239 [00:00<00:02, 97.75it/s]Epoch 12 Training:  21%|██▏       | 51/239 [00:00<00:01, 100.39it/s]Epoch 12 Training:  26%|██▌       | 62/239 [00:00<00:01, 102.34it/s]Epoch 12 Training:  31%|███       | 73/239 [00:00<00:01, 103.75it/s]Epoch 12 Training:  36%|███▌      | 85/239 [00:00<00:01, 107.93it/s]Epoch 12 Training:  41%|████      | 98/239 [00:00<00:01, 112.05it/s]Epoch 12 Training:  46%|████▋     | 111/239 [00:01<00:01, 114.89it/s]Epoch 12 Training:  51%|█████▏    | 123/239 [00:01<00:01, 114.85it/s]Epoch 12 Training:  56%|█████▋    | 135/239 [00:01<00:00, 113.76it/s]Epoch 12 Training:  62%|██████▏   | 147/239 [00:01<00:00, 113.49it/s]Epoch 12 Training:  67%|██████▋   | 159/239 [00:01<00:00, 112.47it/s]Epoch 12 Training:  72%|███████▏  | 171/239 [00:01<00:00, 113.40it/s]Epoch 12 Training:  77%|███████▋  | 183/239 [00:01<00:00, 113.61it/s]Epoch 12 Training:  82%|████████▏ | 195/239 [00:01<00:00, 114.14it/s]Epoch 12 Training:  87%|████████▋ | 207/239 [00:01<00:00, 115.05it/s]Epoch 12 Training:  92%|█████████▏| 220/239 [00:02<00:00, 116.75it/s]Epoch 12 Training:  97%|█████████▋| 233/239 [00:02<00:00, 119.19it/s]Epoch 12 Training: 100%|██████████| 239/239 [00:02<00:00, 111.08it/s]
-Epoch 12 Train Loss: 0.4325
-Epoch 12 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 12 Validation:  46%|████▌     | 28/61 [00:00<00:00, 275.34it/s]Epoch 12 Validation: 100%|██████████| 61/61 [00:00<00:00, 303.12it/s]
-Epoch 12 Val Loss: 0.4408
+Epoch 7 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 7 Training:   4%|▍         | 8/210 [00:00<00:02, 72.78it/s]Epoch 7 Training:   9%|▉         | 19/210 [00:00<00:02, 89.60it/s]Epoch 7 Training:  14%|█▍        | 30/210 [00:00<00:01, 97.52it/s]Epoch 7 Training:  20%|█▉        | 41/210 [00:00<00:01, 101.93it/s]Epoch 7 Training:  25%|██▍       | 52/210 [00:00<00:01, 104.68it/s]Epoch 7 Training:  30%|███       | 64/210 [00:00<00:01, 107.75it/s]Epoch 7 Training:  37%|███▋      | 77/210 [00:00<00:01, 113.25it/s]Epoch 7 Training:  42%|████▏     | 89/210 [00:00<00:01, 115.16it/s]Epoch 7 Training:  48%|████▊     | 101/210 [00:00<00:00, 115.54it/s]Epoch 7 Training:  54%|█████▍    | 113/210 [00:01<00:00, 116.26it/s]Epoch 7 Training:  60%|█████▉    | 125/210 [00:01<00:00, 116.56it/s]Epoch 7 Training:  65%|██████▌   | 137/210 [00:01<00:00, 116.51it/s]Epoch 7 Training:  71%|███████   | 149/210 [00:01<00:00, 116.32it/s]Epoch 7 Training:  77%|███████▋  | 161/210 [00:01<00:00, 116.06it/s]Epoch 7 Training:  82%|████████▏ | 173/210 [00:01<00:00, 115.75it/s]Epoch 7 Training:  88%|████████▊ | 185/210 [00:01<00:00, 115.24it/s]Epoch 7 Training:  94%|█████████▍| 197/210 [00:01<00:00, 116.23it/s]Epoch 7 Training: 100%|██████████| 210/210 [00:01<00:00, 119.18it/s]Epoch 7 Training: 100%|██████████| 210/210 [00:01<00:00, 112.65it/s]
+Epoch 7 Train Loss: 0.4802
+Epoch 7 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 7 Validation:  61%|██████▏   | 27/44 [00:00<00:00, 268.61it/s]Epoch 7 Validation: 100%|██████████| 44/44 [00:00<00:00, 282.05it/s]
+Epoch 7 Val Loss: 0.4730
+  ✅ Saved best model at epoch 7
+Epoch 8 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 8 Training:   4%|▍         | 8/210 [00:00<00:02, 76.14it/s]Epoch 8 Training:  10%|▉         | 20/210 [00:00<00:01, 98.58it/s]Epoch 8 Training:  15%|█▌        | 32/210 [00:00<00:01, 106.26it/s]Epoch 8 Training:  21%|██        | 44/210 [00:00<00:01, 110.70it/s]Epoch 8 Training:  27%|██▋       | 56/210 [00:00<00:01, 112.80it/s]Epoch 8 Training:  32%|███▏      | 68/210 [00:00<00:01, 113.61it/s]Epoch 8 Training:  38%|███▊      | 80/210 [00:00<00:01, 114.94it/s]Epoch 8 Training:  44%|████▍     | 92/210 [00:00<00:01, 115.40it/s]Epoch 8 Training:  50%|████▉     | 104/210 [00:00<00:00, 116.20it/s]Epoch 8 Training:  55%|█████▌    | 116/210 [00:01<00:00, 116.30it/s]Epoch 8 Training:  61%|██████    | 128/210 [00:01<00:00, 116.50it/s]Epoch 8 Training:  67%|██████▋   | 140/210 [00:01<00:00, 116.58it/s]Epoch 8 Training:  72%|███████▏  | 152/210 [00:01<00:00, 117.25it/s]Epoch 8 Training:  78%|███████▊  | 164/210 [00:01<00:00, 117.19it/s]Epoch 8 Training:  84%|████████▍ | 176/210 [00:01<00:00, 117.20it/s]Epoch 8 Training:  90%|████████▉ | 188/210 [00:01<00:00, 116.12it/s]Epoch 8 Training:  95%|█████████▌| 200/210 [00:01<00:00, 115.97it/s]Epoch 8 Training: 100%|██████████| 210/210 [00:01<00:00, 114.57it/s]
+Epoch 8 Train Loss: 0.4771
+Epoch 8 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 8 Validation:  59%|█████▉    | 26/44 [00:00<00:00, 258.54it/s]Epoch 8 Validation: 100%|██████████| 44/44 [00:00<00:00, 254.78it/s]
+Epoch 8 Val Loss: 0.4755
+Epoch 9 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 9 Training:   4%|▍         | 8/210 [00:00<00:02, 78.21it/s]Epoch 9 Training:  10%|▉         | 20/210 [00:00<00:01, 99.54it/s]Epoch 9 Training:  15%|█▌        | 32/210 [00:00<00:01, 106.36it/s]Epoch 9 Training:  21%|██        | 44/210 [00:00<00:01, 110.11it/s]Epoch 9 Training:  27%|██▋       | 56/210 [00:00<00:01, 111.40it/s]Epoch 9 Training:  32%|███▏      | 68/210 [00:00<00:01, 111.50it/s]Epoch 9 Training:  38%|███▊      | 80/210 [00:00<00:01, 112.26it/s]Epoch 9 Training:  44%|████▍     | 92/210 [00:00<00:01, 113.86it/s]Epoch 9 Training:  50%|████▉     | 104/210 [00:00<00:00, 115.02it/s]Epoch 9 Training:  55%|█████▌    | 116/210 [00:01<00:00, 114.10it/s]Epoch 9 Training:  61%|██████    | 128/210 [00:01<00:00, 113.94it/s]Epoch 9 Training:  67%|██████▋   | 141/210 [00:01<00:00, 116.60it/s]Epoch 9 Training:  73%|███████▎  | 153/210 [00:01<00:00, 116.10it/s]Epoch 9 Training:  79%|███████▊  | 165/210 [00:01<00:00, 115.51it/s]Epoch 9 Training:  84%|████████▍ | 177/210 [00:01<00:00, 115.52it/s]Epoch 9 Training:  90%|█████████ | 189/210 [00:01<00:00, 114.78it/s]Epoch 9 Training:  96%|█████████▌| 202/210 [00:01<00:00, 116.84it/s]Epoch 9 Training: 100%|██████████| 210/210 [00:01<00:00, 113.69it/s]
+Epoch 9 Train Loss: 0.4776
+Epoch 9 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 9 Validation:  61%|██████▏   | 27/44 [00:00<00:00, 263.10it/s]Epoch 9 Validation: 100%|██████████| 44/44 [00:00<00:00, 263.15it/s]
+Epoch 9 Val Loss: 0.4757
+Epoch 10 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 10 Training:   4%|▍         | 8/210 [00:00<00:02, 75.72it/s]Epoch 10 Training:  10%|▉         | 20/210 [00:00<00:01, 97.76it/s]Epoch 10 Training:  15%|█▌        | 32/210 [00:00<00:01, 104.14it/s]Epoch 10 Training:  21%|██        | 44/210 [00:00<00:01, 107.61it/s]Epoch 10 Training:  27%|██▋       | 56/210 [00:00<00:01, 109.88it/s]Epoch 10 Training:  32%|███▏      | 68/210 [00:00<00:01, 110.92it/s]Epoch 10 Training:  38%|███▊      | 80/210 [00:00<00:01, 112.03it/s]Epoch 10 Training:  44%|████▍     | 92/210 [00:00<00:01, 112.00it/s]Epoch 10 Training:  50%|████▉     | 104/210 [00:00<00:00, 112.46it/s]Epoch 10 Training:  55%|█████▌    | 116/210 [00:01<00:00, 112.84it/s]Epoch 10 Training:  61%|██████    | 128/210 [00:01<00:00, 113.21it/s]Epoch 10 Training:  67%|██████▋   | 140/210 [00:01<00:00, 113.70it/s]Epoch 10 Training:  72%|███████▏  | 152/210 [00:01<00:00, 114.25it/s]Epoch 10 Training:  78%|███████▊  | 164/210 [00:01<00:00, 114.39it/s]Epoch 10 Training:  84%|████████▍ | 176/210 [00:01<00:00, 114.35it/s]Epoch 10 Training:  90%|████████▉ | 188/210 [00:01<00:00, 114.55it/s]Epoch 10 Training:  96%|█████████▌| 201/210 [00:01<00:00, 116.51it/s]Epoch 10 Training: 100%|██████████| 210/210 [00:01<00:00, 112.57it/s]
+Epoch 10 Train Loss: 0.4760
+Epoch 10 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 10 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 271.19it/s]Epoch 10 Validation: 100%|██████████| 44/44 [00:00<00:00, 290.15it/s]
+Epoch 10 Val Loss: 0.4730
+Epoch 11 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 11 Training:   4%|▍         | 9/210 [00:00<00:02, 85.84it/s]Epoch 11 Training:  10%|█         | 22/210 [00:00<00:01, 106.57it/s]Epoch 11 Training:  17%|█▋        | 35/210 [00:00<00:01, 112.89it/s]Epoch 11 Training:  23%|██▎       | 48/210 [00:00<00:01, 115.73it/s]Epoch 11 Training:  29%|██▉       | 61/210 [00:00<00:01, 117.38it/s]Epoch 11 Training:  35%|███▌      | 74/210 [00:00<00:01, 118.14it/s]Epoch 11 Training:  41%|████      | 86/210 [00:00<00:01, 117.10it/s]Epoch 11 Training:  47%|████▋     | 98/210 [00:00<00:00, 116.09it/s]Epoch 11 Training:  52%|█████▏    | 110/210 [00:00<00:00, 115.35it/s]Epoch 11 Training:  58%|█████▊    | 122/210 [00:01<00:00, 114.83it/s]Epoch 11 Training:  64%|██████▍   | 134/210 [00:01<00:00, 113.70it/s]Epoch 11 Training:  70%|██████▉   | 146/210 [00:01<00:00, 113.40it/s]Epoch 11 Training:  75%|███████▌  | 158/210 [00:01<00:00, 113.69it/s]Epoch 11 Training:  81%|████████  | 170/210 [00:01<00:00, 114.03it/s]Epoch 11 Training:  87%|████████▋ | 182/210 [00:01<00:00, 113.79it/s]Epoch 11 Training:  92%|█████████▏| 194/210 [00:01<00:00, 114.63it/s]Epoch 11 Training:  99%|█████████▊| 207/210 [00:01<00:00, 118.19it/s]Epoch 11 Training: 100%|██████████| 210/210 [00:01<00:00, 115.05it/s]
+Epoch 11 Train Loss: 0.4771
+Epoch 11 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 11 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 277.11it/s]Epoch 11 Validation: 100%|██████████| 44/44 [00:00<00:00, 277.36it/s]
+Epoch 11 Val Loss: 0.4750
+Epoch 12 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 12 Training:   4%|▍         | 8/210 [00:00<00:02, 77.09it/s]Epoch 12 Training:  10%|▉         | 20/210 [00:00<00:01, 99.41it/s]Epoch 12 Training:  15%|█▌        | 32/210 [00:00<00:01, 106.73it/s]Epoch 12 Training:  21%|██        | 44/210 [00:00<00:01, 109.52it/s]Epoch 12 Training:  27%|██▋       | 56/210 [00:00<00:01, 110.54it/s]Epoch 12 Training:  32%|███▏      | 68/210 [00:00<00:01, 110.62it/s]Epoch 12 Training:  38%|███▊      | 80/210 [00:00<00:01, 110.31it/s]Epoch 12 Training:  44%|████▍     | 93/210 [00:00<00:01, 114.10it/s]Epoch 12 Training:  50%|█████     | 106/210 [00:00<00:00, 116.30it/s]Epoch 12 Training:  56%|█████▌    | 118/210 [00:01<00:00, 115.75it/s]Epoch 12 Training:  62%|██████▏   | 131/210 [00:01<00:00, 117.32it/s]Epoch 12 Training:  68%|██████▊   | 143/210 [00:01<00:00, 116.43it/s]Epoch 12 Training:  74%|███████▍  | 155/210 [00:01<00:00, 116.27it/s]Epoch 12 Training:  80%|███████▉  | 167/210 [00:01<00:00, 116.05it/s]Epoch 12 Training:  85%|████████▌ | 179/210 [00:01<00:00, 115.48it/s]Epoch 12 Training:  91%|█████████▏| 192/210 [00:01<00:00, 117.25it/s]Epoch 12 Training:  98%|█████████▊| 205/210 [00:01<00:00, 118.85it/s]Epoch 12 Training: 100%|██████████| 210/210 [00:01<00:00, 114.24it/s]
+Epoch 12 Train Loss: 0.4736
+Epoch 12 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 12 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 278.86it/s]Epoch 12 Validation: 100%|██████████| 44/44 [00:00<00:00, 275.57it/s]
+Epoch 12 Val Loss: 0.4725
   ✅ Saved best model at epoch 12
-Epoch 13 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 13 Training:   4%|▍         | 9/239 [00:00<00:02, 86.01it/s]Epoch 13 Training:   9%|▉         | 21/239 [00:00<00:02, 100.75it/s]Epoch 13 Training:  14%|█▍        | 33/239 [00:00<00:01, 104.93it/s]Epoch 13 Training:  19%|█▉        | 45/239 [00:00<00:01, 110.09it/s]Epoch 13 Training:  24%|██▍       | 57/239 [00:00<00:01, 111.62it/s]Epoch 13 Training:  29%|██▉       | 69/239 [00:00<00:01, 113.21it/s]Epoch 13 Training:  34%|███▍      | 82/239 [00:00<00:01, 116.84it/s]Epoch 13 Training:  40%|███▉      | 95/239 [00:00<00:01, 119.72it/s]Epoch 13 Training:  45%|████▌     | 108/239 [00:00<00:01, 121.29it/s]Epoch 13 Training:  51%|█████     | 121/239 [00:01<00:00, 121.79it/s]Epoch 13 Training:  56%|█████▌    | 134/239 [00:01<00:00, 122.77it/s]Epoch 13 Training:  62%|██████▏   | 147/239 [00:01<00:00, 124.27it/s]Epoch 13 Training:  67%|██████▋   | 160/239 [00:01<00:00, 124.78it/s]Epoch 13 Training:  72%|███████▏  | 173/239 [00:01<00:00, 125.81it/s]Epoch 13 Training:  78%|███████▊  | 186/239 [00:01<00:00, 126.38it/s]Epoch 13 Training:  83%|████████▎ | 199/239 [00:01<00:00, 119.95it/s]Epoch 13 Training:  89%|████████▊ | 212/239 [00:01<00:00, 117.94it/s]Epoch 13 Training:  94%|█████████▎| 224/239 [00:01<00:00, 114.65it/s]Epoch 13 Training:  99%|█████████▊| 236/239 [00:02<00:00, 115.51it/s]Epoch 13 Training: 100%|██████████| 239/239 [00:02<00:00, 117.37it/s]
-Epoch 13 Train Loss: 0.4317
-Epoch 13 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 13 Validation:  46%|████▌     | 28/61 [00:00<00:00, 277.48it/s]Epoch 13 Validation:  93%|█████████▎| 57/61 [00:00<00:00, 284.45it/s]Epoch 13 Validation: 100%|██████████| 61/61 [00:00<00:00, 286.99it/s]
-Epoch 13 Val Loss: 0.4421
-Epoch 14 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 14 Training:   3%|▎         | 7/239 [00:00<00:03, 67.65it/s]Epoch 14 Training:   8%|▊         | 19/239 [00:00<00:02, 93.82it/s]Epoch 14 Training:  13%|█▎        | 30/239 [00:00<00:02, 98.24it/s]Epoch 14 Training:  17%|█▋        | 41/239 [00:00<00:01, 100.70it/s]Epoch 14 Training:  22%|██▏       | 52/239 [00:00<00:01, 99.97it/s] Epoch 14 Training:  26%|██▌       | 62/239 [00:00<00:01, 99.58it/s]Epoch 14 Training:  30%|███       | 72/239 [00:00<00:01, 99.45it/s]Epoch 14 Training:  35%|███▌      | 84/239 [00:00<00:01, 103.12it/s]Epoch 14 Training:  40%|███▉      | 95/239 [00:00<00:01, 101.97it/s]Epoch 14 Training:  44%|████▍     | 106/239 [00:01<00:01, 101.53it/s]Epoch 14 Training:  49%|████▉     | 117/239 [00:01<00:01, 102.21it/s]Epoch 14 Training:  54%|█████▎    | 128/239 [00:01<00:01, 100.31it/s]Epoch 14 Training:  58%|█████▊    | 139/239 [00:01<00:01, 99.90it/s] Epoch 14 Training:  63%|██████▎   | 150/239 [00:01<00:00, 100.46it/s]Epoch 14 Training:  67%|██████▋   | 161/239 [00:01<00:00, 98.89it/s] Epoch 14 Training:  72%|███████▏  | 172/239 [00:01<00:00, 99.71it/s]Epoch 14 Training:  77%|███████▋  | 184/239 [00:01<00:00, 103.02it/s]Epoch 14 Training:  82%|████████▏ | 195/239 [00:01<00:00, 103.37it/s]Epoch 14 Training:  86%|████████▌ | 206/239 [00:02<00:00, 103.57it/s]Epoch 14 Training:  91%|█████████ | 217/239 [00:02<00:00, 103.30it/s]Epoch 14 Training:  95%|█████████▌| 228/239 [00:02<00:00, 103.31it/s]Epoch 14 Training: 100%|██████████| 239/239 [00:02<00:00, 104.85it/s]Epoch 14 Training: 100%|██████████| 239/239 [00:02<00:00, 101.18it/s]
-Epoch 14 Train Loss: 0.4279
-Epoch 14 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 14 Validation:  43%|████▎     | 26/61 [00:00<00:00, 258.36it/s]Epoch 14 Validation:  85%|████████▌ | 52/61 [00:00<00:00, 258.81it/s]Epoch 14 Validation: 100%|██████████| 61/61 [00:00<00:00, 264.08it/s]
-Epoch 14 Val Loss: 0.4420
-Epoch 15 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 15 Training:   3%|▎         | 7/239 [00:00<00:03, 69.26it/s]Epoch 15 Training:   8%|▊         | 19/239 [00:00<00:02, 98.26it/s]Epoch 15 Training:  12%|█▏        | 29/239 [00:00<00:02, 98.99it/s]Epoch 15 Training:  17%|█▋        | 40/239 [00:00<00:01, 101.58it/s]Epoch 15 Training:  21%|██▏       | 51/239 [00:00<00:01, 102.26it/s]Epoch 15 Training:  26%|██▌       | 62/239 [00:00<00:01, 102.12it/s]Epoch 15 Training:  31%|███       | 73/239 [00:00<00:01, 101.31it/s]Epoch 15 Training:  35%|███▌      | 84/239 [00:00<00:01, 100.59it/s]Epoch 15 Training:  40%|███▉      | 95/239 [00:00<00:01, 101.26it/s]Epoch 15 Training:  44%|████▍     | 106/239 [00:01<00:01, 101.18it/s]Epoch 15 Training:  49%|████▉     | 118/239 [00:01<00:01, 104.02it/s]Epoch 15 Training:  54%|█████▍    | 129/239 [00:01<00:01, 104.13it/s]Epoch 15 Training:  59%|█████▉    | 141/239 [00:01<00:00, 107.22it/s]Epoch 15 Training:  64%|██████▎   | 152/239 [00:01<00:00, 106.43it/s]Epoch 15 Training:  68%|██████▊   | 163/239 [00:01<00:00, 106.28it/s]Epoch 15 Training:  73%|███████▎  | 174/239 [00:01<00:00, 106.68it/s]Epoch 15 Training:  78%|███████▊  | 186/239 [00:01<00:00, 108.55it/s]Epoch 15 Training:  82%|████████▏ | 197/239 [00:01<00:00, 108.82it/s]Epoch 15 Training:  87%|████████▋ | 208/239 [00:02<00:00, 106.83it/s]Epoch 15 Training:  92%|█████████▏| 220/239 [00:02<00:00, 108.32it/s]Epoch 15 Training:  97%|█████████▋| 231/239 [00:02<00:00, 108.43it/s]Epoch 15 Training: 100%|██████████| 239/239 [00:02<00:00, 104.67it/s]
-Epoch 15 Train Loss: 0.4292
-Epoch 15 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 15 Validation:  39%|███▉      | 24/61 [00:00<00:00, 238.42it/s]Epoch 15 Validation:  79%|███████▊  | 48/61 [00:00<00:00, 230.98it/s]Epoch 15 Validation: 100%|██████████| 61/61 [00:00<00:00, 235.27it/s]
-Epoch 15 Val Loss: 0.4436
-Epoch 16 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 16 Training:   3%|▎         | 7/239 [00:00<00:03, 64.82it/s]Epoch 16 Training:   8%|▊         | 18/239 [00:00<00:02, 89.68it/s]Epoch 16 Training:  12%|█▏        | 29/239 [00:00<00:02, 97.17it/s]Epoch 16 Training:  17%|█▋        | 40/239 [00:00<00:01, 101.76it/s]Epoch 16 Training:  21%|██▏       | 51/239 [00:00<00:01, 103.00it/s]Epoch 16 Training:  26%|██▌       | 62/239 [00:00<00:01, 102.97it/s]Epoch 16 Training:  31%|███       | 73/239 [00:00<00:01, 104.77it/s]Epoch 16 Training:  35%|███▌      | 84/239 [00:00<00:01, 105.77it/s]Epoch 16 Training:  40%|████      | 96/239 [00:00<00:01, 107.92it/s]Epoch 16 Training:  45%|████▍     | 107/239 [00:01<00:01, 106.61it/s]Epoch 16 Training:  50%|████▉     | 119/239 [00:01<00:01, 108.72it/s]Epoch 16 Training:  54%|█████▍    | 130/239 [00:01<00:01, 107.96it/s]Epoch 16 Training:  59%|█████▉    | 142/239 [00:01<00:00, 109.93it/s]Epoch 16 Training:  64%|██████▍   | 153/239 [00:01<00:00, 108.78it/s]Epoch 16 Training:  69%|██████▉   | 165/239 [00:01<00:00, 110.34it/s]Epoch 16 Training:  74%|███████▍  | 177/239 [00:01<00:00, 112.08it/s]Epoch 16 Training:  79%|███████▉  | 189/239 [00:01<00:00, 113.34it/s]Epoch 16 Training:  84%|████████▍ | 201/239 [00:01<00:00, 114.24it/s]Epoch 16 Training:  90%|████████▉ | 214/239 [00:01<00:00, 116.00it/s]Epoch 16 Training:  95%|█████████▍| 226/239 [00:02<00:00, 115.70it/s]Epoch 16 Training: 100%|██████████| 239/239 [00:02<00:00, 118.45it/s]Epoch 16 Training: 100%|██████████| 239/239 [00:02<00:00, 109.06it/s]
-Epoch 16 Train Loss: 0.4260
-Epoch 16 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 16 Validation:  44%|████▍     | 27/61 [00:00<00:00, 257.72it/s]Epoch 16 Validation:  95%|█████████▌| 58/61 [00:00<00:00, 287.26it/s]Epoch 16 Validation: 100%|██████████| 61/61 [00:00<00:00, 286.08it/s]
-Epoch 16 Val Loss: 0.4404
-  ✅ Saved best model at epoch 16
-Epoch 17 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 17 Training:   4%|▍         | 9/239 [00:00<00:02, 84.31it/s]Epoch 17 Training:   9%|▉         | 21/239 [00:00<00:02, 104.68it/s]Epoch 17 Training:  14%|█▍        | 33/239 [00:00<00:01, 107.29it/s]Epoch 17 Training:  18%|█▊        | 44/239 [00:00<00:01, 102.41it/s]Epoch 17 Training:  23%|██▎       | 55/239 [00:00<00:01, 102.07it/s]Epoch 17 Training:  28%|██▊       | 66/239 [00:00<00:01, 102.46it/s]Epoch 17 Training:  32%|███▏      | 77/239 [00:00<00:01, 102.58it/s]Epoch 17 Training:  37%|███▋      | 88/239 [00:00<00:01, 102.87it/s]Epoch 17 Training:  41%|████▏     | 99/239 [00:00<00:01, 102.89it/s]Epoch 17 Training:  46%|████▌     | 110/239 [00:01<00:01, 102.29it/s]Epoch 17 Training:  51%|█████     | 121/239 [00:01<00:01, 101.87it/s]Epoch 17 Training:  55%|█████▌    | 132/239 [00:01<00:01, 101.65it/s]Epoch 17 Training:  60%|█████▉    | 143/239 [00:01<00:00, 102.03it/s]Epoch 17 Training:  64%|██████▍   | 154/239 [00:01<00:00, 102.41it/s]Epoch 17 Training:  69%|██████▉   | 165/239 [00:01<00:00, 102.53it/s]Epoch 17 Training:  74%|███████▎  | 176/239 [00:01<00:00, 102.03it/s]Epoch 17 Training:  78%|███████▊  | 187/239 [00:01<00:00, 101.92it/s]Epoch 17 Training:  83%|████████▎ | 199/239 [00:01<00:00, 104.65it/s]Epoch 17 Training:  88%|████████▊ | 210/239 [00:02<00:00, 101.76it/s]Epoch 17 Training:  92%|█████████▏| 221/239 [00:02<00:00, 100.73it/s]Epoch 17 Training:  97%|█████████▋| 232/239 [00:02<00:00, 101.55it/s]Epoch 17 Training: 100%|██████████| 239/239 [00:02<00:00, 102.30it/s]
-Epoch 17 Train Loss: 0.4261
-Epoch 17 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 17 Validation:  38%|███▊      | 23/61 [00:00<00:00, 229.70it/s]Epoch 17 Validation:  75%|███████▌  | 46/61 [00:00<00:00, 222.63it/s]Epoch 17 Validation: 100%|██████████| 61/61 [00:00<00:00, 236.96it/s]
-Epoch 17 Val Loss: 0.4400
-  ✅ Saved best model at epoch 17
-Epoch 18 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 18 Training:   3%|▎         | 7/239 [00:00<00:03, 67.67it/s]Epoch 18 Training:   8%|▊         | 19/239 [00:00<00:02, 93.84it/s]Epoch 18 Training:  13%|█▎        | 31/239 [00:00<00:02, 103.53it/s]Epoch 18 Training:  18%|█▊        | 42/239 [00:00<00:01, 101.30it/s]Epoch 18 Training:  23%|██▎       | 54/239 [00:00<00:01, 106.57it/s]Epoch 18 Training:  28%|██▊       | 66/239 [00:00<00:01, 107.96it/s]Epoch 18 Training:  33%|███▎      | 78/239 [00:00<00:01, 110.25it/s]Epoch 18 Training:  38%|███▊      | 90/239 [00:00<00:01, 111.34it/s]Epoch 18 Training:  43%|████▎     | 102/239 [00:00<00:01, 112.82it/s]Epoch 18 Training:  48%|████▊     | 114/239 [00:01<00:01, 114.55it/s]Epoch 18 Training:  53%|█████▎    | 126/239 [00:01<00:00, 114.92it/s]Epoch 18 Training:  58%|█████▊    | 138/239 [00:01<00:00, 115.44it/s]Epoch 18 Training:  63%|██████▎   | 150/239 [00:01<00:00, 115.95it/s]Epoch 18 Training:  68%|██████▊   | 162/239 [00:01<00:00, 116.49it/s]Epoch 18 Training:  73%|███████▎  | 174/239 [00:01<00:00, 116.41it/s]Epoch 18 Training:  78%|███████▊  | 186/239 [00:01<00:00, 116.05it/s]Epoch 18 Training:  83%|████████▎ | 198/239 [00:01<00:00, 114.97it/s]Epoch 18 Training:  88%|████████▊ | 210/239 [00:01<00:00, 110.69it/s]Epoch 18 Training:  93%|█████████▎| 222/239 [00:02<00:00, 109.64it/s]Epoch 18 Training:  98%|█████████▊| 234/239 [00:02<00:00, 111.78it/s]Epoch 18 Training: 100%|██████████| 239/239 [00:02<00:00, 110.99it/s]
-Epoch 18 Train Loss: 0.4256
-Epoch 18 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 18 Validation:  43%|████▎     | 26/61 [00:00<00:00, 249.97it/s]Epoch 18 Validation:  89%|████████▊ | 54/61 [00:00<00:00, 266.03it/s]Epoch 18 Validation: 100%|██████████| 61/61 [00:00<00:00, 279.72it/s]
-Epoch 18 Val Loss: 0.4400
-  ✅ Saved best model at epoch 18
-Epoch 19 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 19 Training:   3%|▎         | 7/239 [00:00<00:03, 69.51it/s]Epoch 19 Training:   8%|▊         | 19/239 [00:00<00:02, 96.46it/s]Epoch 19 Training:  13%|█▎        | 30/239 [00:00<00:02, 99.04it/s]Epoch 19 Training:  17%|█▋        | 40/239 [00:00<00:02, 99.19it/s]Epoch 19 Training:  22%|██▏       | 52/239 [00:00<00:01, 104.21it/s]Epoch 19 Training:  26%|██▋       | 63/239 [00:00<00:01, 103.58it/s]Epoch 19 Training:  31%|███       | 74/239 [00:00<00:01, 103.32it/s]Epoch 19 Training:  36%|███▌      | 85/239 [00:00<00:01, 103.22it/s]Epoch 19 Training:  40%|████      | 96/239 [00:00<00:01, 102.56it/s]Epoch 19 Training:  45%|████▍     | 107/239 [00:01<00:01, 101.41it/s]Epoch 19 Training:  49%|████▉     | 118/239 [00:01<00:01, 100.82it/s]Epoch 19 Training:  54%|█████▍    | 129/239 [00:01<00:01, 99.78it/s] Epoch 19 Training:  58%|█████▊    | 139/239 [00:01<00:01, 98.42it/s]Epoch 19 Training:  63%|██████▎   | 150/239 [00:01<00:00, 98.99it/s]Epoch 19 Training:  67%|██████▋   | 160/239 [00:01<00:00, 99.20it/s]Epoch 19 Training:  71%|███████   | 170/239 [00:01<00:00, 98.27it/s]Epoch 19 Training:  76%|███████▌  | 181/239 [00:01<00:00, 98.97it/s]Epoch 19 Training:  80%|████████  | 192/239 [00:01<00:00, 99.31it/s]Epoch 19 Training:  85%|████████▍ | 202/239 [00:02<00:00, 98.64it/s]Epoch 19 Training:  89%|████████▊ | 212/239 [00:02<00:00, 98.54it/s]Epoch 19 Training:  93%|█████████▎| 223/239 [00:02<00:00, 98.90it/s]Epoch 19 Training:  98%|█████████▊| 235/239 [00:02<00:00, 102.43it/s]Epoch 19 Training: 100%|██████████| 239/239 [00:02<00:00, 100.29it/s]
-Epoch 19 Train Loss: 0.4271
-Epoch 19 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 19 Validation:  41%|████      | 25/61 [00:00<00:00, 244.89it/s]Epoch 19 Validation:  90%|█████████ | 55/61 [00:00<00:00, 273.62it/s]Epoch 19 Validation: 100%|██████████| 61/61 [00:00<00:00, 272.63it/s]
-Epoch 19 Val Loss: 0.4397
-  ✅ Saved best model at epoch 19
-Epoch 20 Training:   0%|          | 0/239 [00:00<?, ?it/s]Epoch 20 Training:   3%|▎         | 7/239 [00:00<00:03, 67.38it/s]Epoch 20 Training:   8%|▊         | 18/239 [00:00<00:02, 88.01it/s]Epoch 20 Training:  12%|█▏        | 29/239 [00:00<00:02, 97.18it/s]Epoch 20 Training:  17%|█▋        | 40/239 [00:00<00:01, 100.28it/s]Epoch 20 Training:  21%|██▏       | 51/239 [00:00<00:01, 101.64it/s]Epoch 20 Training:  26%|██▌       | 62/239 [00:00<00:01, 101.99it/s]Epoch 20 Training:  31%|███       | 73/239 [00:00<00:01, 103.47it/s]Epoch 20 Training:  35%|███▌      | 84/239 [00:00<00:01, 104.31it/s]Epoch 20 Training:  40%|████      | 96/239 [00:00<00:01, 108.30it/s]Epoch 20 Training:  45%|████▍     | 107/239 [00:01<00:01, 107.76it/s]Epoch 20 Training:  49%|████▉     | 118/239 [00:01<00:01, 108.25it/s]Epoch 20 Training:  54%|█████▍    | 130/239 [00:01<00:00, 110.40it/s]Epoch 20 Training:  59%|█████▉    | 142/239 [00:01<00:00, 110.81it/s]Epoch 20 Training:  64%|██████▍   | 154/239 [00:01<00:00, 111.07it/s]Epoch 20 Training:  69%|██████▉   | 166/239 [00:01<00:00, 111.02it/s]Epoch 20 Training:  74%|███████▍  | 178/239 [00:01<00:00, 113.53it/s]Epoch 20 Training:  79%|███████▉  | 190/239 [00:01<00:00, 114.23it/s]Epoch 20 Training:  85%|████████▍ | 202/239 [00:01<00:00, 112.97it/s]Epoch 20 Training:  90%|████████▉ | 214/239 [00:01<00:00, 113.89it/s]Epoch 20 Training:  95%|█████████▍| 226/239 [00:02<00:00, 114.96it/s]Epoch 20 Training: 100%|██████████| 239/239 [00:02<00:00, 117.57it/s]Epoch 20 Training: 100%|██████████| 239/239 [00:02<00:00, 108.91it/s]
-Epoch 20 Train Loss: 0.4218
-Epoch 20 Validation:   0%|          | 0/61 [00:00<?, ?it/s]Epoch 20 Validation:  39%|███▉      | 24/61 [00:00<00:00, 234.01it/s]Epoch 20 Validation:  79%|███████▊  | 48/61 [00:00<00:00, 235.35it/s]Epoch 20 Validation: 100%|██████████| 61/61 [00:00<00:00, 250.48it/s]
-Epoch 20 Val Loss: 0.4397
+Epoch 13 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 13 Training:   4%|▍         | 9/210 [00:00<00:02, 82.46it/s]Epoch 13 Training:  10%|█         | 21/210 [00:00<00:01, 101.42it/s]Epoch 13 Training:  16%|█▌        | 33/210 [00:00<00:01, 108.28it/s]Epoch 13 Training:  21%|██▏       | 45/210 [00:00<00:01, 110.03it/s]Epoch 13 Training:  27%|██▋       | 57/210 [00:00<00:01, 110.72it/s]Epoch 13 Training:  33%|███▎      | 69/210 [00:00<00:01, 107.97it/s]Epoch 13 Training:  38%|███▊      | 80/210 [00:00<00:01, 106.29it/s]Epoch 13 Training:  43%|████▎     | 91/210 [00:00<00:01, 105.40it/s]Epoch 13 Training:  49%|████▊     | 102/210 [00:00<00:01, 105.45it/s]Epoch 13 Training:  54%|█████▍    | 114/210 [00:01<00:00, 106.96it/s]Epoch 13 Training:  60%|██████    | 126/210 [00:01<00:00, 108.65it/s]Epoch 13 Training:  66%|██████▌   | 138/210 [00:01<00:00, 109.70it/s]Epoch 13 Training:  71%|███████▏  | 150/210 [00:01<00:00, 110.74it/s]Epoch 13 Training:  77%|███████▋  | 162/210 [00:01<00:00, 111.63it/s]Epoch 13 Training:  83%|████████▎ | 174/210 [00:01<00:00, 112.03it/s]Epoch 13 Training:  89%|████████▊ | 186/210 [00:01<00:00, 112.71it/s]Epoch 13 Training:  94%|█████████▍| 198/210 [00:01<00:00, 113.74it/s]Epoch 13 Training: 100%|██████████| 210/210 [00:01<00:00, 110.08it/s]
+Epoch 13 Train Loss: 0.4725
+Epoch 13 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 13 Validation:  59%|█████▉    | 26/44 [00:00<00:00, 258.83it/s]Epoch 13 Validation: 100%|██████████| 44/44 [00:00<00:00, 256.50it/s]
+Epoch 13 Val Loss: 0.4739
+Epoch 14 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 14 Training:   3%|▎         | 7/210 [00:00<00:02, 68.03it/s]Epoch 14 Training:   8%|▊         | 17/210 [00:00<00:02, 86.49it/s]Epoch 14 Training:  13%|█▎        | 28/210 [00:00<00:01, 93.21it/s]Epoch 14 Training:  19%|█▊        | 39/210 [00:00<00:01, 96.59it/s]Epoch 14 Training:  24%|██▍       | 51/210 [00:00<00:01, 102.53it/s]Epoch 14 Training:  30%|██▉       | 62/210 [00:00<00:01, 102.47it/s]Epoch 14 Training:  35%|███▍      | 73/210 [00:00<00:01, 102.82it/s]Epoch 14 Training:  40%|████      | 84/210 [00:00<00:01, 102.16it/s]Epoch 14 Training:  45%|████▌     | 95/210 [00:00<00:01, 101.87it/s]Epoch 14 Training:  50%|█████     | 106/210 [00:01<00:01, 102.30it/s]Epoch 14 Training:  56%|█████▌    | 117/210 [00:01<00:00, 103.18it/s]Epoch 14 Training:  61%|██████▏   | 129/210 [00:01<00:00, 106.61it/s]Epoch 14 Training:  67%|██████▋   | 141/210 [00:01<00:00, 108.92it/s]Epoch 14 Training:  73%|███████▎  | 153/210 [00:01<00:00, 110.67it/s]Epoch 14 Training:  79%|███████▊  | 165/210 [00:01<00:00, 112.11it/s]Epoch 14 Training:  84%|████████▍ | 177/210 [00:01<00:00, 113.25it/s]Epoch 14 Training:  90%|█████████ | 189/210 [00:01<00:00, 114.88it/s]Epoch 14 Training:  96%|█████████▌| 202/210 [00:01<00:00, 116.56it/s]Epoch 14 Training: 100%|██████████| 210/210 [00:01<00:00, 106.92it/s]
+Epoch 14 Train Loss: 0.4748
+Epoch 14 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 14 Validation:  39%|███▊      | 17/44 [00:00<00:00, 169.35it/s]Epoch 14 Validation: 100%|██████████| 44/44 [00:00<00:00, 247.29it/s]
+Epoch 14 Val Loss: 0.4771
+Epoch 15 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 15 Training:   4%|▍         | 9/210 [00:00<00:02, 84.07it/s]Epoch 15 Training:  10%|█         | 22/210 [00:00<00:01, 107.77it/s]Epoch 15 Training:  17%|█▋        | 35/210 [00:00<00:01, 115.37it/s]Epoch 15 Training:  23%|██▎       | 48/210 [00:00<00:01, 119.06it/s]Epoch 15 Training:  29%|██▉       | 61/210 [00:00<00:01, 121.77it/s]Epoch 15 Training:  35%|███▌      | 74/210 [00:00<00:01, 123.60it/s]Epoch 15 Training:  41%|████▏     | 87/210 [00:00<00:00, 123.18it/s]Epoch 15 Training:  48%|████▊     | 100/210 [00:00<00:00, 122.48it/s]Epoch 15 Training:  54%|█████▍    | 113/210 [00:00<00:00, 121.60it/s]Epoch 15 Training:  60%|██████    | 126/210 [00:01<00:00, 122.60it/s]Epoch 15 Training:  66%|██████▌   | 139/210 [00:01<00:00, 122.14it/s]Epoch 15 Training:  72%|███████▏  | 152/210 [00:01<00:00, 119.03it/s]Epoch 15 Training:  78%|███████▊  | 164/210 [00:01<00:00, 118.03it/s]Epoch 15 Training:  84%|████████▍ | 176/210 [00:01<00:00, 117.87it/s]Epoch 15 Training:  90%|████████▉ | 188/210 [00:01<00:00, 116.23it/s]Epoch 15 Training:  95%|█████████▌| 200/210 [00:01<00:00, 115.87it/s]Epoch 15 Training: 100%|██████████| 210/210 [00:01<00:00, 118.66it/s]
+Epoch 15 Train Loss: 0.4732
+Epoch 15 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 15 Validation:  52%|█████▏    | 23/44 [00:00<00:00, 229.38it/s]Epoch 15 Validation: 100%|██████████| 44/44 [00:00<00:00, 294.68it/s]
+Epoch 15 Val Loss: 0.4738
+Epoch 16 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 16 Training:   3%|▎         | 7/210 [00:00<00:02, 69.58it/s]Epoch 16 Training:   9%|▉         | 19/210 [00:00<00:01, 98.00it/s]Epoch 16 Training:  15%|█▌        | 32/210 [00:00<00:01, 110.48it/s]Epoch 16 Training:  21%|██▏       | 45/210 [00:00<00:01, 114.91it/s]Epoch 16 Training:  27%|██▋       | 57/210 [00:00<00:01, 116.20it/s]Epoch 16 Training:  33%|███▎      | 69/210 [00:00<00:01, 117.26it/s]Epoch 16 Training:  39%|███▊      | 81/210 [00:00<00:01, 118.01it/s]Epoch 16 Training:  44%|████▍     | 93/210 [00:00<00:00, 118.05it/s]Epoch 16 Training:  50%|█████     | 105/210 [00:00<00:00, 118.10it/s]Epoch 16 Training:  56%|█████▌    | 117/210 [00:01<00:00, 117.99it/s]Epoch 16 Training:  62%|██████▏   | 130/210 [00:01<00:00, 118.85it/s]Epoch 16 Training:  68%|██████▊   | 143/210 [00:01<00:00, 119.15it/s]Epoch 16 Training:  74%|███████▍  | 155/210 [00:01<00:00, 118.48it/s]Epoch 16 Training:  80%|███████▉  | 167/210 [00:01<00:00, 118.56it/s]Epoch 16 Training:  85%|████████▌ | 179/210 [00:01<00:00, 117.98it/s]Epoch 16 Training:  91%|█████████ | 191/210 [00:01<00:00, 118.41it/s]Epoch 16 Training:  97%|█████████▋| 204/210 [00:01<00:00, 119.85it/s]Epoch 16 Training: 100%|██████████| 210/210 [00:01<00:00, 116.81it/s]
+Epoch 16 Train Loss: 0.4704
+Epoch 16 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 16 Validation:  59%|█████▉    | 26/44 [00:00<00:00, 257.53it/s]Epoch 16 Validation: 100%|██████████| 44/44 [00:00<00:00, 270.10it/s]
+Epoch 16 Val Loss: 0.4735
+Epoch 17 Training:   0%|          | 0/210 [00:00<?, ?it/s]Epoch 17 Training:   4%|▍         | 8/210 [00:00<00:02, 77.34it/s]Epoch 17 Training:  10%|▉         | 20/210 [00:00<00:01, 100.57it/s]Epoch 17 Training:  15%|█▌        | 32/210 [00:00<00:01, 107.10it/s]Epoch 17 Training:  21%|██        | 44/210 [00:00<00:01, 109.53it/s]Epoch 17 Training:  27%|██▋       | 57/210 [00:00<00:01, 113.49it/s]Epoch 17 Training:  33%|███▎      | 69/210 [00:00<00:01, 114.07it/s]Epoch 17 Training:  39%|███▊      | 81/210 [00:00<00:01, 113.42it/s]Epoch 17 Training:  44%|████▍     | 93/210 [00:00<00:01, 113.22it/s]Epoch 17 Training:  50%|█████     | 105/210 [00:00<00:00, 113.77it/s]Epoch 17 Training:  56%|█████▌    | 117/210 [00:01<00:00, 113.93it/s]Epoch 17 Training:  61%|██████▏   | 129/210 [00:01<00:00, 114.34it/s]Epoch 17 Training:  67%|██████▋   | 141/210 [00:01<00:00, 114.23it/s]Epoch 17 Training:  73%|███████▎  | 153/210 [00:01<00:00, 114.91it/s]Epoch 17 Training:  79%|███████▊  | 165/210 [00:01<00:00, 116.02it/s]Epoch 17 Training:  84%|████████▍ | 177/210 [00:01<00:00, 114.20it/s]Epoch 17 Training:  90%|█████████ | 190/210 [00:01<00:00, 115.96it/s]Epoch 17 Training:  96%|█████████▌| 202/210 [00:01<00:00, 116.51it/s]Epoch 17 Training: 100%|██████████| 210/210 [00:01<00:00, 113.74it/s]
+Epoch 17 Train Loss: 0.4727
+Epoch 17 Validation:   0%|          | 0/44 [00:00<?, ?it/s]Epoch 17 Validation:  64%|██████▎   | 28/44 [00:00<00:00, 275.90it/s]Epoch 17 Validation: 100%|██████████| 44/44 [00:00<00:00, 283.51it/s]
+Epoch 17 Val Loss: 0.4733
+⏹️ Early stopping.
 [ResourceLogger] logged resources for clinicalbert_transformer → ../../analysis/logs/resource_usage.csv
 
 💾 Saving predicted probabilities for iter4...
-Saving Probs:   0%|          | 0/61 [00:00<?, ?it/s]Saving Probs:  43%|████▎     | 26/61 [00:00<00:00, 257.12it/s]Saving Probs:  92%|█████████▏| 56/61 [00:00<00:00, 279.53it/s]Saving Probs: 100%|██████████| 61/61 [00:00<00:00, 274.56it/s]
+Saving Test Probs:   0%|          | 0/46 [00:00<?, ?it/s]Saving Test Probs:   2%|▏         | 1/46 [00:00<00:24,  1.86it/s]Saving Test Probs:  89%|████████▉ | 41/46 [00:00<00:00, 85.16it/s]Saving Test Probs: 100%|██████████| 46/46 [00:00<00:00, 70.75it/s]
+Reported metrics are from held-out test set (1468 patients).
 📦 Saved outputs → ../../analysis/data/derivedData/clinicalbert_transformer_probs_iter4.npz
-⏱️ GPU-based model training took 183s
+⏱️ GPU-based model training took 186s
 
 🔍 GPU Memory Summary:
 0, NVIDIA A100-SXM4-40GB, 0 MiB, 40960 MiB
@@ -334,5 +321,5 @@ Epoch 20 Val Loss: 0.4397
 ⏱️ Metrics merging took 0s
 
 === [7] Done ===
-🎉 Finished at Wed Jul 22 00:48:23 UTC 2026
-✅ [iter4] Done in 231s
+🎉 Finished at Mon Oct 12 03:51:44 UTC 2026
+✅ [iter4] Done in 237s
